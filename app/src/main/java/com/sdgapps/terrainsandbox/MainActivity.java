@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity
         };
 
         Thread.setDefaultUncaughtExceptionHandler(h);
-        hideSystemUI();
+
 
     }
 
@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity
 
         if (hasFocus) {
             Logger.log("Lifecycle: HAS FOCUS");
+            hideSystemUI();
 
         } else {
             Logger.log("Lifecycle: LOST FOCUS");

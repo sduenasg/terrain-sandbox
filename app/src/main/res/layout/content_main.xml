@@ -17,7 +17,7 @@
             android:layout_height="match_parent" />
 
         <!--
-        Silly fix for a bug involving a navigation drawer that lays on top of a GLSurfaceView.
+        Silly fix for a bug involving a Navigation Drawer that lays on top of a GLSurfaceView.
         This empty dummy view fixes most of the problems. The animation is still a bit twitchy though.
         I've found posts about this bug from as early as 2014.
         https://stackoverflow.com/questions/23691012/drawerlayout-listview-not-drawn-with-glsurfaceview-as-content

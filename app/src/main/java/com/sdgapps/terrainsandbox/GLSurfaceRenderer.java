@@ -137,7 +137,7 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
 
     private void configGL() {
         GLES20.glLineWidth(3);
-        GLES20.glClearColor(0.8f, 0.8f, 0.9f, 0.8f);
+        GLES20.glClearColor(0.8f, 0.8f, 0.9f, 1.0f);
         GLES20.glEnable(GLES20.GL_CULL_FACE);
         GLES20.glCullFace(GLES20.GL_BACK);
 
