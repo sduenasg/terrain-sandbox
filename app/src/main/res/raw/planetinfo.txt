@@ -1,0 +1,3 @@
+#col earthcm00.png earthcm01.png earthcm02.png earthcm03.png earthcm04.png earthcm05.png
+#disp earthdisplacement00.png earthdisplacement01.png earthdisplacement02.png earthdisplacement03.png earthdisplacement04.png earthdisplacement05.png
+#norm earthnormals00.png earthnormals01.png earthnormals02.png earthnormals03.png earthnormals04.png earthnormals05.png

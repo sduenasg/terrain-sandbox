@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+
+
+<android.support.v7.widget.LinearLayoutCompat
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:paddingTop="10dp"
+android:orientation="vertical"
+android:gravity="left"
+        >
+
+<android.support.v7.widget.AppCompatTextView
+        android:textColor="#1d1e1d"
+        android:text="@string/azimuth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:textSize="14sp"
+        android:fontFamily="sans-serif-medium"
+        android:layout_weight="1"
+        />
+
+    <android.support.v7.widget.AppCompatSeekBar
+            android:id="@+id/seeker"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:progress="0"
+            android:secondaryProgress="1"
+            android:max="360"/>
+
+</android.support.v7.widget.LinearLayoutCompat>

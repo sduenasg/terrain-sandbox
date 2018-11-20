@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+            android:title="Settings"
+            >
+        <menu
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto">
+            <item
+                    android:title="@string/wireframe"
+                    android:id="@+id/wireframecheck"
+                    app:actionLayout="@layout/widget_switch_off"
+                    />
+            <item
+                    android:title="@string/solid"
+                    android:id="@+id/solid"
+                    app:actionLayout="@layout/widget_switch_on"
+                    />
+            <item
+                    android:title="@string/debug"
+                    android:id="@+id/debug"
+                    app:actionLayout="@layout/widget_switch_off"
+                    />
+            <item
+                    android:title="@string/texture"
+                    android:id="@+id/texture"
+                    app:actionLayout="@layout/widget_switch_on"
+                    />
+            <item
+                    android:title="@string/shadows"
+                    android:id="@+id/shadowmap"
+                    app:actionLayout="@layout/widget_switch_off"
+                    />
+            <item
+                    android:id="@+id/rangeSeekbar"
+                    app:actionLayout="@layout/widget_seekbar_range"
+                    />
+            <item
+                    android:title="@string/autorbit"
+                    android:id="@+id/orbit"
+                    app:actionLayout="@layout/widget_switch_off"
+                    />
+            <item
+                    android:id="@+id/lightAzimuth"
+                    app:actionLayout="@layout/widget_seekbar_azimuth"
+                    />
+            <item
+                    android:id="@+id/lightElevation"
+                    app:actionLayout="@layout/widget_seekbar_elevation"
+                    />
+
+            <item
+                    android:id="@+id/resetCamera"
+                    android:title="@string/resetcam"
+                    />
+
+        </menu>
+    </item>
+</menu>
+
+        <!--  example
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <menu
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+        <item
+        android:title="Widgets"
+        >
+        <menu>
+        <item
+            android:title="Checkable menu item (checked)"
+            android:checkable="true"
+            android:checked="true"
+            />
+        <item
+            android:title="CheckBox"
+            app:actionLayout="@layout/widget_check" />
+        <item
+            android:title="Switch"
+            app:actionLayout="@layout/widget_switch_on" />
+        <item
+            android:title="EditText"
+            app:actionLayout="@layout/widget_edit" />
+        <item
+            android:title=""
+            app:actionLayout="@layout/widget_wide" />
+        <item
+            android:title="NumberPicker"
+            app:actionLayout="@layout/widget_number" />
+        <item
+            android:title="Custom LinearLayout number"
+            app:actionLayout="@layout/widget_custom" />
+        </menu>
+        </item>
+        </menu>
+
+
+                -->

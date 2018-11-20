@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- layout-v14/widget_switch_on.xmlxml
+     for older versions you can add a CheckBox into layout/widget_switch_ON_ON.xml
+     and treat both as Checkable or CompoundButton -->
+<android.support.v7.widget.SwitchCompat
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:checkable="true"
+        android:checked="false"
+        tools:targetApi="ICE_CREAM_SANDWICH"
+        />

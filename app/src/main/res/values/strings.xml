@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Terrain Sandbox</string>
+    <string name="texture">Color texture</string>
+    <string name="autorbit">Sun auto-orbit</string>
+    <string name="resetcam">Reset camera</string>
+    <string name="wireframe">Wireframe</string>
+    <string name="walk">Autowalk</string>
+    <string name="rangedet">Detail range</string>
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="scene1">Scene 1</string>
+    <string name="scene2">Scene 2</string>
+    <string name="scene3">Flat</string>
+    <string name="solid">Solid</string>
+    <string name="debug">Show Boxes</string>
+    <string name="drawcalls">Drawcalls/frame:\u0020</string>
+    <string name="fps">FPS:\u0020</string>
+    <string name="azimuth">Sun azimuth</string>
+    <string name="elevation">Sun elevation</string>
+    <string name="shadows">Shadow map</string>
+    <string name="title_activity_main2_test">Main2Activity_test</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+</resources>

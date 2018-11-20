@@ -1,0 +1,3 @@
+#col island1texnobake.pkm
+#disp isla1disp1024.png
+#norm isla1normals512.png
