@@ -431,7 +431,7 @@ class CDLODNode extends SelectableNode {
     }
 
     void renderBox(Material boundingBoxMaterial) {
-        boundingBoxMaterial.shader.useProgram(null);
+        boundingBoxMaterial.shader.useProgram();
         if (selection[4])
             AABB.draw(boundingBoxMaterial.shader);
         else//draw the boxes of the children we are covering for

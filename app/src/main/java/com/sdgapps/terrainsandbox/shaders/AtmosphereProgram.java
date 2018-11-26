@@ -8,7 +8,7 @@ import com.sdgapps.terrainsandbox.Singleton;
 
 public class AtmosphereProgram extends GLSLProgram {
     private AtmosphereProgram(String id) {
-        super(id, R.raw.atmosphere_vert, R.raw.atmosphere_frag,false, false, false, GLSLProgram.USES_MODEL_MATRIX, false);
+        super(id, R.raw.atmosphere_vert, R.raw.atmosphere_frag, false, false, GLSLProgram.USES_MODEL_MATRIX, false);
         initAtmosphereShader();
     }
 

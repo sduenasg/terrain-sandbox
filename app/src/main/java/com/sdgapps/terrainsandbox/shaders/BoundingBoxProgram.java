@@ -6,7 +6,7 @@ import com.sdgapps.terrainsandbox.Singleton;
 
 public class BoundingBoxProgram extends GLSLProgram {
     private BoundingBoxProgram(String id) {
-        super(id, R.raw.boxvertex, R.raw.boxfragment, false, false, false, GLSLProgram.USES_MVMATRIX, false);
+        super(id, R.raw.boxvertex, R.raw.boxfragment,  false, false, GLSLProgram.USES_MVMATRIX, false);
     }
 
     public static GLSLProgram createInstance(String id)

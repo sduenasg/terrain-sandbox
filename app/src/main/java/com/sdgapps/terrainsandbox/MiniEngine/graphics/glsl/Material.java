@@ -33,7 +33,7 @@ public class Material {
 
     public void bindShader()
     {
-        shader.useProgram(Singleton.systems.mainLight);
+        shader.useProgram();
     }
     public void bindTextures()
     {

@@ -9,7 +9,7 @@ import com.sdgapps.terrainsandbox.Singleton;
 
 public class PlanetShader extends GLSLProgram {
     private PlanetShader(String id) {
-        super(id, R.raw.terrain_vertex_planet, R.raw.planet_fragment_derivative, true, true, false, GLSLProgram.USES_MVMATRIX, false);
+        super(id, R.raw.terrain_vertex_planet, R.raw.planet_fragment_derivative, true, false, GLSLProgram.USES_MVMATRIX, false);
 
         configureTerrainShader();
     }
@@ -39,6 +39,8 @@ public class PlanetShader extends GLSLProgram {
         ShaderUniform1f CDLODLodlevel = new ShaderUniform1f("lodlevel");
         ShaderUniform3F CDLODNodeOffset = new ShaderUniform3F("nodeoffset");
         ShaderUniform3F fogcolorTerrain = new ShaderUniform3F("u_Fogcolor");
+        ShaderUniform3F lightpos = new ShaderUniform3F("u_LightPos");
+        ShaderUniform3F lightambient = new ShaderUniform3F("ambientLight");
 
         addUniform(heightmap);
         addUniform(colormap);
@@ -53,5 +55,7 @@ public class PlanetShader extends GLSLProgram {
         addUniform(CDLODLodlevel);
         addUniform(CDLODNodeOffset);
         addUniform(fogcolorTerrain);
+        addUniform(lightpos);
+        addUniform(lightambient);
     }
 }

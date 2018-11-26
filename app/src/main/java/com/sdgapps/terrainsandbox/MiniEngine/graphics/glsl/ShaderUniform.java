@@ -4,7 +4,7 @@ public class ShaderUniform {
 
     public String name;
     /**
-     * Handle of this variable in the shader it is bound to
+     * Handle of this uniform in the shader it is bound to
      */
     public int glHandle;
 

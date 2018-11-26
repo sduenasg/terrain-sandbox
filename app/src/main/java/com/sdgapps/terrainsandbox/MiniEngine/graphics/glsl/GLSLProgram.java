@@ -26,7 +26,9 @@ public class GLSLProgram {
      */
     private int nsamplers=0;
 
+    /** OpenGL handle of this program*/
     public int glHandle = -1;
+
     GLSLShader vertex, fragment;
 
     public int positionHandle = -1;
@@ -48,18 +50,11 @@ public class GLSLProgram {
 
     public int gridPositionHandle = -1;
     public int barycentricHandle = -1;
-    public int morphTargetHandle = -1;
 
     /**Shader identifier in the engine*/
     public String shaderID;
     public int shadowMapTextureUniformHandle;
 
-    //Light Handlers
-    public int LightPosHandle;
-    public int ambientColorHandle;
-    public int diffuseColorHandle;
-
-    public boolean usesLight = false;
     public boolean usesBumpMap = false;
     public boolean usesSpecularMap = false;
     public boolean usesShadowmapMVP = false;
@@ -72,7 +67,7 @@ public class GLSLProgram {
 
     public short MVMatrixUsage = USES_MVMATRIX;
 
-    public GLSLProgram(String id, int vertexid, int fragmentid, boolean usesLight, boolean usesBumpMap, boolean usesSpecularMap, short matrixusage,
+    public GLSLProgram(String id, int vertexid, int fragmentid, boolean usesBumpMap, boolean usesSpecularMap, short matrixusage,
                        boolean uses_shadowmapMVP) {
         Resources res=Singleton.systems.sShaderSystem.res;
         this.shaderID = id;
@@ -83,7 +78,6 @@ public class GLSLProgram {
                 fragment.glHandle, new String[]{
                         "a_Position", "a_Normal"
                 });
-        this.usesLight = usesLight;
         this.usesSpecularMap = usesSpecularMap;
         this.usesBumpMap = usesBumpMap;
         this.MVMatrixUsage = matrixusage;
@@ -129,22 +123,15 @@ public class GLSLProgram {
         bitangentHandle = GLES20.glGetAttribLocation(glHandle, "a_Bitangent");
         texcoordHandle = GLES20.glGetAttribLocation(glHandle, "a_TexCoordinate");
 
+
         MVPMatrixHandle = GLES20.glGetUniformLocation(glHandle, "u_MVPMatrix");
         MVMatrixHandle = GLES20.glGetUniformLocation(glHandle, "u_MVMatrix");
         ModelMatrixHandle = GLES20.glGetUniformLocation(glHandle, "u_Modelmatrix");
         ProjMatrixHandle = GLES20.glGetUniformLocation(glHandle, "u_Projectionmatrix");
         ViewMatrixHandle = GLES20.glGetUniformLocation(glHandle, "u_Viewmatrix");
 
-
-        if (usesLight) {
-            LightPosHandle = GLES20.glGetUniformLocation(glHandle, "u_LightPos");
-            ambientColorHandle = GLES20.glGetUniformLocation(glHandle, "ambientLight");
-            diffuseColorHandle = GLES20.glGetUniformLocation(glHandle, "diffuseLight");
-        }
-
         gridPositionHandle = GLES20.glGetAttribLocation(glHandle, "a_gridPosition");
         barycentricHandle = GLES20.glGetAttribLocation(glHandle, "a_barycentric");
-        morphTargetHandle = GLES20.glGetAttribLocation(glHandle, "a_morphTarget");
 
         if (usesShadowmapMVP) {
             shadowmapMVPmatrixHandle = GLES20.glGetUniformLocation(glHandle, "u_shadowmapMVP");
@@ -152,20 +139,8 @@ public class GLSLProgram {
         }
     }
 
-    public void useProgram(Light light) {
-
+    public void useProgram() {
         GLES20.glUseProgram(glHandle);
-
-        if (this.usesLight && light != null) {
-            GLES20.glUniform3f(LightPosHandle, light.mLightPosInEyeSpace[0],
-                    light.mLightPosInEyeSpace[1], light.mLightPosInEyeSpace[2]);
-
-            GLES20.glUniform3f(ambientColorHandle, light.lightAmbient[0],
-                    light.lightAmbient[1], light.lightAmbient[2]);
-
-            GLES20.glUniform3f(diffuseColorHandle, light.lightDiffuse[0],
-                    light.lightDiffuse[1], light.lightDiffuse[2]);
-        }
     }
 
 

@@ -6,7 +6,7 @@ import com.sdgapps.terrainsandbox.Singleton;
 
 public class SunProgram extends GLSLProgram {
     private SunProgram(String id) {
-        super(id, R.raw.sun_vertex, R.raw.sun_fragment, false, false, false, GLSLProgram.USES_MVMATRIX, false);
+        super(id, R.raw.sun_vertex, R.raw.sun_fragment,  false, false, GLSLProgram.USES_MVMATRIX, false);
     }
 
     public static GLSLProgram createInstance(String id)

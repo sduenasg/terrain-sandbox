@@ -4,6 +4,7 @@ import android.opengl.GLES20;
 
 import com.sdgapps.terrainsandbox.MiniEngine.*;
 import com.sdgapps.terrainsandbox.MiniEngine.behaviours.FlyAround;
+import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Light;
 import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Renderer;
 import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Sphere;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.*;
@@ -287,7 +288,7 @@ public class Planet extends Renderer implements TerrainInterface {
         for (RenderPackage pass : renderPackages) {
             pass.bind();//binds the frame buffer
             GLSLProgram targetShader = pass.targetProgram;
-            targetShader.useProgram(Singleton.systems.mainLight);
+            targetShader.useProgram();
             gridMesh.bind(targetShader, false);
             bindPlanetInfo(targetShader);
 
@@ -358,6 +359,19 @@ public class Planet extends Renderer implements TerrainInterface {
         if (camPosVar != null) {
             camPosVar.set(Singleton.systems.mainCamera.transform.position);
             camPosVar.bind();
+        }
+        Light l = Singleton.systems.mainLight;
+        ShaderUniform3F lightpos = (ShaderUniform3F) shader.getUniform("u_LightPos");
+        if (lightpos != null) {
+
+            lightpos.set(l.mLightPosInEyeSpace[0],l.mLightPosInEyeSpace[1],l.mLightPosInEyeSpace[2]);
+            lightpos.bind();
+        }
+
+        ShaderUniform3F ambientcolor = (ShaderUniform3F) shader.getUniform("ambientLight");
+        if (ambientcolor != null) {
+            ambientcolor.set(l.lightAmbient[0],l.lightAmbient[1],l.lightAmbient[2]);
+            ambientcolor.bind();
         }
     }
 

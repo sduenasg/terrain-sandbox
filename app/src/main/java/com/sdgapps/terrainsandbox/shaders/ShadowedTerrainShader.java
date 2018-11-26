@@ -8,7 +8,7 @@ import com.sdgapps.terrainsandbox.Singleton;
 
 public class ShadowedTerrainShader extends GLSLProgram {
     private ShadowedTerrainShader(String id) {
-        super(id, R.raw.terrain_vertex_shadowed, R.raw.terrain_fragment_derivative_shadowed_, true, true, false, GLSLProgram.USES_MVMATRIX, true);
+        super(id, R.raw.terrain_vertex_shadowed, R.raw.terrain_fragment_derivative_shadowed_, true, false, GLSLProgram.USES_MVMATRIX, true);
         configureShadowedTerrainShader();
     }
 
