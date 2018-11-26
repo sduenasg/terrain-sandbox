@@ -2,11 +2,11 @@ package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
 import android.opengl.GLES20;
 
-public class ShaderUniformMatrix4Fv extends ShaderUniform {
+public class ShaderUniformMatrix4fv extends ShaderUniform {
 
     public float[] array = new float[16];
 
-    public ShaderUniformMatrix4Fv(String name) {
+    public ShaderUniformMatrix4fv(String name) {
         super(name);
     }
 
