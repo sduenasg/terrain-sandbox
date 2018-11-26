@@ -312,6 +312,8 @@ public class Planet extends Renderer implements TerrainInterface {
     }
 
     private void renderAtmosphere() {
+
+        atmosphere.material.bindShader();
         ShaderVariable3f atmosphereCol = (ShaderVariable3f) atmosphere.material.shader.getUniform("u_atmosphere_color");
         atmosphereCol.bind();
 

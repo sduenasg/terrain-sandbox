@@ -10,7 +10,8 @@ import java.util.HashMap;
 /**
  * GLSL Program encapsulates the vertex and the fragment shader interface.
  *
- * No render data should be stored here, as this shader interface may be shared by multiple materials.
+ * No specific render data should be stored here, as this shader interface may be shared by multiple materials.
+ * ShaderVariable subclasses are used to pass uniform data to the actual shaders.
  *
  */
 public class GLSLProgram {
@@ -34,8 +35,6 @@ public class GLSLProgram {
     public int tangentHandle = -1;
     public int bitangentHandle = -1;
 
-    public int blendIndicesHandle = -1;
-    public int blendWeightsHandle = -1;
     public int texcoordHandle = -1;
 
     public int MVPMatrixHandle = -1;
@@ -142,9 +141,6 @@ public class GLSLProgram {
             ambientColorHandle = GLES20.glGetUniformLocation(glHandle, "ambientLight");
             diffuseColorHandle = GLES20.glGetUniformLocation(glHandle, "diffuseLight");
         }
-
-        blendIndicesHandle = GLES20.glGetAttribLocation(glHandle, "a_blendIndices");
-        blendWeightsHandle = GLES20.glGetAttribLocation(glHandle, "a_blendWeights");
 
         gridPositionHandle = GLES20.glGetAttribLocation(glHandle, "a_gridPosition");
         barycentricHandle = GLES20.glGetAttribLocation(glHandle, "a_barycentric");

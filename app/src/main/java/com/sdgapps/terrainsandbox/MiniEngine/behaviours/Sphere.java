@@ -155,7 +155,7 @@ public class Sphere extends Renderer {
     @Override
     public void draw() {
         transform.updateModelMatrix();
-        material.bindShader();
+
         material.bindTextures();
         sendMatrices();
         bind(material.shader);
