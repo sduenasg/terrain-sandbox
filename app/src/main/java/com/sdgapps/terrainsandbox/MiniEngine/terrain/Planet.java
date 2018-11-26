@@ -13,7 +13,6 @@ import com.sdgapps.terrainsandbox.Singleton;
 import com.sdgapps.terrainsandbox.shaders.AtmosphereProgram;
 import com.sdgapps.terrainsandbox.shaders.BoundingBoxProgram;
 import com.sdgapps.terrainsandbox.shaders.PlanetShader;
-import com.sdgapps.terrainsandbox.shaders.ShadowedTerrainShader;
 import com.sdgapps.terrainsandbox.utils.Logger;
 import com.sdgapps.terrainsandbox.utils.TimingHelper;
 
@@ -34,8 +33,8 @@ import com.sdgapps.terrainsandbox.utils.TimingHelper;
  * more evenly around the sphere. This is a more complex/slower calculation for each vertex.
  *
  * <p>
- * Texturing: The following textures are loaded as cubemap faces that have been prepared for this class on Blender
- * and an external python script.
+ * Texturing: The following textures are loaded as cubemap faces (separately, every face is an image) that have been
+ * prepared for this class using World Machine and a Python script that pre-processes the set of textures.
  * <p>
  * <p>
  * - Heightmap: grayscale image where every pixel represents a height value. An external script has been used so that
@@ -47,6 +46,11 @@ import com.sdgapps.terrainsandbox.utils.TimingHelper;
  * <p>
  * - Color map: Just the color map of the terrain, procedurally generated on World Machine, converted to 6 cubemap face textures
  * using blender.
+ *
+ * //TODO
+ * -Splat map: Every channel in the image is related to a texture. The value of the channel is that texture's weight
+ * on that area. Baked in World Machine.
+ * -Terrain color spritesheet: A spritesheet that conains different terrain detailmaps
  */
 public class Planet extends Renderer implements TerrainInterface {
     private CDLODQuadTree[] cube;
@@ -95,6 +99,11 @@ public class Planet extends Renderer implements TerrainInterface {
     private static final String planetShadowedID = "IDPlanetShadowedShader";
 
     public FlyAround camFly;
+
+    static final String colormapUniformName="u_colorMap";
+    static final String bumpMapUniformName="u_normalMap";
+    static final String heightmapUniformName="u_heightMap";
+
     public void initialize(TerrainData data) {
 
         TimingHelper th=new TimingHelper("Planet initialization...");
@@ -125,26 +134,26 @@ public class Planet extends Renderer implements TerrainInterface {
         materialD.shader = myPlanetShader;
 
         //texturing
-        materialN.texture = data.TexColorMaps[0];
-        materialS.texture = data.TexColorMaps[2];
-        materialA.texture = data.TexColorMaps[3];
-        materialB.texture = data.TexColorMaps[5];
-        materialC.texture = data.TexColorMaps[1];
-        materialD.texture = data.TexColorMaps[4];
+        materialN.addTexture(data.TexColorMaps[0],colormapUniformName);
+        materialS.addTexture(data.TexColorMaps[2],colormapUniformName);
+        materialA.addTexture(data.TexColorMaps[3],colormapUniformName);
+        materialB.addTexture(data.TexColorMaps[5],colormapUniformName);
+        materialC.addTexture(data.TexColorMaps[1],colormapUniformName);
+        materialD.addTexture(data.TexColorMaps[4],colormapUniformName);
 
-        materialN.bumpMap = data.TexNormalMaps[0];
-        materialS.bumpMap = data.TexNormalMaps[2];
-        materialA.bumpMap = data.TexNormalMaps[3];
-        materialB.bumpMap = data.TexNormalMaps[5];
-        materialC.bumpMap = data.TexNormalMaps[1];
-        materialD.bumpMap = data.TexNormalMaps[4];
+        materialN.addTexture(data.TexNormalMaps[0],bumpMapUniformName);
+        materialS.addTexture(data.TexNormalMaps[2],bumpMapUniformName);
+        materialA.addTexture(data.TexNormalMaps[3],bumpMapUniformName);
+        materialB.addTexture(data.TexNormalMaps[5],bumpMapUniformName);
+        materialC.addTexture(data.TexNormalMaps[1],bumpMapUniformName);
+        materialD.addTexture(data.TexNormalMaps[4],bumpMapUniformName);
 
-        materialN.displacementMap = data.TexDisplacementMaps[0];
-        materialS.displacementMap = data.TexDisplacementMaps[2];
-        materialA.displacementMap = data.TexDisplacementMaps[3];
-        materialB.displacementMap = data.TexDisplacementMaps[5];
-        materialC.displacementMap = data.TexDisplacementMaps[1];
-        materialD.displacementMap = data.TexDisplacementMaps[4];
+        materialN.addTexture(data.TexDisplacementMaps[0],heightmapUniformName);
+        materialS.addTexture(data.TexDisplacementMaps[2],heightmapUniformName);
+        materialA.addTexture(data.TexDisplacementMaps[3],heightmapUniformName);
+        materialB.addTexture(data.TexDisplacementMaps[5],heightmapUniformName);
+        materialC.addTexture(data.TexDisplacementMaps[1],heightmapUniformName);
+        materialD.addTexture(data.TexDisplacementMaps[4],heightmapUniformName);
 
         terrainXZ = rootQuadScale * gridSize;
 
@@ -205,7 +214,8 @@ public class Planet extends Renderer implements TerrainInterface {
         atmosphere.GenBuffersAndSubmitToGL();
         atmosphere.transform.position.add(planetRadius, 0, planetRadius);
         atmosphereColor.normalize_noalpha();
-        atmosphere.material.texture = AppTextureManager.atmosphereGradient;
+        atmosphere.material.addTexture(AppTextureManager.atmosphereGradient,"u_Texture");
+
         ShaderVariable3f atmosphereCol = (ShaderVariable3f) atmosphere.material.shader.getUniform("u_atmosphere_color");
         atmosphereCol.set(atmosphereColor);
 
@@ -222,8 +232,6 @@ public class Planet extends Renderer implements TerrainInterface {
         //update the node bounding boxes with the planet's world space transforms
         for (CDLODQuadTree chunk : cube)
             chunk.transformBoundingBoxes(transform);
-
-
     }
 
     private void LodSelect() {
@@ -277,10 +285,12 @@ public class Planet extends Renderer implements TerrainInterface {
         setRenderMode();
 
         for (RenderPackage pass : renderPackages) {
-            pass.bind();
+            pass.bind();//binds the frame buffer
             GLSLProgram targetShader = pass.targetProgram;
+            targetShader.useProgram(Singleton.systems.mainLight);
             gridMesh.bind(targetShader, false);
-            bindMeshInfo(targetShader);
+            bindPlanetInfo(targetShader);
+
 
             for (CDLODQuadTree chunk : cube) {
                 chunk.draw(pass, gridMesh, transform);
@@ -324,7 +334,7 @@ public class Planet extends Renderer implements TerrainInterface {
         GLES20.glDisable(GLES20.GL_BLEND);
     }
 
-    private void bindMeshInfo(GLSLProgram shader) {
+    private void bindPlanetInfo(GLSLProgram shader) {
         ShaderVariable3f meshInfoUniform = (ShaderVariable3f) shader.getUniform("meshInfo");
         meshInfoUniform.set(terrainXZ, gridSize * rootQuadScale, yscale);
         meshInfoUniform.bind();
@@ -333,16 +343,19 @@ public class Planet extends Renderer implements TerrainInterface {
         if (v != null) {
             Color4f fogColor = Singleton.systems.mainLight.fogColor;
             v.set(fogColor.r, fogColor.g, fogColor.b);
+            v.bind();
         }
 
         ShaderVariable1f zfarVar = (ShaderVariable1f) shader.getUniform("zfar");
         if (zfarVar != null) {
             zfarVar.v = Singleton.systems.mainCamera.frustum.zfar;
+            zfarVar.bind();
         }
 
         ShaderVariable3f camPosVar = (ShaderVariable3f) shader.getUniform("cameraPosition");
         if (camPosVar != null) {
             camPosVar.set(Singleton.systems.mainCamera.transform.position);
+            camPosVar.bind();
         }
     }
 
@@ -364,9 +377,9 @@ public class Planet extends Renderer implements TerrainInterface {
 
     public void initializeRenderModes(FrameBufferInterface defaultFB, FrameBufferInterface shadowmapFB) {
         defaultPass = new DefaultRenderPackage(defaultFB, material.shader);
-        shadowPass = new ShadowmapRenderPackage(shadowmapFB, Singleton.systems.sShaderSystem.shadowMapProgram);
-        shadowedDefaultPass =
-                new DefaultRenderPackage(defaultFB, ShadowedTerrainShader.createInstance("shadowedterrain"));
+       // shadowPass = new ShadowmapRenderPackage(shadowmapFB, Singleton.systems.sShaderSystem.shadowMapProgram);
+      //  shadowedDefaultPass =
+               // new DefaultRenderPackage(defaultFB, ShadowedTerrainShader.createInstance("shadowedterrain"));
         renderPackages.add(defaultPass);
     }
 
@@ -456,8 +469,9 @@ public class Planet extends Renderer implements TerrainInterface {
     }
 
     public void freeHeightmapPixels() {
+        //TODO FIX
         for (CDLODQuadTree chunk : cube) {
-            chunk.material.displacementMap.freepixels();
+           // chunk.material.displacementMap.freepixels();
         }
     }
 

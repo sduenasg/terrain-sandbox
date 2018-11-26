@@ -25,9 +25,9 @@ public class TerrainData {
     private ArrayList<String> displacementMaps;
     private ArrayList<String> normalMaps;
 
-    public Texture[] TexColorMaps;
-    public Texture[] TexDisplacementMaps;
-    public Texture[] TexNormalMaps;
+    Texture[] TexColorMaps;
+    Texture[] TexDisplacementMaps;
+    Texture[] TexNormalMaps;
 
     public TerrainData(String file, Resources res) {
         int resid = AndroidUtils.getResId(file, R.raw.class);

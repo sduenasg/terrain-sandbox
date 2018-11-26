@@ -8,11 +8,9 @@ precision highp float;
 precision mediump float;
 #endif
 
-uniform sampler2D u_Texture;  //color map
-uniform sampler2D u_Texture2; //detail texture
-uniform sampler2D u_Texture3; //normal map
-uniform sampler2D u_heightmap; //heightmap (for debugging)
-uniform sampler2D u_BumpMap;
+uniform sampler2D u_colorMap;  //color map
+uniform sampler2D u_heightMap; //heightmap (for debugging)
+uniform sampler2D u_normalMap;
 
 uniform float zfar;
 uniform float lodlevel;
@@ -46,7 +44,7 @@ vec3 getNormal(vec2 v) {
     The normal map is baked on Blender (object space normal map). Coordinates there are
     different than here (.xzy, y=-yb)
     */
-    vec3 nobj = texture2D( u_BumpMap, v).xzy *2.0 - 1.0;
+    vec3 nobj = texture2D( u_normalMap, v).xzy *2.0 - 1.0;
     nobj.y = -nobj.y;
     nobj = ( u_MVMatrix * vec4(nobj, 0.0)).xyz;
 	return normalize(nobj);
@@ -118,7 +116,7 @@ void main()
         if(range.z==3.0 || range.z==1.0)
             colorMap = vec3(0.8,0.8,0.8); //no color texture
         else
-            colorMap = texture2D(u_Texture, v_TexCoordinate).rgb;
+            colorMap = texture2D(u_colorMap, v_TexCoordinate).rgb;
 
 
         vec3 l = normalize(u_LightPos - v_Position.xyz);

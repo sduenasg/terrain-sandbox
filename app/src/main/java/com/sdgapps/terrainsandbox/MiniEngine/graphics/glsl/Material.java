@@ -1,69 +1,49 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
-
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec3f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManagerGL;
-
+import com.sdgapps.terrainsandbox.Singleton;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Material {
     public String name;
-    String diffuseTextureName;
-    public Texture texture;
-    public Texture bumpMap;
-    String bumpMapName;
-    String displacementMapName;
-    public Texture displacementMap;
-    Texture specularMap;
-    String specularMapName;
+
     public GLSLProgram shader;
 
-    Vec3f kd_color;
+    private HashMap<String,Texture> textures=new HashMap<>();
 
-    public Material() {
+    /**
+     * @param  nameInShader must be exactly the name of the sampler in the shader files
+     */
+    public void addTexture(Texture t, String nameInShader)
+    {
+        textures.put(nameInShader,t);
     }
 
-    public void bind_texture_to_part() {
 
-        if (diffuseTextureName != null)
-            texture = TextureManagerGL.getTexture(diffuseTextureName);
-
-        if (bumpMapName != null)
-            bumpMap = TextureManagerGL.getTexture(bumpMapName);
-
-        if (specularMapName != null)
-            specularMap = TextureManagerGL.getTexture(specularMapName);
-
-
-        if (displacementMapName != null)
-            displacementMap = TextureManagerGL.getTexture(displacementMapName);
+    public Texture getTexture(String uniformName)
+    {
+        return textures.get(uniformName);
     }
+    /**
+     * Binds the shader, and the material's textures to the shader
+     * If the texture's nameInShader doesn't match a sampler's name in the GLSL shader, this will crash
+     * For performance reasons, not null checking inside a loop in the middle of the render code.
+     */
 
-    public Material(String name) {
-        this.name = name;
+    public void bindShader()
+    {
+        shader.useProgram(Singleton.systems.mainLight);
     }
+    public void bindTextures()
+    {
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getTextureFile() {
-        return diffuseTextureName;
-    }
-
-    public void setTextureFile(String textureFile) {
-        this.diffuseTextureName = textureFile;
-    }
-
-    public String toString() {
-        String str = new String();
-        str += "Material name: " + name;
-        str += "\n texture ID: " + texture.glID;
-        str += "\texture file: " + diffuseTextureName;
-        return str;
+        for (Map.Entry<String, Texture> entry  : textures.entrySet())
+        {
+            //TODO optimize
+            Sampler2D sampler=(Sampler2D)shader.getUniform(entry.getKey());
+            sampler.setTexture(entry.getValue());
+            sampler.bind();
+        }
     }
 }

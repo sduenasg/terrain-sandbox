@@ -20,7 +20,7 @@ uniform vec3 u_LightPos; //Light position in eye space
 uniform mat4 u_Modelmatrix;
 
 // terrain CDLOD
-uniform sampler2D u_heightmap;
+uniform sampler2D u_heightMap;
 
 uniform float gridDim;
 uniform float quad_scale; //Quad size of the current lod grid mesh
@@ -63,9 +63,9 @@ float getHeightuv(in vec2 uv, in bool usefilter) {
 
     float heightmap=0.0;
     /*if(usefilter)
-        heightmap = texture2D_bilinear(u_heightmap,uv);//bilinear sample
+        heightmap = texture2D_bilinear(u_heightMap,uv);//bilinear sample
     else*/
-        heightmap = texture2D(u_heightmap, uv).r;//make sure the heightmaps are loaded with the NEAREST mode(no filter)
+        heightmap = texture2D(u_heightMap, uv).r;//make sure the heightmaps are loaded with the NEAREST mode(no filter)
 	return meshInfo.z * heightmap;
 }
 

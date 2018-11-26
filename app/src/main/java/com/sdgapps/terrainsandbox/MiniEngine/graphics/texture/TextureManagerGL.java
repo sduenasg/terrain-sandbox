@@ -19,19 +19,6 @@ public class TextureManagerGL {
      */
     private static HashMap<String, Texture> texMap = new HashMap<String, Texture>();
 
-    public static int getGLid(String s) {
-
-        if (texMap == null)
-            return -1;
-        return ((Integer) texMap.get(s).glID).intValue();
-    }
-
-    public static Texture getTexture(String s) {
-        if (texMap == null)
-            return null;
-
-        return texMap.get(s);
-    }
 
     public static Texture getDummyTex(String name) {
         Texture t = new Texture(name, false, false, false, false, 1, false);

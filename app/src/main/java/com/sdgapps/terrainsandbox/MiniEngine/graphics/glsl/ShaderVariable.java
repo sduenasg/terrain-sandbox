@@ -7,7 +7,6 @@ public class ShaderVariable {
      * Handle of this variable in the shader it is bound to
      */
     public int glHandle;
-    public boolean autobind = true;
 
     public ShaderVariable(String name) {
         this.name = name;

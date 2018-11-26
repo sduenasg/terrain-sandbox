@@ -155,10 +155,10 @@ public class Sphere extends Renderer {
     @Override
     public void draw() {
         transform.updateModelMatrix();
-        material.shader.useProgram(null);
+        material.bindShader();
+        material.bindTextures();
         sendMatrices();
         bind(material.shader);
-        bindMaterial();
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, indexArraySize, GLES20.GL_UNSIGNED_SHORT, 0);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
@@ -195,15 +195,6 @@ public class Sphere extends Renderer {
             GLES20.glUniformMatrix4fv(material.shader.MVPMatrixHandle, 1, false, MatrixManager.MVPMatrix, 0);
         }
     }
-
-    private void bindMaterial() {
-        if (material.shader.TextureUniformHandle != -1) {
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, material.texture.glID);
-            GLES20.glUniform1i(material.shader.TextureUniformHandle, 0);
-        }
-    }
-
 
     public void invalidateVBO() {
         uploadedVBO = false;

@@ -61,10 +61,6 @@ public class Texture {
         needsPixels = _needsPixels;
     }
 
-    public Texture(int glid) {
-        this.glID = glid;
-    }
-
     public int loadTexture(Resources res) {
         if (compressedETC1) {
             getETC1_mipmap_resids();

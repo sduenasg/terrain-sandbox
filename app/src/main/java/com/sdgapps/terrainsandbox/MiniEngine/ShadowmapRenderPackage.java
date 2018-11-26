@@ -16,16 +16,17 @@ public class ShadowmapRenderPackage extends RenderPackage {
     public void setupForRendering(float[] modelMatrix, float[] shadowmapMVPmatrix, Material mat, GLSLProgram shader) {
 
         sendMatrices(modelMatrix, shadowmapMVPmatrix);
-        bindMaterial(mat, shader);
+        mat.bindTextures();
+      //  bindMaterial(mat, shader);
     }
 
     private void bindMaterial(Material material, GLSLProgram shader) {
-        if (material != null && material.displacementMap != null) {
-            //heightmap para el vertex shader
+        /*if (material != null && material.displacementMap != null) {
+
             GLES20.glActiveTexture(GLES20.GL_TEXTURE4);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, material.displacementMap.glID);
             GLES20.glUniform1i(shader.DisplacementMapTextureUniformHandle, 4);
-        }
+        }*/
     }
 
     private void sendMatrices(float[] modelMatrix, float[] shadowmapMVPmatrix) {

@@ -18,31 +18,7 @@ public class DefaultRenderPackage extends RenderPackage {
     public void setupForRendering(float[] modelMatrix, float[] shadowmapMVPmatrix, Material mat, GLSLProgram shader) {
 
         sendMatrices(modelMatrix, shadowmapMVPmatrix);
-        bindMaterial(mat, shader);
-    }
-
-    private void bindMaterial(Material material, GLSLProgram shader) {
-        /** bindGridMesh the diffuse texture*/
-        if (shader.TextureUniformHandle != -1) {
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, material.texture.glID);
-            GLES20.glUniform1i(shader.TextureUniformHandle, 0);
-        }
-
-        /**bindGridMesh the heightmap if there is one*/
-        if (material != null && material.displacementMap != null) {
-            //heightmap para el vertex shader
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE4);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, material.displacementMap.glID);
-            GLES20.glUniform1i(shader.DisplacementMapTextureUniformHandle, 4);
-        }
-
-        /**bindGridMesh the normal map if there is one*/
-        if (material != null && material.bumpMap != null && shader.usesBumpMap && shader.BumpMapTextureUniformHandle != -1) {
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE3);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, material.bumpMap.glID);
-            GLES20.glUniform1i(shader.BumpMapTextureUniformHandle, 3);
-        }
+        mat.bindTextures();
 
         if (OpenGLChecks.oes_depth_texture
                 && shader.shadowMapTextureUniformHandle != -1) {
@@ -50,6 +26,32 @@ public class DefaultRenderPackage extends RenderPackage {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, AppTextureManager.shadowmap.glID);
             GLES20.glUniform1i(shader.shadowMapTextureUniformHandle, 5);
         }
+    }
+
+    @Deprecated
+    private void bindMaterial(Material material, GLSLProgram shader) {
+        /** bindGridMesh the diffuse texture*/
+      /*  if (shader.TextureUniformHandle != -1) {
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, material.texture.glID);
+            GLES20.glUniform1i(shader.TextureUniformHandle, 0);
+        }
+
+        //bindGridMesh the heightmap if there is one
+        if (material != null && material.displacementMap != null) {
+            //heightmap para el vertex shader
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE4);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, material.displacementMap.glID);
+            GLES20.glUniform1i(shader.DisplacementMapTextureUniformHandle, 4);
+        }
+
+        //bindGridMesh the normal map if there is one
+        if (material != null && material.bumpMap != null && shader.usesBumpMap && shader.BumpMapTextureUniformHandle != -1) {
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE3);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, material.bumpMap.glID);
+            GLES20.glUniform1i(shader.BumpMapTextureUniformHandle, 3);
+        }
+*/
     }
 
     private void sendMatrices(float[] modelMatrix, float[] shadowmapMVPmatrix) {

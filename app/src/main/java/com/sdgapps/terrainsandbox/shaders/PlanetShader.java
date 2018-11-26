@@ -1,11 +1,13 @@
 package com.sdgapps.terrainsandbox.shaders;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Sampler2D;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderVariable1f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderVariable3f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.AppTextureManager;
 import com.sdgapps.terrainsandbox.R;
 import com.sdgapps.terrainsandbox.Singleton;
+import com.sdgapps.terrainsandbox.utils.Logger;
 
 public class PlanetShader extends GLSLProgram {
     private PlanetShader(String id) {
@@ -26,8 +28,9 @@ public class PlanetShader extends GLSLProgram {
     }
 
     public void configureTerrainShader() {
-        addTexture(AppTextureManager.terrainDetailTexture); //u_texture2
-        addTexture(AppTextureManager.terrainDetailNormalmap); //u_texture3
+        Sampler2D heightmap = new Sampler2D("u_heightMap");
+        Sampler2D colormap=new Sampler2D("u_colorMap");
+        Sampler2D normalmap=new Sampler2D("u_normalMap");
 
         ShaderVariable1f CDLODQuadScale = new ShaderVariable1f("quad_scale");
         ShaderVariable3f CDLODrange = new ShaderVariable3f("range");
@@ -38,6 +41,10 @@ public class PlanetShader extends GLSLProgram {
         ShaderVariable1f CDLODLodlevel = new ShaderVariable1f("lodlevel");
         ShaderVariable3f CDLODNodeOffset = new ShaderVariable3f("nodeoffset");
         ShaderVariable3f fogcolorTerrain = new ShaderVariable3f("u_Fogcolor");
+
+        addUniform(heightmap);
+        addUniform(colormap);
+        addUniform(normalmap);
 
         addUniform(CDLODQuadScale);
         addUniform(CDLODrange);

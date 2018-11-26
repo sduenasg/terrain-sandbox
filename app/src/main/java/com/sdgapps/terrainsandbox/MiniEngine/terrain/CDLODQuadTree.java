@@ -89,7 +89,7 @@ public class CDLODQuadTree {
         transform.objectPivotPosition.set(terrainXZ / 2f, 0, terrainXZ / 2f);
 
         material = mat;
-        root = new CDLODNode(sphere, nLods - 1, rootQuadScale, 0, 0, gridSize, gridSize * rootQuadScale, material.displacementMap, this);
+        root = new CDLODNode(sphere, nLods - 1, rootQuadScale, 0, 0, gridSize, gridSize * rootQuadScale, material.getTexture(Planet.heightmapUniformName), this);
         boundingBoxMaterial = _boundingBoxMaterial;
         initialized = true;
     }

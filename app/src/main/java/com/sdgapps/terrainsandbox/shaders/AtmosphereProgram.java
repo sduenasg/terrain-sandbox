@@ -1,6 +1,7 @@
 package com.sdgapps.terrainsandbox.shaders;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Sampler2D;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderVariable3f;
 import com.sdgapps.terrainsandbox.R;
 import com.sdgapps.terrainsandbox.Singleton;
@@ -23,6 +24,10 @@ public class AtmosphereProgram extends GLSLProgram {
     }
 
     private void initAtmosphereShader() {
+
+        Sampler2D atmotexture = new Sampler2D("u_Texture");
+        addUniform(atmotexture);
+
         ShaderVariable3f atmosphereColor = new ShaderVariable3f("u_atmosphere_color");
         addUniform(atmosphereColor);
 

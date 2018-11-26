@@ -26,9 +26,6 @@ public class ShadowedTerrainShader extends GLSLProgram {
 
     public void configureShadowedTerrainShader() {
 
-       addTexture(AppTextureManager.terrainDetailTexture); //u_texture2
-       addTexture(AppTextureManager.terrainDetailNormalmap); //u_texture3
-
         ShaderVariable1f CDLODQuadScaleShadowed = new ShaderVariable1f("quad_scale");
         ShaderVariable3f CDLODrangeShadowed = new ShaderVariable3f("range");
         ShaderVariable3f CDLODcamposShadowed = new ShaderVariable3f("cameraPosition");

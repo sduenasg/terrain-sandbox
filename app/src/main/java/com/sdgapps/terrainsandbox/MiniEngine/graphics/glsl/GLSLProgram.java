@@ -2,24 +2,31 @@ package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
 import android.content.res.Resources;
 import android.opengl.GLES20;
-
 import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Light;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
 import com.sdgapps.terrainsandbox.Singleton;
 import com.sdgapps.terrainsandbox.utils.Logger;
-
 import java.util.HashMap;
 
-
 /**
- * GLSL Program with Vertex and Fragment shaders.
+ * GLSL Program encapsulates the vertex and the fragment shader interface.
+ *
+ * No render data should be stored here, as this shader interface may be shared by multiple materials.
+ *
  */
 public class GLSLProgram {
 
     private HashMap<String, ShaderVariable> uniforms = new HashMap<>();
 
+    /**
+     * Keeps track of the amount of samplers in the shader, in order to
+     * set the active texture (glActiveTexture) properly for every sampler in the shader.
+     *
+     * The shader's samplers will be asigned to active texture slots sequentially.
+     */
+    private int nsamplers=0;
+
     public int glHandle = -1;
-    public GLSLShader vertex, fragment;
+    GLSLShader vertex, fragment;
 
     public int positionHandle = -1;
     public int normalHandle = -1;
@@ -44,25 +51,11 @@ public class GLSLProgram {
     public int barycentricHandle = -1;
     public int morphTargetHandle = -1;
 
-    public String shaderID = "";
-
-
-    public Texture texture2;
-    public Texture texture3;
-    public Texture texture4;
-
-    public int ntextures = 1;
-
+    /**Shader identifier in the engine*/
+    public String shaderID;
     public int shadowMapTextureUniformHandle;
-    public int TextureUniformHandle;
-    public int Texture2UniformHandle;
-    public int Texture3UniformHandle;
-    public int Texture4UniformHandle;
-    public int BumpMapTextureUniformHandle;
-    public int SpecularMapTextureUniformHandle;
-    public int DisplacementMapTextureUniformHandle;
 
-    //Luz : Handlers
+    //Light Handlers
     public int LightPosHandle;
     public int ambientColorHandle;
     public int diffuseColorHandle;
@@ -72,37 +65,18 @@ public class GLSLProgram {
     public boolean usesSpecularMap = false;
     public boolean usesShadowmapMVP = false;
 
-    //en todos se usa la MVP
     public static final short USES_MVMATRIX = 0x0;
     public static final short USES_MODEL_MATRIX = 0x1;
     public static final short USES_VIEW_MATRIX = 0x2;
     public static final short USES_NONE = 0x3;
     public static final short USES_VIEW_AND_PROJ = 0x4;
 
-    /**
-     * Indica si se le pasa al shader la matriz ModelView (true) o solo la view (ya que ya le dan
-     * las coordenadas en coordenadas de mundo)
-     */
     public short MVMatrixUsage = USES_MVMATRIX;
-
-    public void addTexture(Texture t) {
-        ntextures++;
-
-        if (ntextures == 2) texture2 = t;
-        else if (ntextures == 3) texture3 = t;
-        else if (ntextures == 4) texture4 = t;
-        else {
-            ntextures--;
-            Logger.log("Shaders: No more textures supported by the engine");
-        }
-    }
-
 
     public GLSLProgram(String id, int vertexid, int fragmentid, boolean usesLight, boolean usesBumpMap, boolean usesSpecularMap, short matrixusage,
                        boolean uses_shadowmapMVP) {
         Resources res=Singleton.systems.sShaderSystem.res;
         this.shaderID = id;
-        this.ntextures = 1;
         vertex = new GLSLShader(vertexid, res, false);
         fragment = new GLSLShader(fragmentid, res, true);
 
@@ -136,16 +110,13 @@ public class GLSLProgram {
         rebuildUserVariables();
     }
 
-
     private void rebuildUserVariables() {
-
         this.buildVariables();
 
         for (ShaderVariable sv : uniforms.values()) {
             sv.glHandle = GLES20.glGetUniformLocation(glHandle, sv.name);
         }
     }
-
 
     /**
      * Obtain basic uniform and attribute handlers for the program
@@ -165,18 +136,6 @@ public class GLSLProgram {
         ProjMatrixHandle = GLES20.glGetUniformLocation(glHandle, "u_Projectionmatrix");
         ViewMatrixHandle = GLES20.glGetUniformLocation(glHandle, "u_Viewmatrix");
 
-        TextureUniformHandle = GLES20.glGetUniformLocation(glHandle, "u_Texture");
-        Texture2UniformHandle = GLES20.glGetUniformLocation(glHandle, "u_Texture2");
-        Texture3UniformHandle = GLES20.glGetUniformLocation(glHandle, "u_Texture3");
-        Texture4UniformHandle = GLES20.glGetUniformLocation(glHandle, "u_Texture4");
-
-        if (usesBumpMap)
-            BumpMapTextureUniformHandle = GLES20.glGetUniformLocation(glHandle, "u_BumpMap");
-
-        if (usesSpecularMap)
-            SpecularMapTextureUniformHandle = GLES20.glGetUniformLocation(glHandle, "u_SpecularMap");
-
-        DisplacementMapTextureUniformHandle = GLES20.glGetUniformLocation(glHandle, "u_heightmap");
 
         if (usesLight) {
             LightPosHandle = GLES20.glGetUniformLocation(glHandle, "u_LightPos");
@@ -211,41 +170,23 @@ public class GLSLProgram {
             GLES20.glUniform3f(diffuseColorHandle, light.lightDiffuse[0],
                     light.lightDiffuse[1], light.lightDiffuse[2]);
         }
-
-        if (this.ntextures > 1) {
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, this.texture2.glID);
-            GLES20.glUniform1i(Texture2UniformHandle, 1);
-        }
-        if (this.ntextures > 2) {
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE2);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, this.texture3.glID);
-            GLES20.glUniform1i(Texture3UniformHandle, 2);
-        }
-
-        if (this.ntextures > 3) {
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE3);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, this.texture4.glID);
-            GLES20.glUniform1i(Texture4UniformHandle, 3);
-        }
-
-        for (ShaderVariable sv : uniforms.values()) {
-            if (sv.autobind)
-                sv.bind();
-        }
     }
 
+
     public void addUniform(ShaderVariable sv) {
+
+        if(sv instanceof Sampler2D)
+        {
+            ((Sampler2D) sv).activeTarget=nsamplers;
+            nsamplers++;
+        }
+
         sv.glHandle = GLES20.glGetUniformLocation(glHandle, sv.name);
         uniforms.put(sv.name, sv);
     }
 
     public ShaderVariable getUniform(String uname) {
-
         ShaderVariable res = uniforms.get(uname);
-
-        //if(res==null)
-        //   Logger.log("Requested uniform "+ uname + " on shader " + shaderID + " with a null result");
         return res;
     }
 

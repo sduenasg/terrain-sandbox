@@ -21,7 +21,7 @@ public class ShadowMapFrameBuffer implements FrameBufferInterface {
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         Singleton.systems.mainCamera.updateShadowMapCamera();
 
-        // bind the previously generated framebuffer
+        // bindTextures the previously generated framebuffer
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, shadowmap_fb[0]);
         GLES20.glViewport(0, 0, mShadowMapWidth, mShadowMapHeight);
 
@@ -50,7 +50,7 @@ public class ShadowMapFrameBuffer implements FrameBufferInterface {
             // create a framebuffer object
             GLES20.glGenFramebuffers(1, shadowmap_fb, 0);
 
-            // create render buffer and bind 16-bit depth buffer
+            // create render buffer and bindTextures 16-bit depth buffer
             GLES20.glGenRenderbuffers(1, shadowmap_depthRb, 0);
             GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, shadowmap_depthRb[0]);
             GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, GLES20.GL_DEPTH_COMPONENT16, mShadowMapWidth, mShadowMapHeight);

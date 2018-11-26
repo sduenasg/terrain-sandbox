@@ -21,7 +21,6 @@ public class RenderPackage {
 
     public void bind() {
         targetFB.bind();
-        targetProgram.useProgram(Singleton.systems.mainLight);
     }
 
 

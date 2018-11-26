@@ -6,8 +6,8 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderVariable3f;
 import com.sdgapps.terrainsandbox.R;
 import com.sdgapps.terrainsandbox.Singleton;
 
-public class PlanetShadowmapProgram extends GLSLProgram {
-    private PlanetShadowmapProgram(String id) {
+public class PlanetShadowPassProgram extends GLSLProgram {
+    private PlanetShadowPassProgram(String id) {
         super(id, R.raw.shadowmap_vertex, R.raw.shadowmap_fragment, false, false, false, GLSLProgram.USES_NONE, false);
         configureShadowmapShader();
     }
@@ -17,7 +17,7 @@ public class PlanetShadowmapProgram extends GLSLProgram {
         GLSLProgram instance=Singleton.systems.sShaderSystem.getProgram(id);
         if(instance==null)
         {
-            instance=new PlanetShadowmapProgram(id);
+            instance=new PlanetShadowPassProgram(id);
             Singleton.systems.sShaderSystem.addProgram(instance);
         }
         return instance;
