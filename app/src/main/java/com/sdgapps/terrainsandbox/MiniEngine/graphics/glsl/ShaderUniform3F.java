@@ -6,24 +6,24 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.Color4f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec3f;
 
 
-public class ShaderVariable3f extends ShaderVariable {
+public class ShaderUniform3F extends ShaderUniform {
 
     public float v0;
     public float v1;
     public float v2;
 
-    public ShaderVariable3f(String name) {
+    public ShaderUniform3F(String name) {
         super(name);
     }
 
-    public ShaderVariable3f(String name, ShaderVariable3f copyValuesFrom) {
+    public ShaderUniform3F(String name, ShaderUniform3F copyValuesFrom) {
         super(name);
         v0 = copyValuesFrom.v0;
         v1 = copyValuesFrom.v1;
         v2 = copyValuesFrom.v2;
     }
 
-    public ShaderVariable3f(String name, float _v0, float _v1, float _v2) {
+    public ShaderUniform3F(String name, float _v0, float _v1, float _v2) {
         super(name);
         v0 = _v0;
         v1 = _v1;
@@ -49,7 +49,7 @@ public class ShaderVariable3f extends ShaderVariable {
         v2 = in.z;
     }
 
-    public void set(ShaderVariable3f in) {
+    public void set(ShaderUniform3F in) {
         v0 = in.v0;
         v1 = in.v1;
         v2 = in.v2;

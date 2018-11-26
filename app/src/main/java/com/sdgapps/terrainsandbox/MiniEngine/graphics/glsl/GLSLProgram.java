@@ -11,12 +11,12 @@ import java.util.HashMap;
  * GLSL Program encapsulates the vertex and the fragment shader interface.
  *
  * No specific render data should be stored here, as this shader interface may be shared by multiple materials.
- * ShaderVariable subclasses are used to pass uniform data to the actual shaders.
+ * ShaderUniform subclasses are used to pass uniform data to the actual shaders.
  *
  */
 public class GLSLProgram {
 
-    private HashMap<String, ShaderVariable> uniforms = new HashMap<>();
+    private HashMap<String, ShaderUniform> uniforms = new HashMap<>();
 
     /**
      * Keeps track of the amount of samplers in the shader, in order to
@@ -112,7 +112,7 @@ public class GLSLProgram {
     private void rebuildUserVariables() {
         this.buildVariables();
 
-        for (ShaderVariable sv : uniforms.values()) {
+        for (ShaderUniform sv : uniforms.values()) {
             sv.glHandle = GLES20.glGetUniformLocation(glHandle, sv.name);
         }
     }
@@ -169,7 +169,7 @@ public class GLSLProgram {
     }
 
 
-    public void addUniform(ShaderVariable sv) {
+    public void addUniform(ShaderUniform sv) {
 
         if(sv instanceof Sampler2D)
         {
@@ -181,8 +181,8 @@ public class GLSLProgram {
         uniforms.put(sv.name, sv);
     }
 
-    public ShaderVariable getUniform(String uname) {
-        ShaderVariable res = uniforms.get(uname);
+    public ShaderUniform getUniform(String uname) {
+        ShaderUniform res = uniforms.get(uname);
         return res;
     }
 

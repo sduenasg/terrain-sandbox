@@ -1,6 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
-public class ShaderVariable {
+public class ShaderUniform {
 
     public String name;
     /**
@@ -8,7 +8,7 @@ public class ShaderVariable {
      */
     public int glHandle;
 
-    public ShaderVariable(String name) {
+    public ShaderUniform(String name) {
         this.name = name;
     }
 

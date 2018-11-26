@@ -1,9 +1,8 @@
 package com.sdgapps.terrainsandbox.shaders;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderVariable1f;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderVariable3f;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.AppTextureManager;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform1f;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3F;
 import com.sdgapps.terrainsandbox.R;
 import com.sdgapps.terrainsandbox.Singleton;
 
@@ -26,14 +25,14 @@ public class ShadowedTerrainShader extends GLSLProgram {
 
     public void configureShadowedTerrainShader() {
 
-        ShaderVariable1f CDLODQuadScaleShadowed = new ShaderVariable1f("quad_scale");
-        ShaderVariable3f CDLODrangeShadowed = new ShaderVariable3f("range");
-        ShaderVariable3f CDLODcamposShadowed = new ShaderVariable3f("cameraPosition");
-        ShaderVariable1f CDLODGriddimShadowed = new ShaderVariable1f("gridDim");
-        ShaderVariable3f CDLODMeshInfoShadowed = new ShaderVariable3f("meshInfo");
-        ShaderVariable1f CDLODzfarShadowed = new ShaderVariable1f("zfar");
-        ShaderVariable1f CDLODLodlevelShadowed = new ShaderVariable1f("lodlevel");
-        ShaderVariable3f CDLODNodeOffsetShadowed = new ShaderVariable3f("nodeoffset");
+        ShaderUniform1f CDLODQuadScaleShadowed = new ShaderUniform1f("quad_scale");
+        ShaderUniform3F CDLODrangeShadowed = new ShaderUniform3F("range");
+        ShaderUniform3F CDLODcamposShadowed = new ShaderUniform3F("cameraPosition");
+        ShaderUniform1f CDLODGriddimShadowed = new ShaderUniform1f("gridDim");
+        ShaderUniform3F CDLODMeshInfoShadowed = new ShaderUniform3F("meshInfo");
+        ShaderUniform1f CDLODzfarShadowed = new ShaderUniform1f("zfar");
+        ShaderUniform1f CDLODLodlevelShadowed = new ShaderUniform1f("lodlevel");
+        ShaderUniform3F CDLODNodeOffsetShadowed = new ShaderUniform3F("nodeoffset");
 
         addUniform(CDLODQuadScaleShadowed);
         addUniform(CDLODrangeShadowed);
@@ -44,7 +43,7 @@ public class ShadowedTerrainShader extends GLSLProgram {
         addUniform(CDLODLodlevelShadowed);
         addUniform(CDLODNodeOffsetShadowed);
 
-        ShaderVariable3f fogcolorTerrainShadowed = new ShaderVariable3f("u_Fogcolor");
+        ShaderUniform3F fogcolorTerrainShadowed = new ShaderUniform3F("u_Fogcolor");
         addUniform(fogcolorTerrainShadowed);
     }
 }

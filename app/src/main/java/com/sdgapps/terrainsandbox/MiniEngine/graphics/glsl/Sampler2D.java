@@ -4,7 +4,7 @@ import android.opengl.GLES20;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
 
-public class Sampler2D extends ShaderVariable {
+public class Sampler2D extends ShaderUniform {
 
     private Texture mTexture;
     public Sampler2D(String name) {

@@ -2,11 +2,11 @@ package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
 import android.opengl.GLES20;
 
-public class ShaderVariable1f extends ShaderVariable {
+public class ShaderUniform1f extends ShaderUniform {
 
     public float v = 0;
 
-    public ShaderVariable1f(String name) {
+    public ShaderUniform1f(String name) {
         super(name);
     }
 

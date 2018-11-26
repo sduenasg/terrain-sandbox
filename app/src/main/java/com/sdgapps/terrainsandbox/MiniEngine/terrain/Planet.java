@@ -216,7 +216,7 @@ public class Planet extends Renderer implements TerrainInterface {
         atmosphereColor.normalize_noalpha();
         atmosphere.material.addTexture(AppTextureManager.atmosphereGradient,"u_Texture");
 
-        ShaderVariable3f atmosphereCol = (ShaderVariable3f) atmosphere.material.shader.getUniform("u_atmosphere_color");
+        ShaderUniform3F atmosphereCol = (ShaderUniform3F) atmosphere.material.shader.getUniform("u_atmosphere_color");
         atmosphereCol.set(atmosphereColor);
 
 
@@ -314,14 +314,14 @@ public class Planet extends Renderer implements TerrainInterface {
     private void renderAtmosphere() {
 
         atmosphere.material.bindShader();
-        ShaderVariable3f atmosphereCol = (ShaderVariable3f) atmosphere.material.shader.getUniform("u_atmosphere_color");
+        ShaderUniform3F atmosphereCol = (ShaderUniform3F) atmosphere.material.shader.getUniform("u_atmosphere_color");
         atmosphereCol.bind();
 
-        ShaderVariable3f camPos = (ShaderVariable3f) atmosphere.material.shader.getUniform("camPos");
+        ShaderUniform3F camPos = (ShaderUniform3F) atmosphere.material.shader.getUniform("camPos");
         camPos.set(Singleton.systems.mainCamera.transform.position);
         camPos.bind();
 
-        ShaderVariable3f lightPos = (ShaderVariable3f) atmosphere.material.shader.getUniform("lightPos");
+        ShaderUniform3F lightPos = (ShaderUniform3F) atmosphere.material.shader.getUniform("lightPos");
         lightPos.set(Singleton.systems.mainLight.transform.position);
         lightPos.bind();
 
@@ -337,24 +337,24 @@ public class Planet extends Renderer implements TerrainInterface {
     }
 
     private void bindPlanetInfo(GLSLProgram shader) {
-        ShaderVariable3f meshInfoUniform = (ShaderVariable3f) shader.getUniform("meshInfo");
+        ShaderUniform3F meshInfoUniform = (ShaderUniform3F) shader.getUniform("meshInfo");
         meshInfoUniform.set(terrainXZ, gridSize * rootQuadScale, yscale);
         meshInfoUniform.bind();
 
-        ShaderVariable3f v = (ShaderVariable3f) shader.getUniform("u_Fogcolor");
+        ShaderUniform3F v = (ShaderUniform3F) shader.getUniform("u_Fogcolor");
         if (v != null) {
             Color4f fogColor = Singleton.systems.mainLight.fogColor;
             v.set(fogColor.r, fogColor.g, fogColor.b);
             v.bind();
         }
 
-        ShaderVariable1f zfarVar = (ShaderVariable1f) shader.getUniform("zfar");
+        ShaderUniform1f zfarVar = (ShaderUniform1f) shader.getUniform("zfar");
         if (zfarVar != null) {
             zfarVar.v = Singleton.systems.mainCamera.frustum.zfar;
             zfarVar.bind();
         }
 
-        ShaderVariable3f camPosVar = (ShaderVariable3f) shader.getUniform("cameraPosition");
+        ShaderUniform3F camPosVar = (ShaderUniform3F) shader.getUniform("cameraPosition");
         if (camPosVar != null) {
             camPosVar.set(Singleton.systems.mainCamera.transform.position);
             camPosVar.bind();
@@ -373,7 +373,7 @@ public class Planet extends Renderer implements TerrainInterface {
         if (config.texture)
             texture = 4;
 
-        ShaderVariable3f meshInfoUniform = (ShaderVariable3f) material.shader.getUniform("range");
+        ShaderUniform3F meshInfoUniform = (ShaderUniform3F) material.shader.getUniform("range");
         meshInfoUniform.v2 = (solid | wire | texture);
     }
 
