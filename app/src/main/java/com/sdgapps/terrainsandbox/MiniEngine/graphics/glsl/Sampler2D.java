@@ -4,13 +4,17 @@ import android.opengl.GLES20;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
 
+/**
+ * Represents a Sampler2D uniform in a shader
+ */
 public class Sampler2D extends ShaderUniform {
 
     private Texture mTexture;
+    int activeTarget=0;
+
     public Sampler2D(String name) {
         super(name);
     }
-    int activeTarget=0;
 
     public void setTexture(Texture t)
     {
