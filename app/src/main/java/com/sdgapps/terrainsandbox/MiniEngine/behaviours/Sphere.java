@@ -8,6 +8,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.MiniMath;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.Transform;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
 import com.sdgapps.terrainsandbox.MiniEngine.terrain.GridMesh;
 
 import java.nio.ByteBuffer;
@@ -155,12 +156,9 @@ public class Sphere extends Renderer {
     @Override
     public void draw() {
         transform.updateModelMatrix();
-
         material.bindTextures();
         sendMatrices();
         bind(material.shader);
-
-
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, indexArraySize, GLES20.GL_UNSIGNED_SHORT, 0);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
@@ -168,34 +166,20 @@ public class Sphere extends Renderer {
     }
 
     private void sendMatrices() {
-        if (material.shader.MVMatrixHandle != -1) {
-            Matrix.multiplyMM(MatrixManager.modelViewMatrix, 0, MatrixManager.viewMatrix, 0,
-                    transform.modelMatrix, 0);
-            GLES20.glUniformMatrix4fv(material.shader.MVMatrixHandle, 1, false, MatrixManager.modelViewMatrix, 0);
-        }
+        Matrix.multiplyMM(MatrixManager.modelViewMatrix, 0, MatrixManager.viewMatrix, 0,
+                transform.modelMatrix, 0);
 
-        if (material.shader.ViewMatrixHandle != -1) {
-            GLES20.glUniformMatrix4fv(material.shader.ViewMatrixHandle, 1, false, MatrixManager.viewMatrix, 0);
-        }
+        Matrix.multiplyMM(MatrixManager.MVPMatrix, 0, MatrixManager.projectionMatrix, 0,
+                MatrixManager.modelViewMatrix, 0);
 
-        if (material.shader.ModelMatrixHandle != -1) {
-            GLES20.glUniformMatrix4fv(material.shader.ModelMatrixHandle, 1, false, transform.modelMatrix, 0);
-        }
+        ShaderUniformMatrix4fv ModelMatrix= (ShaderUniformMatrix4fv) material.shader.getUniform("u_Modelmatrix");
+        ShaderUniformMatrix4fv MVPMatrix= (ShaderUniformMatrix4fv) material.shader.getUniform("u_MVPMatrix");
 
-        if (material.shader.ProjMatrixHandle != -1) {
-            GLES20.glUniformMatrix4fv(material.shader.ProjMatrixHandle, 1, false, MatrixManager.projectionMatrix, 0);
-        }
+        ModelMatrix.array=transform.modelMatrix;
+        MVPMatrix.array=MatrixManager.MVPMatrix;
 
-        if (material.shader.MVPMatrixHandle != -1) {
-            if (material.shader.MVMatrixHandle == -1)
-                Matrix.multiplyMM(MatrixManager.modelViewMatrix, 0, MatrixManager.viewMatrix, 0,
-                        transform.modelMatrix, 0);
-
-            Matrix.multiplyMM(MatrixManager.MVPMatrix, 0, MatrixManager.projectionMatrix, 0,
-                    MatrixManager.modelViewMatrix, 0);
-
-            GLES20.glUniformMatrix4fv(material.shader.MVPMatrixHandle, 1, false, MatrixManager.MVPMatrix, 0);
-        }
+        ModelMatrix.bind();
+        MVPMatrix.bind();
     }
 
     public void invalidateVBO() {

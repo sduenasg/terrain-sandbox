@@ -1,5 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.terrain;
 
+import android.opengl.GLES20;
 import android.opengl.Matrix;
 
 import com.sdgapps.terrainsandbox.MiniEngine.MatrixManager;
@@ -7,6 +8,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.RenderPackage;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.*;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
 import com.sdgapps.terrainsandbox.Singleton;
 
 public class CDLODQuadTree {
@@ -116,13 +118,33 @@ public class CDLODQuadTree {
 
                 Matrix.multiplyMM(MatrixManager.modelMatrix, 0, planetTransform.modelMatrix, 0, transform.modelMatrix, 0);
 
-                pass.setupForRendering(MatrixManager.modelMatrix, shadowMapMVPMatrix, material, targetShader);
+               // pass.setupForRendering(MatrixManager.modelMatrix, shadowMapMVPMatrix, material, targetShader);
+                material.bindTextures();
+                sendMatrices();
                 for (SelectableNode snode : selection.getSelectionList()) {
                     ((CDLODNode) snode).renderSelectedParts(gridMesh, targetShader);
                 }
                 Matrix.setIdentityM(MatrixManager.modelMatrix, 0);
             }
         }
+    }
+
+    private void sendMatrices() {
+
+        Matrix.multiplyMM(MatrixManager.modelViewMatrix, 0, MatrixManager.viewMatrix, 0,
+                MatrixManager.modelMatrix, 0);
+
+        Matrix.multiplyMM(MatrixManager.MVPMatrix, 0, MatrixManager.projectionMatrix, 0,
+                MatrixManager.modelViewMatrix, 0);
+
+        ShaderUniformMatrix4fv MVMatrix= (ShaderUniformMatrix4fv) material.shader.getUniform("u_MVMatrix");
+        ShaderUniformMatrix4fv MVPMatrix= (ShaderUniformMatrix4fv) material.shader.getUniform("u_MVPMatrix");
+
+        MVMatrix.array=MatrixManager.modelViewMatrix;
+        MVPMatrix.array=MatrixManager.MVPMatrix;
+
+        MVMatrix.bind();
+        MVPMatrix.bind();
     }
 
     void drawAABB() {

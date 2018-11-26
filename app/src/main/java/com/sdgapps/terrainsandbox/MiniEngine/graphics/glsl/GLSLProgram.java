@@ -2,7 +2,6 @@ package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
 import android.content.res.Resources;
 import android.opengl.GLES20;
-import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Light;
 import com.sdgapps.terrainsandbox.Singleton;
 import com.sdgapps.terrainsandbox.utils.Logger;
 import java.util.HashMap;
@@ -22,7 +21,7 @@ public class GLSLProgram {
      * Keeps track of the amount of samplers in the shader, in order to
      * set the active texture (glActiveTexture) properly for every sampler in the shader.
      *
-     * The shader's samplers will be asigned to active texture slots sequentially.
+     * The shader's samplers will be assigned to active texture slots sequentially.
      */
     private int nsamplers=0;
 
@@ -31,43 +30,24 @@ public class GLSLProgram {
 
     GLSLShader vertex, fragment;
 
+    //Attributes
     public int positionHandle = -1;
     public int normalHandle = -1;
-
     public int tangentHandle = -1;
     public int bitangentHandle = -1;
-
     public int texcoordHandle = -1;
-
-    public int MVPMatrixHandle = -1;
-    public int MVMatrixHandle = -1;
-
-    public int ModelMatrixHandle = -1;
-    public int ViewMatrixHandle = -1;
-    public int ProjMatrixHandle = -1;
-
-    public int shadowmapMVPmatrixHandle = -1;
-
     public int gridPositionHandle = -1;
     public int barycentricHandle = -1;
+
+    public int shadowmapMVPmatrixHandle = -1;
 
     /**Shader identifier in the engine*/
     public String shaderID;
     public int shadowMapTextureUniformHandle;
 
-    public boolean usesBumpMap = false;
-    public boolean usesSpecularMap = false;
     public boolean usesShadowmapMVP = false;
 
-    public static final short USES_MVMATRIX = 0x0;
-    public static final short USES_MODEL_MATRIX = 0x1;
-    public static final short USES_VIEW_MATRIX = 0x2;
-    public static final short USES_NONE = 0x3;
-    public static final short USES_VIEW_AND_PROJ = 0x4;
-
-    public short MVMatrixUsage = USES_MVMATRIX;
-
-    public GLSLProgram(String id, int vertexid, int fragmentid, boolean usesBumpMap, boolean usesSpecularMap, short matrixusage,
+    public GLSLProgram(String id, int vertexid, int fragmentid,
                        boolean uses_shadowmapMVP) {
         Resources res=Singleton.systems.sShaderSystem.res;
         this.shaderID = id;
@@ -78,9 +58,7 @@ public class GLSLProgram {
                 fragment.glHandle, new String[]{
                         "a_Position", "a_Normal"
                 });
-        this.usesSpecularMap = usesSpecularMap;
-        this.usesBumpMap = usesBumpMap;
-        this.MVMatrixUsage = matrixusage;
+
         this.usesShadowmapMVP = uses_shadowmapMVP;
         buildVariables();
     }
@@ -122,13 +100,6 @@ public class GLSLProgram {
         tangentHandle = GLES20.glGetAttribLocation(glHandle, "a_Tangent");
         bitangentHandle = GLES20.glGetAttribLocation(glHandle, "a_Bitangent");
         texcoordHandle = GLES20.glGetAttribLocation(glHandle, "a_TexCoordinate");
-
-
-        MVPMatrixHandle = GLES20.glGetUniformLocation(glHandle, "u_MVPMatrix");
-        MVMatrixHandle = GLES20.glGetUniformLocation(glHandle, "u_MVMatrix");
-        ModelMatrixHandle = GLES20.glGetUniformLocation(glHandle, "u_Modelmatrix");
-        ProjMatrixHandle = GLES20.glGetUniformLocation(glHandle, "u_Projectionmatrix");
-        ViewMatrixHandle = GLES20.glGetUniformLocation(glHandle, "u_Viewmatrix");
 
         gridPositionHandle = GLES20.glGetAttribLocation(glHandle, "a_gridPosition");
         barycentricHandle = GLES20.glGetAttribLocation(glHandle, "a_barycentric");

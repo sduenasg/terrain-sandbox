@@ -6,6 +6,7 @@ import android.opengl.Matrix;
 
 import com.sdgapps.terrainsandbox.MiniEngine.MatrixManager;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
 import com.sdgapps.terrainsandbox.SimpleVec3fPool;
 
 import java.nio.ByteBuffer;
@@ -272,23 +273,31 @@ public class BoundingBox {
     private FloatBuffer mLineVertices;
 
     public void draw(GLSLProgram shader) {
+
         if (renderable) {
             GLES20.glVertexAttribPointer(shader.positionHandle, 3, GLES20.GL_FLOAT, false, 0, mLineVertices);
             GLES20.glEnableVertexAttribArray(shader.positionHandle);
 
             GLES20.glLineWidth(6);
 
-            Matrix.setIdentityM(MatrixManager.modelMatrix, 0);
-            Matrix.multiplyMM(MatrixManager.modelViewMatrix, 0, MatrixManager.viewMatrix, 0,
-                    MatrixManager.modelMatrix, 0);
-
-            Matrix.multiplyMM(MatrixManager.MVPMatrix, 0, MatrixManager.projectionMatrix, 0,
-                    MatrixManager.modelViewMatrix, 0);
-
-            GLES20.glUniformMatrix4fv(shader.MVPMatrixHandle, 1, false, MatrixManager.MVPMatrix, 0);
+            sendMatrix(shader);
 
             GLES20.glDrawArrays(GLES20.GL_LINES, 0, 24);
         }
+    }
+
+    private void sendMatrix(GLSLProgram shader)
+    {
+        Matrix.setIdentityM(MatrixManager.modelMatrix, 0);
+        Matrix.multiplyMM(MatrixManager.modelViewMatrix, 0, MatrixManager.viewMatrix, 0,
+                MatrixManager.modelMatrix, 0);
+
+        Matrix.multiplyMM(MatrixManager.MVPMatrix, 0, MatrixManager.projectionMatrix, 0,
+                MatrixManager.modelViewMatrix, 0);
+
+        ShaderUniformMatrix4fv MVPMatrix= (ShaderUniformMatrix4fv) shader.getUniform("u_MVPMatrix");
+        MVPMatrix.array=MatrixManager.MVPMatrix;
+        MVPMatrix.bind();
     }
 
     public void prepareForRendering() {

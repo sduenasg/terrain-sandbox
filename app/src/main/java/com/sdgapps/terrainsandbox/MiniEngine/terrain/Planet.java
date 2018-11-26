@@ -49,8 +49,8 @@ import com.sdgapps.terrainsandbox.utils.TimingHelper;
  * using blender.
  *
  * //TODO
- * -Splat map: Every channel in the image is related to a texture. The value of the channel is that texture's weight
- * on that area. Baked in World Machine.
+ * -Splat map: Every channel in the image references a set color or texture. The value of the channel is that color's or texture's weight
+ * on that area.
  * -Terrain color spritesheet: A spritesheet that conains different terrain detailmaps
  */
 public class Planet extends Renderer implements TerrainInterface {

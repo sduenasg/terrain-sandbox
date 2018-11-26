@@ -7,6 +7,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.MatrixManager;
 import com.sdgapps.terrainsandbox.MiniEngine.RenderPackage;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.FrameBufferInterface;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -33,26 +34,36 @@ public class CircleBillboard extends Renderer {
             prepareForRendering();
 
         if (renderPackages.size() > 0) {
+
             RenderPackage pass = renderPackages.get(0);
             pass.targetFB.bind();
             pass.targetProgram.useProgram();
 
+            material.bindShader();
             GLES20.glVertexAttribPointer(material.shader.positionHandle, 3, GLES20.GL_FLOAT, false, 0, mLineVerts);
             GLES20.glEnableVertexAttribArray(material.shader.positionHandle);
 
-            Matrix.setIdentityM(MatrixManager.modelMatrix, 0);
-
-            // Multiplies model matrix with view matrix
-            Matrix.multiplyMM(MatrixManager.modelViewMatrix, 0, MatrixManager.viewMatrix, 0,
-                    transform.modelMatrix, 0);
-
-            // Send the MVP matrix to the shader
-            GLES20.glUniformMatrix4fv(material.shader.MVMatrixHandle, 1, false, MatrixManager.modelViewMatrix, 0);
-            GLES20.glUniformMatrix4fv(material.shader.ProjMatrixHandle, 1, false, MatrixManager.projectionMatrix, 0);
-
+            sendMatrices();
             //Draw
             GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, vertexCount);
         }
+    }
+
+    private void sendMatrices()
+    {
+        Matrix.setIdentityM(MatrixManager.modelMatrix, 0);
+
+        // Multiplies model matrix with view matrix
+        Matrix.multiplyMM(MatrixManager.modelViewMatrix, 0, MatrixManager.viewMatrix, 0,
+                transform.modelMatrix, 0);
+
+        ShaderUniformMatrix4fv MVMatrix= (ShaderUniformMatrix4fv) material.shader.getUniform("u_MVMatrix");
+        ShaderUniformMatrix4fv ProjectionMatrix= (ShaderUniformMatrix4fv) material.shader.getUniform("u_Projectionmatrix");
+
+        MVMatrix.array=MatrixManager.modelViewMatrix;
+        ProjectionMatrix.array=MatrixManager.projectionMatrix;
+        MVMatrix.bind();
+        ProjectionMatrix.bind();
     }
 
 

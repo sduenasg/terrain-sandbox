@@ -3,12 +3,13 @@ package com.sdgapps.terrainsandbox.shaders;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Sampler2D;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3F;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
 import com.sdgapps.terrainsandbox.R;
 import com.sdgapps.terrainsandbox.Singleton;
 
 public class AtmosphereProgram extends GLSLProgram {
     private AtmosphereProgram(String id) {
-        super(id, R.raw.atmosphere_vert, R.raw.atmosphere_frag, false, false, GLSLProgram.USES_MODEL_MATRIX, false);
+        super(id, R.raw.atmosphere_vert, R.raw.atmosphere_frag, false);
         initAtmosphereShader();
     }
 
@@ -36,5 +37,11 @@ public class AtmosphereProgram extends GLSLProgram {
 
         ShaderUniform3F lightposworld = new ShaderUniform3F("lightPos");
         addUniform(lightposworld);
+
+        ShaderUniformMatrix4fv MVPMatrix=new ShaderUniformMatrix4fv("u_MVPMatrix");
+        addUniform(MVPMatrix);
+
+        ShaderUniformMatrix4fv ModelMatrix=new ShaderUniformMatrix4fv("u_Modelmatrix");
+        addUniform(ModelMatrix);
     }
 }

@@ -7,6 +7,8 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.FrameBufferInterface;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
 
+
+//TODO CLEANUP Required
 public class ShadowmapRenderPackage extends RenderPackage {
     public ShadowmapRenderPackage(FrameBufferInterface fb, GLSLProgram shader) {
         super(fb, shader);
@@ -15,7 +17,7 @@ public class ShadowmapRenderPackage extends RenderPackage {
     @Override
     public void setupForRendering(float[] modelMatrix, float[] shadowmapMVPmatrix, Material mat, GLSLProgram shader) {
 
-        sendMatrices(modelMatrix, shadowmapMVPmatrix);
+       // sendMatrices(modelMatrix, shadowmapMVPmatrix);
         mat.bindTextures();
       //  bindMaterial(mat, shader);
     }
@@ -29,12 +31,12 @@ public class ShadowmapRenderPackage extends RenderPackage {
         }*/
     }
 
-    private void sendMatrices(float[] modelMatrix, float[] shadowmapMVPmatrix) {
+    /*private void sendMatrices(float[] modelMatrix, float[] shadowmapMVPmatrix) {
         Matrix.multiplyMM(MatrixManager.shadowmapModelViewMatrix, 0, MatrixManager.shadowmapViewMatrix, 0,
                 modelMatrix, 0);
         Matrix.multiplyMM(shadowmapMVPmatrix, 0, MatrixManager.shadowmapProjectionMatrix, 0,
                 MatrixManager.shadowmapModelViewMatrix, 0);
         GLES20.glUniformMatrix4fv(targetProgram.MVPMatrixHandle, 1, false, shadowmapMVPmatrix, 0);
-    }
+    }*/
 
 }

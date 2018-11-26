@@ -1,12 +1,15 @@
 package com.sdgapps.terrainsandbox.shaders;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
 import com.sdgapps.terrainsandbox.R;
 import com.sdgapps.terrainsandbox.Singleton;
 
 public class BoundingBoxProgram extends GLSLProgram {
     private BoundingBoxProgram(String id) {
-        super(id, R.raw.boxvertex, R.raw.boxfragment,  false, false, GLSLProgram.USES_MVMATRIX, false);
+        super(id, R.raw.boxvertex, R.raw.boxfragment,  false);
+        ShaderUniformMatrix4fv MVPMatrix=new ShaderUniformMatrix4fv("u_MVPMatrix");
+        addUniform(MVPMatrix);
     }
 
     public static GLSLProgram createInstance(String id)

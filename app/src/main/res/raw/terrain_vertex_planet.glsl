@@ -17,7 +17,6 @@ attribute vec3 a_barycentric;
 uniform mat4 u_MVPMatrix;
 uniform mat4 u_MVMatrix;    		
 uniform vec3 u_LightPos; //Light position in eye space
-uniform mat4 u_Modelmatrix;
 
 // terrain CDLOD
 uniform sampler2D u_heightMap;

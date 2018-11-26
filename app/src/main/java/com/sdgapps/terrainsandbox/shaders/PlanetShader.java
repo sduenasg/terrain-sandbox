@@ -4,12 +4,13 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Sampler2D;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform1f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3F;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
 import com.sdgapps.terrainsandbox.R;
 import com.sdgapps.terrainsandbox.Singleton;
 
 public class PlanetShader extends GLSLProgram {
     private PlanetShader(String id) {
-        super(id, R.raw.terrain_vertex_planet, R.raw.planet_fragment_derivative, true, false, GLSLProgram.USES_MVMATRIX, false);
+        super(id, R.raw.terrain_vertex_planet, R.raw.planet_fragment_derivative, false);
 
         configureTerrainShader();
     }
@@ -26,10 +27,12 @@ public class PlanetShader extends GLSLProgram {
     }
 
     public void configureTerrainShader() {
+        //samplers
         Sampler2D heightmap = new Sampler2D("u_heightMap");
         Sampler2D colormap=new Sampler2D("u_colorMap");
         Sampler2D normalmap=new Sampler2D("u_normalMap");
 
+        //uniforms
         ShaderUniform1f CDLODQuadScale = new ShaderUniform1f("quad_scale");
         ShaderUniform3F CDLODrange = new ShaderUniform3F("range");
         ShaderUniform3F CDLODcampos = new ShaderUniform3F("cameraPosition");
@@ -41,6 +44,14 @@ public class PlanetShader extends GLSLProgram {
         ShaderUniform3F fogcolorTerrain = new ShaderUniform3F("u_Fogcolor");
         ShaderUniform3F lightpos = new ShaderUniform3F("u_LightPos");
         ShaderUniform3F lightambient = new ShaderUniform3F("ambientLight");
+
+        //matrices
+        ShaderUniformMatrix4fv MVPMatrix=new ShaderUniformMatrix4fv("u_MVPMatrix");
+        ShaderUniformMatrix4fv MVMatrix=new ShaderUniformMatrix4fv("u_MVMatrix");
+
+        //add them to the shader
+        addUniform(MVMatrix);
+        addUniform(MVPMatrix);
 
         addUniform(heightmap);
         addUniform(colormap);
