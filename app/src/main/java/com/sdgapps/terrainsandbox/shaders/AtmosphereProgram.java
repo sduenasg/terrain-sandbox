@@ -43,5 +43,10 @@ public class AtmosphereProgram extends GLSLProgram {
 
         ShaderUniformMatrix4fv ModelMatrix=new ShaderUniformMatrix4fv("u_Modelmatrix");
         addUniform(ModelMatrix);
+
+        //attributes
+        linkAttribute("a_Position");
+        linkAttribute("a_Normal");
+        linkAttribute("a_TexCoordinate");
     }
 }

@@ -31,5 +31,7 @@ public class SunProgram extends GLSLProgram {
         addUniform(ProjectionMatrix);
         addUniform(MVMatrix);
 
+        linkAttribute("a_Position");
+
     }
 }

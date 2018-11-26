@@ -34,14 +34,14 @@ public class CircleBillboard extends Renderer {
             prepareForRendering();
 
         if (renderPackages.size() > 0) {
-
             RenderPackage pass = renderPackages.get(0);
             pass.targetFB.bind();
             pass.targetProgram.useProgram();
 
             material.bindShader();
-            GLES20.glVertexAttribPointer(material.shader.positionHandle, 3, GLES20.GL_FLOAT, false, 0, mLineVerts);
-            GLES20.glEnableVertexAttribArray(material.shader.positionHandle);
+            int positionHandle=material.shader.getAttributeGLid("a_Position");
+            GLES20.glVertexAttribPointer(positionHandle, 3, GLES20.GL_FLOAT, false, 0, mLineVerts);
+            GLES20.glEnableVertexAttribArray(positionHandle);
 
             sendMatrices();
             //Draw

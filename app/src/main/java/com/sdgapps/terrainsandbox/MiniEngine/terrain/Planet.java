@@ -289,7 +289,7 @@ public class Planet extends Renderer implements TerrainInterface {
             pass.bind();//binds the frame buffer
             GLSLProgram targetShader = pass.targetProgram;
             targetShader.useProgram();
-            gridMesh.bind(targetShader, false);
+            gridMesh.bindAttributes(targetShader, false);
             bindPlanetInfo(targetShader);
 
 

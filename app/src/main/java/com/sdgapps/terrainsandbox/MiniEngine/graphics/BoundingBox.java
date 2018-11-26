@@ -275,8 +275,9 @@ public class BoundingBox {
     public void draw(GLSLProgram shader) {
 
         if (renderable) {
-            GLES20.glVertexAttribPointer(shader.positionHandle, 3, GLES20.GL_FLOAT, false, 0, mLineVertices);
-            GLES20.glEnableVertexAttribArray(shader.positionHandle);
+            int positionHandle=shader.getAttributeGLid("a_Position");
+            GLES20.glVertexAttribPointer(positionHandle, 3, GLES20.GL_FLOAT, false, 0, mLineVertices);
+            GLES20.glEnableVertexAttribArray(positionHandle);
 
             GLES20.glLineWidth(6);
 

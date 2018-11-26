@@ -2,9 +2,12 @@ package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
 import android.content.res.Resources;
 import android.opengl.GLES20;
+
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
 import com.sdgapps.terrainsandbox.Singleton;
 import com.sdgapps.terrainsandbox.utils.Logger;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * GLSL Program encapsulates the vertex and the fragment shader interface.
@@ -18,6 +21,7 @@ import java.util.HashMap;
 public class GLSLProgram {
 
     private HashMap<String, ShaderUniform> uniforms = new HashMap<>();
+    private HashMap<String, Integer> attributes=new HashMap<>();
 
     /**
      * Keeps track of the amount of samplers in the shader, in order to
@@ -31,16 +35,6 @@ public class GLSLProgram {
     public int glHandle = -1;
 
     private GLSLShader vertex, fragment;
-
-    //Attributes
-    public int positionHandle = -1;
-    public int normalHandle = -1;
-    public int tangentHandle = -1;
-    public int bitangentHandle = -1;
-    public int texcoordHandle = -1;
-    public int gridPositionHandle = -1;
-    public int barycentricHandle = -1;
-
 
     /**Shader identifier in the engine*/
     String shaderID;
@@ -84,22 +78,33 @@ public class GLSLProgram {
         }
     }
 
-    /**
-     * Obtain basic uniform and attribute handlers for the program
-     */
     void buildVariables() {
         /**NOTE: glGetUniformLocation and glGetAttribLocation are allowed to return -1 if the uniform//attribute is not used by the
          * shader, even if it is declared.*/
+        //update attrib location
+        for (Map.Entry<String, Integer> entry  : attributes.entrySet())
+        {
+            entry.setValue(GLES20.glGetAttribLocation(glHandle,entry.getKey()));
+        }
+    }
 
-        positionHandle = GLES20.glGetAttribLocation(glHandle, "a_Position");
-        normalHandle = GLES20.glGetAttribLocation(glHandle, "a_Normal");
-        tangentHandle = GLES20.glGetAttribLocation(glHandle, "a_Tangent");
-        bitangentHandle = GLES20.glGetAttribLocation(glHandle, "a_Bitangent");
-        texcoordHandle = GLES20.glGetAttribLocation(glHandle, "a_TexCoordinate");
+    public int getAttributeGLid(String name)
+    {
+        Integer glid = attributes.get(name);
 
-        gridPositionHandle = GLES20.glGetAttribLocation(glHandle, "a_gridPosition");
-        barycentricHandle = GLES20.glGetAttribLocation(glHandle, "a_barycentric");
+        if(glid==null)
+            return -1;
+        else
+            return glid;
+    }
 
+    public int linkAttribute(String nameInShader)
+    {
+        int glid=GLES20.glGetAttribLocation(glHandle, nameInShader);
+        if(glid!=-1)
+            attributes.put(nameInShader, glid);
+
+        return glid;
     }
 
     public void useProgram() {

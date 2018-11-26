@@ -135,19 +135,23 @@ public class Sphere extends Renderer {
     }
 
 
-    private void bind(GLSLProgram Shader) {
+    private void bindAttribs(GLSLProgram shader) {
         //glVertexAttribPointer(int indx, int size, int type, boolean normalized, int stride, int offset)
+
+        int positionHandle=shader.getAttributeGLid("a_Position");
+        int normalHandle=shader.getAttributeGLid("a_Normal");
+        int texcoordHandle=shader.getAttributeGLid("a_TexCoordinate");
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers[1]);
 
-        GLES20.glVertexAttribPointer(Shader.positionHandle, 3, GLES20.GL_FLOAT, false, FloatBytes * 8, 0);
-        GLES20.glEnableVertexAttribArray(Shader.positionHandle);
+        GLES20.glVertexAttribPointer(positionHandle, 3, GLES20.GL_FLOAT, false, FloatBytes * 8, 0);
+        GLES20.glEnableVertexAttribArray(positionHandle);
 
-        GLES20.glVertexAttribPointer(Shader.normalHandle, 3, GLES20.GL_FLOAT, false, FloatBytes * 8, FloatBytes * 3);
-        GLES20.glEnableVertexAttribArray(Shader.normalHandle);
+        GLES20.glVertexAttribPointer(normalHandle,   3, GLES20.GL_FLOAT, false, FloatBytes * 8, FloatBytes * 3);
+        GLES20.glEnableVertexAttribArray(normalHandle);
 
-        GLES20.glVertexAttribPointer(Shader.texcoordHandle, 2, GLES20.GL_FLOAT, false, FloatBytes * 8, FloatBytes * 6);
-        GLES20.glEnableVertexAttribArray(Shader.texcoordHandle);
+        GLES20.glVertexAttribPointer(texcoordHandle, 2, GLES20.GL_FLOAT, false, FloatBytes * 8, FloatBytes * 6);
+        GLES20.glEnableVertexAttribArray(texcoordHandle);
 
         //index buffer
         GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
@@ -158,7 +162,7 @@ public class Sphere extends Renderer {
         transform.updateModelMatrix();
         material.bindTextures();
         sendMatrices();
-        bind(material.shader);
+        bindAttribs(material.shader);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, indexArraySize, GLES20.GL_UNSIGNED_SHORT, 0);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);

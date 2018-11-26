@@ -249,17 +249,20 @@ public class GridMesh {
     }
 
 
-    public void bind(GLSLProgram Shader, boolean shadowmapRender) {
+    public void bindAttributes(GLSLProgram Shader, boolean shadowmapRender) {
+        int gridPositionHandle=Shader.getAttributeGLid("a_gridPosition");
+        int barycentricHandle=Shader.getAttributeGLid("a_barycentric");
+
         //grid position buffer
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers[1]);
-        GLES20.glVertexAttribPointer(Shader.gridPositionHandle, 2, GLES20.GL_FLOAT, false, 0, 0);
-        GLES20.glEnableVertexAttribArray(Shader.gridPositionHandle);
+        GLES20.glVertexAttribPointer(gridPositionHandle, 2, GLES20.GL_FLOAT, false, 0, 0);
+        GLES20.glEnableVertexAttribArray(gridPositionHandle);
 
         //barycentric coords buffer
         if (buffers[2] != -1 && !shadowmapRender) {
             GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers[2]);
-            GLES20.glVertexAttribPointer(Shader.barycentricHandle, 3, GLES20.GL_SHORT, false, 0, 0);
-            GLES20.glEnableVertexAttribArray(Shader.barycentricHandle);
+            GLES20.glVertexAttribPointer(barycentricHandle, 3, GLES20.GL_SHORT, false, 0, 0);
+            GLES20.glEnableVertexAttribArray(barycentricHandle);
         }
 
         //index buffer

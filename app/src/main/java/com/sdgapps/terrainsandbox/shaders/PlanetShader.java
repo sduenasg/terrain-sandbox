@@ -49,7 +49,11 @@ public class PlanetShader extends GLSLProgram {
         ShaderUniformMatrix4fv MVPMatrix=new ShaderUniformMatrix4fv("u_MVPMatrix");
         ShaderUniformMatrix4fv MVMatrix=new ShaderUniformMatrix4fv("u_MVMatrix");
 
-        //add them to the shader
+        //attributes
+        linkAttribute("a_gridPosition");
+        linkAttribute("a_barycentric");
+        
+        //add everything to the shader
         addUniform(MVMatrix);
         addUniform(MVPMatrix);
 

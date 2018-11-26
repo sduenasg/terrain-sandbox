@@ -10,6 +10,7 @@ public class BoundingBoxProgram extends GLSLProgram {
         super(id, R.raw.boxvertex, R.raw.boxfragment);
         ShaderUniformMatrix4fv MVPMatrix=new ShaderUniformMatrix4fv("u_MVPMatrix");
         addUniform(MVPMatrix);
+        linkAttribute("a_Position");
     }
 
     public static GLSLProgram createInstance(String id)
