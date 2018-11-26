@@ -9,7 +9,9 @@ import java.util.HashMap;
 /**
  * GLSL Program encapsulates the vertex and the fragment shader interface.
  *
- * No specific render data should be stored here, as this shader interface may be shared by multiple materials.
+ * No render data should be stored here, this class is merely an interface allowing
+ * users to interact with the OpenGL Shader it represents.
+ *
  * ShaderUniform subclasses are used to pass uniform data to the actual shaders.
  *
  */
@@ -21,14 +23,14 @@ public class GLSLProgram {
      * Keeps track of the amount of samplers in the shader, in order to
      * set the active texture (glActiveTexture) properly for every sampler in the shader.
      *
-     * The shader's samplers will be assigned to active texture slots sequentially.
+     * The shader's samplers will be sequentially assigned to active texture slots.
      */
     private int nsamplers=0;
 
     /** OpenGL handle of this program*/
     public int glHandle = -1;
 
-    GLSLShader vertex, fragment;
+    private GLSLShader vertex, fragment;
 
     //Attributes
     public int positionHandle = -1;
@@ -39,16 +41,11 @@ public class GLSLProgram {
     public int gridPositionHandle = -1;
     public int barycentricHandle = -1;
 
-    public int shadowmapMVPmatrixHandle = -1;
 
     /**Shader identifier in the engine*/
-    public String shaderID;
-    public int shadowMapTextureUniformHandle;
+    String shaderID;
 
-    public boolean usesShadowmapMVP = false;
-
-    public GLSLProgram(String id, int vertexid, int fragmentid,
-                       boolean uses_shadowmapMVP) {
+    public GLSLProgram(String id, int vertexid, int fragmentid) {
         Resources res=Singleton.systems.sShaderSystem.res;
         this.shaderID = id;
         vertex = new GLSLShader(vertexid, res, false);
@@ -58,8 +55,6 @@ public class GLSLProgram {
                 fragment.glHandle, new String[]{
                         "a_Position", "a_Normal"
                 });
-
-        this.usesShadowmapMVP = uses_shadowmapMVP;
         buildVariables();
     }
 
@@ -93,7 +88,8 @@ public class GLSLProgram {
      * Obtain basic uniform and attribute handlers for the program
      */
     void buildVariables() {
-        /**NOTE: glGetUniformLocation is allowed to return -1 if the uniform is not used by the shader*/
+        /**NOTE: glGetUniformLocation and glGetAttribLocation are allowed to return -1 if the uniform//attribute is not used by the
+         * shader, even if it is declared.*/
 
         positionHandle = GLES20.glGetAttribLocation(glHandle, "a_Position");
         normalHandle = GLES20.glGetAttribLocation(glHandle, "a_Normal");
@@ -104,10 +100,6 @@ public class GLSLProgram {
         gridPositionHandle = GLES20.glGetAttribLocation(glHandle, "a_gridPosition");
         barycentricHandle = GLES20.glGetAttribLocation(glHandle, "a_barycentric");
 
-        if (usesShadowmapMVP) {
-            shadowmapMVPmatrixHandle = GLES20.glGetUniformLocation(glHandle, "u_shadowmapMVP");
-            shadowMapTextureUniformHandle = GLES20.glGetUniformLocation(glHandle, "u_Shadowmaptex");
-        }
     }
 
     public void useProgram() {
@@ -145,13 +137,13 @@ public class GLSLProgram {
         int programHandle = GLES20.glCreateProgram();
 
         if (programHandle != 0) {
-            // bindGridMesh the vertex shader to the program.
+            //Bind the vertex shader to the program.
             GLES20.glAttachShader(programHandle, vertexShaderHandle);
 
-            // bindGridMesh the fragment shader to the program.
+            //Bind the fragment shader to the program.
             GLES20.glAttachShader(programHandle, fragmentShaderHandle);
 
-            // bindGridMesh attributes
+            //Bind attributes
             if (attributes != null) {
                 final int size = attributes.length;
                 for (int i = 0; i < size; i++) {
@@ -159,14 +151,14 @@ public class GLSLProgram {
                 }
             }
 
-            // Link the two shaders together into a program.
+            //Link the two shaders together into a program.
             GLES20.glLinkProgram(programHandle);
 
-            // Get the link status.
+            //Get the link status.
             final int[] linkStatus = new int[1];
             GLES20.glGetProgramiv(programHandle, GLES20.GL_LINK_STATUS, linkStatus, 0);
 
-            // If the link failed, delete the program.
+            //If the link failed, delete the program.
             if (linkStatus[0] == 0) {
                 Logger.log("Error compiling program: " + GLES20.glGetProgramInfoLog(programHandle));
                 GLES20.glDeleteProgram(programHandle);

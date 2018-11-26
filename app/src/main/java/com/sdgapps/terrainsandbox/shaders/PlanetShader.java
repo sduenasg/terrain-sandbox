@@ -10,7 +10,7 @@ import com.sdgapps.terrainsandbox.Singleton;
 
 public class PlanetShader extends GLSLProgram {
     private PlanetShader(String id) {
-        super(id, R.raw.terrain_vertex_planet, R.raw.planet_fragment_derivative, false);
+        super(id, R.raw.terrain_vertex_planet, R.raw.planet_fragment_derivative);
 
         configureTerrainShader();
     }
