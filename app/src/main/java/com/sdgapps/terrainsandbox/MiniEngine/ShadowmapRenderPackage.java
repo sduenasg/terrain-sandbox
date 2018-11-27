@@ -1,6 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.Matrix;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.FrameBufferInterface;
@@ -25,9 +25,9 @@ public class ShadowmapRenderPackage extends RenderPackage {
     private void bindMaterial(Material material, GLSLProgram shader) {
         /*if (material != null && material.displacementMap != null) {
 
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE4);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, material.displacementMap.glID);
-            GLES20.glUniform1i(shader.DisplacementMapTextureUniformHandle, 4);
+            GLES30.glActiveTexture(GLES30.GL_TEXTURE4);
+            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, material.displacementMap.glID);
+            GLES30.glUniform1i(shader.DisplacementMapTextureUniformHandle, 4);
         }*/
     }
 
@@ -36,7 +36,7 @@ public class ShadowmapRenderPackage extends RenderPackage {
                 modelMatrix, 0);
         Matrix.multiplyMM(shadowmapMVPmatrix, 0, MatrixManager.shadowmapProjectionMatrix, 0,
                 MatrixManager.shadowmapModelViewMatrix, 0);
-        GLES20.glUniformMatrix4fv(targetProgram.MVPMatrixHandle, 1, false, shadowmapMVPmatrix, 0);
+        GLES30.glUniformMatrix4fv(targetProgram.MVPMatrixHandle, 1, false, shadowmapMVPmatrix, 0);
     }*/
 
 }

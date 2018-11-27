@@ -31,6 +31,9 @@ public class PlanetShader extends GLSLProgram {
         Sampler2D heightmap = new Sampler2D("u_heightMap");
         Sampler2D colormap=new Sampler2D("u_colorMap");
         Sampler2D normalmap=new Sampler2D("u_normalMap");
+        Sampler2D splatmap=new Sampler2D("u_splatMap");
+        Sampler2D splatSheet=new Sampler2D("u_splatSheet");
+        Sampler2D splatarray=new Sampler2D("u_splatArray");
 
         //uniforms
         ShaderUniform1f CDLODQuadScale = new ShaderUniform1f("quad_scale");
@@ -52,7 +55,7 @@ public class PlanetShader extends GLSLProgram {
         //attributes
         linkAttribute("a_gridPosition");
         linkAttribute("a_barycentric");
-        
+
         //add everything to the shader
         addUniform(MVMatrix);
         addUniform(MVPMatrix);
@@ -60,6 +63,9 @@ public class PlanetShader extends GLSLProgram {
         addUniform(heightmap);
         addUniform(colormap);
         addUniform(normalmap);
+        addUniform(splatmap);
+        addUniform(splatSheet);
+        addUniform(splatarray);
 
         addUniform(CDLODQuadScale);
         addUniform(CDLODrange);

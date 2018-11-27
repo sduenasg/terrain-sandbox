@@ -1,6 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.terrain;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 import com.sdgapps.terrainsandbox.MiniEngine.*;
 import com.sdgapps.terrainsandbox.MiniEngine.behaviours.FlyAround;
@@ -104,7 +104,9 @@ public class Planet extends Renderer implements TerrainInterface {
     static final String colormapUniformName="u_colorMap";
     static final String bumpMapUniformName="u_normalMap";
     static final String heightmapUniformName="u_heightMap";
-
+    static final String splatmapUniformName="u_splatMap";
+    static final String splatsheetUniformName="u_splatSheet";
+    static final String splatarrayUniformName="u_splatArray";
     public void initialize(TerrainData data) {
 
         TimingHelper th=new TimingHelper("Planet initialization...");
@@ -155,6 +157,27 @@ public class Planet extends Renderer implements TerrainInterface {
         materialB.addTexture(data.TexDisplacementMaps[5],heightmapUniformName);
         materialC.addTexture(data.TexDisplacementMaps[1],heightmapUniformName);
         materialD.addTexture(data.TexDisplacementMaps[4],heightmapUniformName);
+
+        materialN.addTexture(data.TexSplatMaps[0],splatmapUniformName);
+        materialS.addTexture(data.TexSplatMaps[2],splatmapUniformName);
+        materialA.addTexture(data.TexSplatMaps[3],splatmapUniformName);
+        materialB.addTexture(data.TexSplatMaps[5],splatmapUniformName);
+        materialC.addTexture(data.TexSplatMaps[1],splatmapUniformName);
+        materialD.addTexture(data.TexSplatMaps[4],splatmapUniformName);
+
+        materialN.addTexture(data.TexSplatSheet,splatsheetUniformName);
+        materialS.addTexture(data.TexSplatSheet,splatsheetUniformName);
+        materialA.addTexture(data.TexSplatSheet,splatsheetUniformName);
+        materialB.addTexture(data.TexSplatSheet,splatsheetUniformName);
+        materialC.addTexture(data.TexSplatSheet,splatsheetUniformName);
+        materialD.addTexture(data.TexSplatSheet,splatsheetUniformName);
+
+        materialN.addTexture(data.TexArraySplat,splatarrayUniformName);
+        materialS.addTexture(data.TexArraySplat,splatarrayUniformName);
+        materialA.addTexture(data.TexArraySplat,splatarrayUniformName);
+        materialB.addTexture(data.TexArraySplat,splatarrayUniformName);
+        materialC.addTexture(data.TexArraySplat,splatarrayUniformName);
+        materialD.addTexture(data.TexArraySplat,splatarrayUniformName);
 
         terrainXZ = rootQuadScale * gridSize;
 
@@ -297,18 +320,18 @@ public class Planet extends Renderer implements TerrainInterface {
                 chunk.draw(pass, gridMesh, transform);
             }
 
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
-            GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
+            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
+            GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
         }
 
         renderAtmosphere();
 
         if (config.debug) {
-            //GLES20.glDisable(GLES20.GL_DEPTH_TEST);
+            //GLES30.glDisable(GLES30.GL_DEPTH_TEST);
             for (CDLODQuadTree chunk : cube) {
                 chunk.drawAABB();
             }
-            //GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+            //GLES30.glEnable(GLES30.GL_DEPTH_TEST);
         }
     }
 
@@ -326,15 +349,15 @@ public class Planet extends Renderer implements TerrainInterface {
         lightPos.set(Singleton.systems.mainLight.transform.position);
         lightPos.bind();
 
-        GLES20.glEnable(GLES20.GL_BLEND);
-        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE);
+        GLES30.glEnable(GLES30.GL_BLEND);
+        GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE);
 
-        GLES20.glCullFace(GLES20.GL_FRONT);
+        GLES30.glCullFace(GLES30.GL_FRONT);
 
         atmosphere.draw();
 
-        GLES20.glCullFace(GLES20.GL_BACK);
-        GLES20.glDisable(GLES20.GL_BLEND);
+        GLES30.glCullFace(GLES30.GL_BACK);
+        GLES30.glDisable(GLES30.GL_BLEND);
     }
 
     private void bindPlanetInfo(GLSLProgram shader) {

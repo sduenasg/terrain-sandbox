@@ -1,3 +1,5 @@
+#version 300 es
+
 #ifdef GL_OES_standard_derivatives
 #extension GL_OES_standard_derivatives : enable
 #endif
@@ -11,6 +13,9 @@ precision mediump float;
 uniform sampler2D u_colorMap;  //color map
 uniform sampler2D u_heightMap; //heightmap (for debugging)
 uniform sampler2D u_normalMap;
+uniform sampler2D u_splatMap;
+uniform sampler2D u_splatSheet;
+uniform sampler2DArray u_splatArray;
 
 uniform float zfar;
 uniform float lodlevel;
@@ -33,6 +38,12 @@ const vec3 specularColor = vec3(0.5, 0.5, 0.5);
 const float fogScale=0.6;
 const float detailThreshold = 0.59;
 const float detailTextureMult = 100.0;
+
+//usethe splat map with these flat colors instead of textures for testing
+const vec3 rcolor=vec3(0.0,1.0,0.0);
+const vec3 gcolor=vec3(0.27,0.21,0.13);//cliffs
+const vec3 bcolor=vec3(0.0,0.0,1.0);
+const vec3 acolor=vec3(1.0,1.0,1.0);
 
 // Functions
 float calcFogLinear(float distanceToEye);
@@ -83,6 +94,27 @@ float edgeFactor(){
 }
 #endif
 
+vec3 getSplatSheetColor(vec4 splatWeights)
+{
+    /*Array texture for the detail maps: Atlassing:
+    Pros: Avoid a thousand problems related to atlassing, mipmapping and linear interpolation
+    Cons: OpenGL ES 3.0 required
+    */
+    vec2 coords = fract(v_TexCoordinate * 200.0);
+
+    vec3 grassvalue=texture( u_splatArray  , vec3(coords,0.0)).rgb;
+    vec3 snowvalue=texture(  u_splatArray  , vec3(coords,2.0)).rgb;
+    vec3 watervalue=texture( u_splatArray  , vec3(coords,3.0)).rgb;
+    vec3 cliffsvalue=texture(u_splatArray  , vec3(coords,1.0)).rgb;
+
+    vec3 outcolor = splatWeights.r * grassvalue +
+                    splatWeights.g * cliffsvalue+
+                    splatWeights.b * watervalue +
+                    splatWeights.a * snowvalue;
+    //return cliffsvalue;
+    return outcolor;
+}
+
 void main()
 {
     float fogFactor = calcFogLinear(distancef);
@@ -112,19 +144,31 @@ void main()
         vec3 n = getNormal(v_TexCoordinate);
 
         vec3 colorMap;
-        vec3 ambient;
         if(range.z==3.0 || range.z==1.0)
             colorMap = vec3(0.8,0.8,0.8); //no color texture
         else
-            colorMap = texture2D(u_colorMap, v_TexCoordinate).rgb;
+            colorMap = texture(u_colorMap, v_TexCoordinate).rgb;
 
+        vec4 splatvalue=texture(u_splatMap,v_TexCoordinate);
+
+        //alpha comes in pre-multiplied from android.
+        splatvalue.r/=splatvalue.a;
+        splatvalue.g/=splatvalue.a;
+        splatvalue.b/=splatvalue.a;
+
+        colorMap*=3.0*getSplatSheetColor(splatvalue);
+
+        /*//debug the splatmap with solid colors
+       colorMap =  splatvalue.r * rcolor +
+                    splatvalue.g * gcolor +
+                    splatvalue.b * bcolor +
+                    splatvalue.a * acolor;*/
 
         vec3 l = normalize(u_LightPos - v_Position.xyz);
         float lightDot = dot(n,l);
         vec3 Idiff = colorMap * lightDot;
         vec3 baseColor = mix(Idiff*vertColor,Idiff,clamp(lightDot,0.0,1.0));
 
-       // baseColor=vertColor;
         if((range.z==3.0 || range.z==7.0 )){ //wire + solid (texured or not)
            #ifdef GL_OES_standard_derivatives
                wirecolor=mix(getWireColor(), baseColor.rgb, edgeFactor());
@@ -140,7 +184,7 @@ void main()
            #endif
         }
         else{ //solid, no wire
-            gl_FragColor =  vec4(mix (u_Fogcolor, baseColor, fogFactor),1.0); //<-
+           gl_FragColor =  vec4(mix (u_Fogcolor, baseColor, fogFactor),1.0); //<-
         }
     }
 }

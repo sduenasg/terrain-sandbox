@@ -1,6 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.terrain;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.Singleton;
@@ -223,25 +223,25 @@ public class GridMesh {
             buffers = new int[3];
 
             //submit to opengl
-            GLES20.glGenBuffers(3, buffers, 0);
+            GLES30.glGenBuffers(3, buffers, 0);
 
-            GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
-            GLES20.glBufferData(GLES20.GL_ELEMENT_ARRAY_BUFFER,
+            GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
+            GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER,
                     indexBuffer.capacity() * GridMesh.IntBytes, indexBuffer,
-                    GLES20.GL_STATIC_DRAW);
-            GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
+                    GLES30.GL_STATIC_DRAW);
+            GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
             indexBuffer.clear();
 
 
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers[1]);
-            GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, gridPositionsBuffer.capacity() * GridMesh.FloatBytes, gridPositionsBuffer,
-                    GLES20.GL_STATIC_DRAW);
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
+            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, buffers[1]);
+            GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, gridPositionsBuffer.capacity() * GridMesh.FloatBytes, gridPositionsBuffer,
+                    GLES30.GL_STATIC_DRAW);
+            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
 
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers[2]);
-            GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, barycentricBuffer.capacity() * GridMesh.ShortBytes, barycentricBuffer,
-                    GLES20.GL_STATIC_DRAW);
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
+            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, buffers[2]);
+            GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, barycentricBuffer.capacity() * GridMesh.ShortBytes, barycentricBuffer,
+                    GLES30.GL_STATIC_DRAW);
+            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
 
             indexArraySize = index_array.length;
             uploadedVBO = true;
@@ -254,24 +254,24 @@ public class GridMesh {
         int barycentricHandle=Shader.getAttributeGLid("a_barycentric");
 
         //grid position buffer
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers[1]);
-        GLES20.glVertexAttribPointer(gridPositionHandle, 2, GLES20.GL_FLOAT, false, 0, 0);
-        GLES20.glEnableVertexAttribArray(gridPositionHandle);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, buffers[1]);
+        GLES30.glVertexAttribPointer(gridPositionHandle, 2, GLES30.GL_FLOAT, false, 0, 0);
+        GLES30.glEnableVertexAttribArray(gridPositionHandle);
 
         //barycentric coords buffer
         if (buffers[2] != -1 && !shadowmapRender) {
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers[2]);
-            GLES20.glVertexAttribPointer(barycentricHandle, 3, GLES20.GL_SHORT, false, 0, 0);
-            GLES20.glEnableVertexAttribArray(barycentricHandle);
+            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, buffers[2]);
+            GLES30.glVertexAttribPointer(barycentricHandle, 3, GLES30.GL_SHORT, false, 0, 0);
+            GLES30.glEnableVertexAttribArray(barycentricHandle);
         }
 
         //index buffer
-        GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
+        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
     }
 
     public void draw(boolean[] selection) {
         if (selection[4]) {//the whole node got selected
-            GLES20.glDrawElements(GLES20.GL_TRIANGLES, indexArraySize, GLES20.GL_UNSIGNED_INT, 0);
+            GLES30.glDrawElements(GLES30.GL_TRIANGLES, indexArraySize, GLES30.GL_UNSIGNED_INT, 0);
             Singleton.systems.sTime.drawcalls++;
         } else {//only parts of the node got selected (covering for it's children)
             for (int j = 0; j < 4; j++) {
@@ -286,7 +286,7 @@ public class GridMesh {
                         j++;
                     }
 
-                    GLES20.glDrawElements(GLES20.GL_TRIANGLES, size, GLES20.GL_UNSIGNED_INT, offset);//offset in bytes
+                    GLES30.glDrawElements(GLES30.GL_TRIANGLES, size, GLES30.GL_UNSIGNED_INT, offset);//offset in bytes
                     Singleton.systems.sTime.drawcalls++;
                 }
             }

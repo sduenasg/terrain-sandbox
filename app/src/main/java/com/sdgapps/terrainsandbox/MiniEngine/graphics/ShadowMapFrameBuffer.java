@@ -1,6 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.util.Log;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.AppTextureManager;
@@ -15,19 +15,19 @@ public class ShadowMapFrameBuffer implements FrameBufferInterface {
 
     @Override
     public void bind() {
-        GLES20.glColorMask(false, false, false, false);
-        GLES20.glEnable(GLES20.GL_CULL_FACE);
-        GLES20.glCullFace(GLES20.GL_FRONT);
-        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+        GLES30.glColorMask(false, false, false, false);
+        GLES30.glEnable(GLES30.GL_CULL_FACE);
+        GLES30.glCullFace(GLES30.GL_FRONT);
+        GLES30.glEnable(GLES30.GL_DEPTH_TEST);
         Singleton.systems.mainCamera.updateShadowMapCamera();
 
         // bindTextures the previously generated framebuffer
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, shadowmap_fb[0]);
-        GLES20.glViewport(0, 0, mShadowMapWidth, mShadowMapHeight);
+        GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, shadowmap_fb[0]);
+        GLES30.glViewport(0, 0, mShadowMapWidth, mShadowMapHeight);
 
         // Clear color and buffers
-        GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
+        GLES30.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        GLES30.glClear(GLES30.GL_DEPTH_BUFFER_BIT);
         AppTextureManager.shadowmap.glID = shadowmap_renderTex[0];
     }
 
@@ -48,44 +48,44 @@ public class ShadowMapFrameBuffer implements FrameBufferInterface {
             shadowmap_renderTex = new int[1];
 
             // create a framebuffer object
-            GLES20.glGenFramebuffers(1, shadowmap_fb, 0);
+            GLES30.glGenFramebuffers(1, shadowmap_fb, 0);
 
             // create render buffer and bindTextures 16-bit depth buffer
-            GLES20.glGenRenderbuffers(1, shadowmap_depthRb, 0);
-            GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, shadowmap_depthRb[0]);
-            GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, GLES20.GL_DEPTH_COMPONENT16, mShadowMapWidth, mShadowMapHeight);
+            GLES30.glGenRenderbuffers(1, shadowmap_depthRb, 0);
+            GLES30.glBindRenderbuffer(GLES30.GL_RENDERBUFFER, shadowmap_depthRb[0]);
+            GLES30.glRenderbufferStorage(GLES30.GL_RENDERBUFFER, GLES30.GL_DEPTH_COMPONENT16, mShadowMapWidth, mShadowMapHeight);
 
             // Try to use a texture depth component
-            GLES20.glGenTextures(1, shadowmap_renderTex, 0);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, shadowmap_renderTex[0]);
+            GLES30.glGenTextures(1, shadowmap_renderTex, 0);
+            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, shadowmap_renderTex[0]);
 
             // GL_LINEAR does not make sense for depth texture. However, next tutorial shows usage of GL_LINEAR and PCF. Using GL_NEAREST
-          /* GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);*/
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
+          /* GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR);
+            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);*/
+            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_NEAREST);
+            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_NEAREST);
 
             // Remove artifact on the edges of the shadowmap
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
+            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
 
-            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, shadowmap_fb[0]);
+            GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, shadowmap_fb[0]);
 
             Logger.log("Depth texture extension oes " + mHasDepthTextureExtension);
             // Use a depth texture, uses the oes_depth_texture extension, so no shadows if the extension is not available
-            GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_DEPTH_COMPONENT, mShadowMapWidth, mShadowMapHeight, 0, GLES20.GL_DEPTH_COMPONENT, GLES20.GL_UNSIGNED_INT, null);
+            GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_DEPTH_COMPONENT, mShadowMapWidth, mShadowMapHeight, 0, GLES30.GL_DEPTH_COMPONENT, GLES30.GL_UNSIGNED_INT, null);
             // Attach the depth texture to FBO depth attachment point
-            GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_DEPTH_ATTACHMENT, GLES20.GL_TEXTURE_2D, shadowmap_renderTex[0], 0);
+            GLES30.glFramebufferTexture2D(GLES30.GL_FRAMEBUFFER, GLES30.GL_DEPTH_ATTACHMENT, GLES30.GL_TEXTURE_2D, shadowmap_renderTex[0], 0);
 
             // check FBO status
-            int FBOstatus = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER);
-            if (FBOstatus != GLES20.GL_FRAMEBUFFER_COMPLETE) {
+            int FBOstatus = GLES30.glCheckFramebufferStatus(GLES30.GL_FRAMEBUFFER);
+            if (FBOstatus != GLES30.GL_FRAMEBUFFER_COMPLETE) {
                 Log.e("Shadowmap_fbuffer", "GL_FRAMEBUFFER_COMPLETE failed, CANNOT use FBO");
                 throw new RuntimeException("GL_FRAMEBUFFER_COMPLETE failed, CANNOT use FBO");
             }
 
             AppTextureManager.shadowmap.glID = shadowmap_renderTex[0];
-            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+            GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, 0);
         }
     }
 }

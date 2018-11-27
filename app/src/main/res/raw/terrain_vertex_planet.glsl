@@ -36,6 +36,7 @@ varying float distancef;
 varying vec3 barycentric;
 varying float morph;
 varying vec3 vertColor;
+
 const float _TransitionWidth = 0.1;
 const float _FresnelExponent = 0.1;
 #define PI 3.14159265;
@@ -121,6 +122,7 @@ float interpolateHeights(in float oldheight, in vec2 newUvCoords,in float morph)
 {
     return(mix(oldheight,getHeightuv(newUvCoords,false),morph));
 }
+
 
 void main()                                                 	
 {

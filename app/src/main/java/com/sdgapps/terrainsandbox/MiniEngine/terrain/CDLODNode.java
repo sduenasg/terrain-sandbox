@@ -5,7 +5,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform1f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3F;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture2D;
 import com.sdgapps.terrainsandbox.SimpleVec3fPool;
 import com.sdgapps.terrainsandbox.Singleton;
 
@@ -20,7 +20,7 @@ class CDLODNode extends SelectableNode {
     private CDLODQuadTree quadTree;
 
     CDLODNode(boolean sphere, int _lod, float _quadScale, float _xoffset, float _yoffset, int gridsize,
-              float fullWidth, Texture heightmap, CDLODQuadTree cdlodQuadTree) {
+              float fullWidth, Texture2D heightmap, CDLODQuadTree cdlodQuadTree) {
         quadScale = _quadScale;
         lod = _lod;
         xoffset = _xoffset;
@@ -126,7 +126,7 @@ class CDLODNode extends SelectableNode {
     /**
      * Bounding box initialization for planets
      */
-    private void buildAABBfromDataSphere(Texture heightmap, float terrainWidth, float nodeSide) {
+    private void buildAABBfromDataSphere(Texture2D heightmap, float terrainWidth, float nodeSide) {
         //TimingHelper th=new TimingHelper("bb building");
        // th.start();
         AABB = new BoundingBox();
@@ -160,7 +160,7 @@ class CDLODNode extends SelectableNode {
     }
 
     //TODO: Optimize, very slow
-    private void minMaxValAreaSphere(Texture texture, float x, float z, float w, float h, Vec3f outMin, Vec3f outMax,
+    private void minMaxValAreaSphere(Texture2D texture, float x, float z, float w, float h, Vec3f outMin, Vec3f outMax,
                                      float sphereRadius, float terrainWidth, float yscale) {
 
         outMax.set(-Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE);
@@ -230,7 +230,7 @@ class CDLODNode extends SelectableNode {
         }
     }
 
-    private void buildAABBfromData(Texture heightmap, float terrainWidth, float nodeSide) {
+    private void buildAABBfromData(Texture2D heightmap, float terrainWidth, float nodeSide) {
 
         AABB = new BoundingBox();
         //Get the first and the last vertex positions to calculate the bounding box

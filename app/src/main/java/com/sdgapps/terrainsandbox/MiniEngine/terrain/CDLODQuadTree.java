@@ -1,6 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.terrain;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.Matrix;
 
 import com.sdgapps.terrainsandbox.MiniEngine.MatrixManager;
@@ -9,6 +9,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.*;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture2D;
 import com.sdgapps.terrainsandbox.Singleton;
 
 public class CDLODQuadTree {
@@ -91,7 +92,7 @@ public class CDLODQuadTree {
         transform.objectPivotPosition.set(terrainXZ / 2f, 0, terrainXZ / 2f);
 
         material = mat;
-        root = new CDLODNode(sphere, nLods - 1, rootQuadScale, 0, 0, gridSize, gridSize * rootQuadScale, material.getTexture(Planet.heightmapUniformName), this);
+        root = new CDLODNode(sphere, nLods - 1, rootQuadScale, 0, 0, gridSize, gridSize * rootQuadScale, (Texture2D)material.getTexture(Planet.heightmapUniformName), this);
         boundingBoxMaterial = _boundingBoxMaterial;
         initialized = true;
     }
@@ -148,11 +149,11 @@ public class CDLODQuadTree {
     }
 
     void drawAABB() {
-        //GLES20.glDisable(GLES20.GL_DEPTH_TEST);
+        //GLES30.glDisable(GLES30.GL_DEPTH_TEST);
         for (SelectableNode snode : selection.getSelectionList()) {
             ((CDLODNode) snode).renderBox(this.boundingBoxMaterial);
         }
-        //GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+        //GLES30.glEnable(GLES30.GL_DEPTH_TEST);
     }
 
     void transformBoundingBoxes(Transform planetTransform) {

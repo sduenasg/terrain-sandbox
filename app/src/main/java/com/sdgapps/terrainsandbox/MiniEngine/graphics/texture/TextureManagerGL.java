@@ -20,8 +20,8 @@ public class TextureManagerGL {
     private static HashMap<String, Texture> texMap = new HashMap<String, Texture>();
 
 
-    public static Texture getDummyTex(String name) {
-        Texture t = new Texture(name, false, false, false, false, 1, false);
+    public static Texture2D getDummyTex(String name) {
+        Texture2D t = new Texture2D(name, false, false, false, false, 1, false);
         return t;
     }
 
@@ -43,7 +43,7 @@ public class TextureManagerGL {
 
             if (extension.equals("pkm")) {
 
-                Texture t = new Texture(name, mipmapping, alpha, interpolation, wrapMode, id, false);
+                Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, id, false);
                 t.compressedETC1 = true;
                 resu = t.loadTexture(res);
                 texMap.put(name, t);
@@ -51,14 +51,14 @@ public class TextureManagerGL {
 
             } else {
 
-                Texture t = new Texture(name, mipmapping, alpha, interpolation, wrapMode, id, false);
+                Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, id, false);
                 resu = t.loadTexture(res);
 
                 texMap.put(name, t);
                 return t;
             }
         } else {
-            Texture t = new Texture(name, mipmapping, alpha, interpolation, wrapMode, id, false);
+            Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, id, false);
             resu = t.loadTexture(res);
 
             texMap.put(name, t);
@@ -67,6 +67,23 @@ public class TextureManagerGL {
     }
 
 
+    public static Texture addArrayTexture(String[] files, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode, Resources res)
+    {
+        int[] resids=new int[files.length];
+
+        int i=0;
+        for(String s : files)
+        {
+            String[] aux = s.split("[.]+");
+            resids[i]= AndroidUtils.getResId(aux[0],  R.drawable.class);
+            i++;
+        }
+
+        ArrayTexture t=new ArrayTexture(files, mipmapping, alpha, interpolation, wrapMode, resids);
+        t.loadTexture(res);
+        texMap.put(files[0], t);
+        return null;
+    }
     /**
      * Adds a texture using a resource name, if ETC1 textures are supported and an ETC1 version of the texture is present, it replaces the png by
      * the compressed ETC1 textures automatically. It falls back to using the png's otherwise
@@ -75,7 +92,7 @@ public class TextureManagerGL {
         int resu;
 
         if (texMap.containsKey(name)) {
-            Logger.log("Texture Manager: Warning: texture named: " + name + " already in texMap, no action taken");
+            Logger.log("Texture2D Manager: Warning: texture named: " + name + " already in texMap, no action taken");
 
             return texMap.get(name);
         }
@@ -91,35 +108,35 @@ public class TextureManagerGL {
             if (resid == -1 || !OpenGLChecks.etc1_texture_compression) {
                 //use the png
                 resid = AndroidUtils.getResId(aux[0], R.drawable.class);
-                Texture t = new Texture(name, mipmapping, alpha, interpolation, wrapMode, resid, needsPixels);
+                Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, resid, needsPixels);
                 resu = t.loadTexture(res);
 
                 texMap.put(name, t);
-                // Logger.log("Texture Manager: New texture loaded " + name + " with Id " + resu);
+                // Logger.log("Texture2D Manager: New texture loaded " + name + " with Id " + resu);
                 return t;
             } else {
                 //use ETC1 compression
-                Texture t = new Texture(compressed, mipmapping, alpha, interpolation, wrapMode, resid, needsPixels);
+                Texture2D t = new Texture2D(compressed, mipmapping, alpha, interpolation, wrapMode, resid, needsPixels);
                 t.compressedETC1 = true;
                 resu = t.loadTexture(res);
                 texMap.put(name, t);
 
-                // Logger.log("Texture Manager: New ETC1 texture loaded " + name + " with Id " + resu);
+                // Logger.log("Texture2D Manager: New ETC1 texture loaded " + name + " with Id " + resu);
                 return t;
             }
         } else {
             int resid = AndroidUtils.getResId(aux[0], R.drawable.class);
-            Texture t = new Texture(name, mipmapping, alpha, interpolation, wrapMode, resid, needsPixels);
+            Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, resid, needsPixels);
             resu = t.loadTexture(res);
 
             texMap.put(name, t);
-            // Logger.log("Texture Manager: New texture loaded " + name + " with Id " + resu);
+            // Logger.log("Texture2D Manager: New texture loaded " + name + " with Id " + resu);
             return t;
         }
     }
 
     public static void addDummy(String name) {
-        Texture t = new Texture(name, false, false, false, false, -1, false);
+        Texture2D t = new Texture2D(name, false, false, false, false, -1, false);
         texMap.put(name, t);
     }
 

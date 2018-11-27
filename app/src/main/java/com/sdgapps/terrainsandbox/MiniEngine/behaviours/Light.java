@@ -1,7 +1,7 @@
 
 package com.sdgapps.terrainsandbox.MiniEngine.behaviours;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.Matrix;
 
 import com.sdgapps.terrainsandbox.MiniEngine.Behaviour;
@@ -61,7 +61,7 @@ public class Light extends Behaviour {
         Matrix.multiplyMV(mLightPosInEyeSpace, 0, MatrixManager.viewMatrix, 0,
                 mLightPosInWorldSpace, 0);
 
-        GLES20.glClearColor(fogColor.r, fogColor.g, fogColor.b, 1f);
+        GLES30.glClearColor(fogColor.r, fogColor.g, fogColor.b, 1f);
     }
 
     //TODO use the transform matrices

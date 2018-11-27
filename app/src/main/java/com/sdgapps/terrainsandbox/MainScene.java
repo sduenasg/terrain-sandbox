@@ -1,7 +1,7 @@
 package com.sdgapps.terrainsandbox;
 
 import android.content.res.Resources;
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 import com.sdgapps.terrainsandbox.MVP.SceneInterface;
 import com.sdgapps.terrainsandbox.MiniEngine.GameObject;
@@ -133,7 +133,7 @@ public class MainScene extends Scene implements SceneInterface {
     public void draw() {
 
         if (sun != null)
-            GLES20.glClearColor(sun.fogColor.r, sun.fogColor.g, sun.fogColor.b, 1f);
+            GLES30.glClearColor(sun.fogColor.r, sun.fogColor.g, sun.fogColor.b, 1f);
 
         super.draw();
     }

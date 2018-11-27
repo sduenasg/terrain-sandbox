@@ -190,7 +190,7 @@ public class MainViewMvpImpl implements MainViewMvp,
         renderer = _renderer;
 
         if (!glViewInitialized) {
-            mGLView.setEGLContextClientVersion(2);
+            mGLView.setEGLContextClientVersion(3);
             mGLView.setEGLConfigChooser(8, 8, 8, 8, 24, 0);
             mGLView.setRenderer(renderer);
             glViewInitialized = true;

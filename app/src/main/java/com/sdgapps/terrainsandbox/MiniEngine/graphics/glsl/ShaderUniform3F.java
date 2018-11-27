@@ -1,6 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.Color4f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec3f;
@@ -33,7 +33,7 @@ public class ShaderUniform3F extends ShaderUniform {
     public void bind() {
         if (glHandle != -1) {
             super.bind();
-            GLES20.glUniform3f(glHandle, v0, v1, v2);
+            GLES30.glUniform3f(glHandle, v0, v1, v2);
         }
     }
 

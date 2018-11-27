@@ -1,7 +1,7 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics;
 
 import android.opengl.ETC1Util;
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 import com.sdgapps.terrainsandbox.utils.Logger;
 
@@ -36,26 +36,26 @@ public class OpenGLChecks {
 
         if (!done) {
             done = true;
-            String extensions = GLES20.glGetString(GLES20.GL_EXTENSIONS);
+            String extensions = GLES30.glGetString(GLES30.GL_EXTENSIONS);
 
             int[] res = new int[5];
 
         /*the maximum number of four-element floating-point, integer, or boolean vectors that can be
          held in uniform variable storage for a vertex shader. The value must be at least 128."*/
-            GLES20.glGetIntegerv(GLES20.GL_MAX_VERTEX_UNIFORM_VECTORS, res, 0);
+            GLES30.glGetIntegerv(GLES30.GL_MAX_VERTEX_UNIFORM_VECTORS, res, 0);
             MAX_VERTEX_UNIFORM_VECTORS = res[0];
 
-            GLES20.glGetIntegerv(GLES20.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, res, 1);
+            GLES30.glGetIntegerv(GLES30.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, res, 1);
             MAX_VERTEX_TEXTURE_IMAGE_UNITS = res[1];
 
-            GLES20.glGetIntegerv(GLES20.GL_MAX_TEXTURE_IMAGE_UNITS, res, 2);
+            GLES30.glGetIntegerv(GLES30.GL_MAX_TEXTURE_IMAGE_UNITS, res, 2);
             GL_MAX_TEXTURE_IMAGE_UNITS = res[2];
 
 
-            GLES20.glGetIntegerv(GLES20.GL_MAX_TEXTURE_SIZE, res, 3);
+            GLES30.glGetIntegerv(GLES30.GL_MAX_TEXTURE_SIZE, res, 3);
             GL_MAX_TEXTURE_SIZE = res[3];
 
-            GLES20.glGetIntegerv(GLES20.GL_DEPTH_BITS, res, 4);
+            GLES30.glGetIntegerv(GLES30.GL_DEPTH_BITS, res, 4);
             GL_DEPTH_BITS = res[4];
 
             vertex_shader_texture_fetch_enabled = (MAX_VERTEX_TEXTURE_IMAGE_UNITS > 0);
@@ -68,9 +68,9 @@ public class OpenGLChecks {
             standard_derivatives = extensions.contains("GL_OES_standard_derivatives");
             Logger.log("EXTENSIONS " + extensions);
 
-            GL_RENDERER = GLES20.glGetString(GLES20.GL_RENDERER);
-            GL_VENDOR = GLES20.glGetString(GLES20.GL_VENDOR);
-            GL_VERSION = GLES20.glGetString(GLES20.GL_VERSION);
+            GL_RENDERER = GLES30.glGetString(GLES30.GL_RENDERER);
+            GL_VENDOR = GLES30.glGetString(GLES30.GL_VENDOR);
+            GL_VERSION = GLES30.glGetString(GLES30.GL_VERSION);
 
             //logDeviceGLinfo();
             //log();
@@ -90,6 +90,6 @@ public class OpenGLChecks {
         Logger.log("GL_RENDERER = " + GL_RENDERER);
         Logger.log("GL_VENDOR = " + GL_VENDOR);
         Logger.log("GL_VERSION = " + GL_VERSION);
-        Logger.log("GL_EXTENSIONS = " + GLES20.glGetString(GLES20.GL_EXTENSIONS));
+        Logger.log("GL_EXTENSIONS = " + GLES30.glGetString(GLES30.GL_EXTENSIONS));
     }
 }

@@ -16,7 +16,7 @@ public class AppTextureManager extends TextureManagerGL {
 
     public static void initialize(Resources _res) {
         reset();
-        shadowmap = getDummyTex("trebuchet");
+        shadowmap = getDummyTex("cat");
         res = _res;
         load_terrain_detail_texture("detail2", "detail2nmap");
         init = true;
@@ -24,8 +24,8 @@ public class AppTextureManager extends TextureManagerGL {
 
     public static void load_terrain_detail_texture(String texturename, String normalmapname) {
 
-        atmosphereGradient = addTexture("atmogradient" + ".png", true, false, Texture.FILTER_LINEAR, Texture.WRAP_REPEAT, res, false);
-        terrainDetailTexture = addTexture(texturename + ".png", true, true, Texture.FILTER_LINEAR, Texture.WRAP_CLAMP, res, false);
-        terrainDetailNormalmap = addTexture(normalmapname + ".png", true, true, Texture.FILTER_LINEAR, Texture.WRAP_CLAMP, res, false);
+        atmosphereGradient = addTexture("atmogradient" + ".png", true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_REPEAT, res, false);
+        terrainDetailTexture = addTexture(texturename + ".png", true, true, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP, res, false);
+        terrainDetailNormalmap = addTexture(normalmapname + ".png", true, true, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP, res, false);
     }
 }

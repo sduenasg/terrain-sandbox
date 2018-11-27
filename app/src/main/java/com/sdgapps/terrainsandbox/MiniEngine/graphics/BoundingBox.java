@@ -1,7 +1,7 @@
 
 package com.sdgapps.terrainsandbox.MiniEngine.graphics;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.Matrix;
 
 import com.sdgapps.terrainsandbox.MiniEngine.MatrixManager;
@@ -276,14 +276,14 @@ public class BoundingBox {
 
         if (renderable) {
             int positionHandle=shader.getAttributeGLid("a_Position");
-            GLES20.glVertexAttribPointer(positionHandle, 3, GLES20.GL_FLOAT, false, 0, mLineVertices);
-            GLES20.glEnableVertexAttribArray(positionHandle);
+            GLES30.glVertexAttribPointer(positionHandle, 3, GLES30.GL_FLOAT, false, 0, mLineVertices);
+            GLES30.glEnableVertexAttribArray(positionHandle);
 
-            GLES20.glLineWidth(6);
+            GLES30.glLineWidth(6);
 
             sendMatrix(shader);
 
-            GLES20.glDrawArrays(GLES20.GL_LINES, 0, 24);
+            GLES30.glDrawArrays(GLES30.GL_LINES, 0, 24);
         }
     }
 

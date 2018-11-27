@@ -1,7 +1,8 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
-import com.sdgapps.terrainsandbox.Singleton;
+
+
 import java.util.HashMap;
 import java.util.Map;
 

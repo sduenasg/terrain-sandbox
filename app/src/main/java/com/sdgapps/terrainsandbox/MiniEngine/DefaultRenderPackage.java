@@ -1,6 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.Matrix;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.FrameBufferInterface;
@@ -21,9 +21,9 @@ public class DefaultRenderPackage extends RenderPackage {
 
         /*if (OpenGLChecks.oes_depth_texture
                 && shader.shadowMapTextureUniformHandle != -1) {
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE5);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, AppTextureManager.shadowmap.glID);
-            GLES20.glUniform1i(shader.shadowMapTextureUniformHandle, 5);
+            GLES30.glActiveTexture(GLES30.GL_TEXTURE5);
+            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, AppTextureManager.shadowmap.glID);
+            GLES30.glUniform1i(shader.shadowMapTextureUniformHandle, 5);
         }*/
     }
 

@@ -1,7 +1,7 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
 import android.content.res.Resources;
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 
 import com.sdgapps.terrainsandbox.utils.Logger;
 import com.sdgapps.terrainsandbox.utils.RawResourceReader;
@@ -18,9 +18,9 @@ public class GLSLShader {
     public GLSLShader(int resid, Resources res, boolean isFragment) {
 
         if (isFragment)
-            glHandle = compileShader(GLES20.GL_FRAGMENT_SHADER, getCode(resid, res));
+            glHandle = compileShader(GLES30.GL_FRAGMENT_SHADER, getCode(resid, res));
         else
-            glHandle = compileShader(GLES20.GL_VERTEX_SHADER, getCode(resid, res));
+            glHandle = compileShader(GLES30.GL_VERTEX_SHADER, getCode(resid, res));
 
         this.isFragment = isFragment;
         this.resid = resid;
@@ -29,9 +29,9 @@ public class GLSLShader {
     protected void reloadShader(Resources res) {
 
         if (isFragment)
-            glHandle = compileShader(GLES20.GL_FRAGMENT_SHADER, getCode(resid, res));
+            glHandle = compileShader(GLES30.GL_FRAGMENT_SHADER, getCode(resid, res));
         else
-            glHandle = compileShader(GLES20.GL_VERTEX_SHADER, getCode(resid, res));
+            glHandle = compileShader(GLES30.GL_VERTEX_SHADER, getCode(resid, res));
     }
 
     private static String getCode(int resid, Resources res) {
@@ -46,23 +46,23 @@ public class GLSLShader {
      * @return OpenGL handle for the shader
      */
     public static int compileShader(final int shaderType, final String shaderSource) {
-        int shaderHandle = GLES20.glCreateShader(shaderType);
+        int shaderHandle = GLES30.glCreateShader(shaderType);
 
         if (shaderHandle != 0) {
             // Pass in the shader source.
-            GLES20.glShaderSource(shaderHandle, shaderSource);
+            GLES30.glShaderSource(shaderHandle, shaderSource);
 
             // Compile the shader.
-            GLES20.glCompileShader(shaderHandle);
+            GLES30.glCompileShader(shaderHandle);
 
             // Get the compilation status.
             final int[] compileStatus = new int[1];
-            GLES20.glGetShaderiv(shaderHandle, GLES20.GL_COMPILE_STATUS, compileStatus, 0);
+            GLES30.glGetShaderiv(shaderHandle, GLES30.GL_COMPILE_STATUS, compileStatus, 0);
 
             // If the compilation failed, delete the shader.
             if (compileStatus[0] == 0) {
-                Logger.log("Error compiling shader: " + GLES20.glGetShaderInfoLog(shaderHandle));
-                GLES20.glDeleteShader(shaderHandle);
+                Logger.log("Error compiling shader: " + GLES30.glGetShaderInfoLog(shaderHandle));
+                GLES30.glDeleteShader(shaderHandle);
                 shaderHandle = 0;
             }
         }

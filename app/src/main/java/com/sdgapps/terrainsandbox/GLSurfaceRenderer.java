@@ -1,7 +1,7 @@
 package com.sdgapps.terrainsandbox;
 
 import android.content.res.Resources;
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 
@@ -47,7 +47,7 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
         centerX = w / 2;
         centerY = h / 2;
 
-        GLES20.glViewport(0, 0, surface_width, surface_height);
+        GLES30.glViewport(0, 0, surface_width, surface_height);
         ratio = (float) w / h;
 
         worldScene.setAspectRatio(ratio);
@@ -66,7 +66,7 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
             OpenGLChecks.runChecks();
             if (OpenGLChecks.standard_derivatives) {
                 //Accuracy of the derivative calculations. Default is GL_DONT_CARE, other possible values are GL_NICEST, GL_FASTEST
-                GLES20.glHint(FRAGMENT_SHADER_DERIVATIVE_HINT_OES, GLES20.GL_FASTEST);
+                GLES30.glHint(FRAGMENT_SHADER_DERIVATIVE_HINT_OES, GLES30.GL_FASTEST);
             }
 
             Singleton.systems.sTime.tickStart();
@@ -131,21 +131,21 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
     }
 
     private void draw() {
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT | GLES30.GL_DEPTH_BUFFER_BIT);
         worldScene.draw();
     }
 
     private void configGL() {
-        GLES20.glLineWidth(3);
-        GLES20.glClearColor(0.8f, 0.8f, 0.9f, 1.0f);
-        GLES20.glEnable(GLES20.GL_CULL_FACE);
-        GLES20.glCullFace(GLES20.GL_BACK);
+        GLES30.glLineWidth(3);
+        GLES30.glClearColor(0.8f, 0.8f, 0.9f, 1.0f);
+        GLES30.glEnable(GLES30.GL_CULL_FACE);
+        GLES30.glCullFace(GLES30.GL_BACK);
 
         /* Depth buffer */
-        GLES20.glClearDepthf(1.0f);
-        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-        GLES20.glDepthFunc(GLES20.GL_LEQUAL);
+        GLES30.glClearDepthf(1.0f);
+        GLES30.glEnable(GLES30.GL_DEPTH_TEST);
+        GLES30.glDepthFunc(GLES30.GL_LEQUAL);
 
-        GLES20.glDepthMask(true);
+        GLES30.glDepthMask(true);
     }
 }

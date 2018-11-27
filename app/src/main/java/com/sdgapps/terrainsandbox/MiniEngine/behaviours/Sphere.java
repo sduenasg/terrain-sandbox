@@ -1,6 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.behaviours;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.Matrix;
 
 import com.sdgapps.terrainsandbox.MiniEngine.MatrixManager;
@@ -61,7 +61,7 @@ public class Sphere extends Renderer {
                 verts[i * latVerts * 8 + j * 8 + 1] = verts[i * latVerts * 8 + j * 8 + 4] * radius;
                 verts[i * latVerts * 8 + j * 8 + 2] = verts[i * latVerts * 8 + j * 8 + 5] * radius;
 
-                // Texture coordinates
+                // Texture2D coordinates
                 verts[i * latVerts * 8 + j * 8 + 6] = iDivLong;
                 verts[i * latVerts * 8 + j * 8 + 7] = jDivLat;
             }
@@ -112,20 +112,20 @@ public class Sphere extends Renderer {
             buffers = new int[2];
 
             //submit to opengl
-            GLES20.glGenBuffers(2, buffers, 0);
+            GLES30.glGenBuffers(2, buffers, 0);
 
-            GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
-            GLES20.glBufferData(GLES20.GL_ELEMENT_ARRAY_BUFFER,
+            GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
+            GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER,
                     indexBuffer.capacity() * GridMesh.ShortBytes, indexBuffer,
-                    GLES20.GL_STATIC_DRAW);
-            GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
+                    GLES30.GL_STATIC_DRAW);
+            GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
             indexBuffer.clear();
             indexBuffer = null;
 
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers[1]);
-            GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, posBuffer.capacity() * GridMesh.FloatBytes, posBuffer,
-                    GLES20.GL_STATIC_DRAW);
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
+            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, buffers[1]);
+            GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, posBuffer.capacity() * GridMesh.FloatBytes, posBuffer,
+                    GLES30.GL_STATIC_DRAW);
+            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
 
             posBuffer = null;
             indexBuffer = null;
@@ -142,19 +142,19 @@ public class Sphere extends Renderer {
         int normalHandle=shader.getAttributeGLid("a_Normal");
         int texcoordHandle=shader.getAttributeGLid("a_TexCoordinate");
 
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers[1]);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, buffers[1]);
 
-        GLES20.glVertexAttribPointer(positionHandle, 3, GLES20.GL_FLOAT, false, FloatBytes * 8, 0);
-        GLES20.glEnableVertexAttribArray(positionHandle);
+        GLES30.glVertexAttribPointer(positionHandle, 3, GLES30.GL_FLOAT, false, FloatBytes * 8, 0);
+        GLES30.glEnableVertexAttribArray(positionHandle);
 
-        GLES20.glVertexAttribPointer(normalHandle,   3, GLES20.GL_FLOAT, false, FloatBytes * 8, FloatBytes * 3);
-        GLES20.glEnableVertexAttribArray(normalHandle);
+        GLES30.glVertexAttribPointer(normalHandle,   3, GLES30.GL_FLOAT, false, FloatBytes * 8, FloatBytes * 3);
+        GLES30.glEnableVertexAttribArray(normalHandle);
 
-        GLES20.glVertexAttribPointer(texcoordHandle, 2, GLES20.GL_FLOAT, false, FloatBytes * 8, FloatBytes * 6);
-        GLES20.glEnableVertexAttribArray(texcoordHandle);
+        GLES30.glVertexAttribPointer(texcoordHandle, 2, GLES30.GL_FLOAT, false, FloatBytes * 8, FloatBytes * 6);
+        GLES30.glEnableVertexAttribArray(texcoordHandle);
 
         //index buffer
-        GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
+        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
     }
 
     @Override
@@ -164,9 +164,9 @@ public class Sphere extends Renderer {
         sendMatrices();
         bindAttribs(material.shader);
 
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, indexArraySize, GLES20.GL_UNSIGNED_SHORT, 0);
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
-        GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
+        GLES30.glDrawElements(GLES30.GL_TRIANGLES, indexArraySize, GLES30.GL_UNSIGNED_SHORT, 0);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
+        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     private void sendMatrices() {

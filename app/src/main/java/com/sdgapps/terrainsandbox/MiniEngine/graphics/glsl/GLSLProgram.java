@@ -1,7 +1,7 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
 import android.content.res.Resources;
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 import com.sdgapps.terrainsandbox.Singleton;
 import com.sdgapps.terrainsandbox.utils.Logger;
 import java.util.HashMap;
@@ -72,7 +72,7 @@ public class GLSLProgram {
         this.buildVariables();
 
         for (ShaderUniform sv : uniforms.values()) {
-            sv.glHandle = GLES20.glGetUniformLocation(glHandle, sv.name);
+            sv.glHandle = GLES30.glGetUniformLocation(glHandle, sv.name);
         }
     }
 
@@ -82,7 +82,7 @@ public class GLSLProgram {
         //update attrib location
         for (Map.Entry<String, Integer> entry  : attributes.entrySet())
         {
-            entry.setValue(GLES20.glGetAttribLocation(glHandle,entry.getKey()));
+            entry.setValue(GLES30.glGetAttribLocation(glHandle,entry.getKey()));
         }
     }
 
@@ -98,7 +98,7 @@ public class GLSLProgram {
 
     public int linkAttribute(String nameInShader)
     {
-        int glid=GLES20.glGetAttribLocation(glHandle, nameInShader);
+        int glid=GLES30.glGetAttribLocation(glHandle, nameInShader);
         if(glid!=-1)
             attributes.put(nameInShader, glid);
 
@@ -106,7 +106,7 @@ public class GLSLProgram {
     }
 
     public void useProgram() {
-        GLES20.glUseProgram(glHandle);
+        GLES30.glUseProgram(glHandle);
     }
 
 
@@ -118,7 +118,7 @@ public class GLSLProgram {
             nsamplers++;
         }
 
-        sv.glHandle = GLES20.glGetUniformLocation(glHandle, sv.name);
+        sv.glHandle = GLES30.glGetUniformLocation(glHandle, sv.name);
         uniforms.put(sv.name, sv);
     }
 
@@ -137,34 +137,34 @@ public class GLSLProgram {
      */
     private static int createAndLinkProgram(final int vertexShaderHandle,
                                             final int fragmentShaderHandle, final String[] attributes) {
-        int programHandle = GLES20.glCreateProgram();
+        int programHandle = GLES30.glCreateProgram();
 
         if (programHandle != 0) {
             //Bind the vertex shader to the program.
-            GLES20.glAttachShader(programHandle, vertexShaderHandle);
+            GLES30.glAttachShader(programHandle, vertexShaderHandle);
 
             //Bind the fragment shader to the program.
-            GLES20.glAttachShader(programHandle, fragmentShaderHandle);
+            GLES30.glAttachShader(programHandle, fragmentShaderHandle);
 
             //Bind attributes
             if (attributes != null) {
                 final int size = attributes.length;
                 for (int i = 0; i < size; i++) {
-                    GLES20.glBindAttribLocation(programHandle, i, attributes[i]);
+                    GLES30.glBindAttribLocation(programHandle, i, attributes[i]);
                 }
             }
 
             //Link the two shaders together into a program.
-            GLES20.glLinkProgram(programHandle);
+            GLES30.glLinkProgram(programHandle);
 
             //Get the link status.
             final int[] linkStatus = new int[1];
-            GLES20.glGetProgramiv(programHandle, GLES20.GL_LINK_STATUS, linkStatus, 0);
+            GLES30.glGetProgramiv(programHandle, GLES30.GL_LINK_STATUS, linkStatus, 0);
 
             //If the link failed, delete the program.
             if (linkStatus[0] == 0) {
-                Logger.log("Error compiling program: " + GLES20.glGetProgramInfoLog(programHandle));
-                GLES20.glDeleteProgram(programHandle);
+                Logger.log("Error compiling program: " + GLES30.glGetProgramInfoLog(programHandle));
+                GLES30.glDeleteProgram(programHandle);
                 programHandle = 0;
             }
         }

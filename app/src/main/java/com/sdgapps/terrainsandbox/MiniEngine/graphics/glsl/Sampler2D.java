@@ -1,7 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
-import android.opengl.GLES20;
-
+import android.opengl.GLES30;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
 
 /**
@@ -25,9 +24,9 @@ public class Sampler2D extends ShaderUniform {
     public void bind()
     {
         if(mTexture!=null) {
-            GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + activeTarget);
-            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTexture.glID);
-            GLES20.glUniform1i(glHandle, activeTarget);
+            GLES30.glActiveTexture(GLES30.GL_TEXTURE0 + activeTarget);
+            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, mTexture.glID);
+            GLES30.glUniform1i(glHandle, activeTarget);
         }
     }
 }
