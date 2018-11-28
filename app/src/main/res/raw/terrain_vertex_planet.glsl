@@ -35,11 +35,12 @@ out vec4 depthPosition;
 out float distancef;
 out vec3 barycentric;
 out float morph;
-out vec3 vertColor;
+out vec4 vertColor;
 out float incidenceAngle;
 
-const float _TransitionWidth = 0.1;
-const float _FresnelExponent = 0.1;
+const float _TransitionWidth = .03;
+const float _FresnelExponent = .1;
+const float atmoBorderWidth=1.9;
 #define PI 3.14159265;
 
 // 1/(size of the texture) = the value to move one pixel up/down/left/right
@@ -104,6 +105,7 @@ vec4 applyHeightmapToSpherizedPoint(in vec4 p, in float heightValue)
     return vec4(p.xyz + radiusVector * heightValue,1.0);
 }
 
+
 void calcAtmosphereValues(in vec4 eyepos, in vec3 eyenormal)
 {
     vec3 viewDirection = normalize(-eyepos.xyz);
@@ -115,7 +117,7 @@ void calcAtmosphereValues(in vec4 eyepos, in vec3 eyenormal)
     float shadeFactor = 0.1 * (1.0 - incidenceAngle) + 0.9 * (1.0 - (clamp(incidenceAngle, 0.5, 0.5 + _TransitionWidth) - 0.5) / _TransitionWidth);
     float angleToViewer = sin(acos(dot(eyenormal, viewDirection)));
     float perspectiveFactor = 0.3 + 0.2 * pow(angleToViewer, _FresnelExponent) + 0.5 * pow(angleToViewer, _FresnelExponent * 20.0);
-    vertColor = ambientLight * shadeFactor*perspectiveFactor;
+    vertColor = vec4(ambientLight * shadeFactor*perspectiveFactor,atmoBorderWidth-angleToViewer);
 }
 
 //morph original height with the fully morphed height using the morphLerpK value

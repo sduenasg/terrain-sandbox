@@ -32,7 +32,7 @@ void main()
     // this ramp function lights up edges, especially the very edges of the sphere contour
     float perspectiveFactor = 0.3 + 0.2 * pow(angleToViewer, _FresnelExponent) + 0.5 * pow(angleToViewer, _FresnelExponent * 20.0);
 
-    col = vec4(u_atmosphere_color * perspectiveFactor * shadeFactor,(1.0-angleToViewer)*10.0);
+    col = vec4(u_atmosphere_color * perspectiveFactor * shadeFactor,(1.0-angleToViewer)*20.0);
     gl_Position = u_MVPMatrix * a_Position;
 }
 

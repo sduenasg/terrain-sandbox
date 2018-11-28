@@ -90,11 +90,10 @@ public class Planet extends Renderer implements TerrainInterface {
     private static final float morphstartratio = .1f;
 //1 54 119
    // public Color4f atmosphereColor = new Color4f(219, 246, 254, 1);
-    public Color4f atmosphereColor = new Color4f(12, 153, 251, 1);
+    public Color4f atmosphereColor = new Color4f(218, 220, 255, 1);
     private float atmosphereRadius;
-    private Vec3f worldSpaceCenter;
     private float planetRadius;
-    private float sqAtmosphereRadius;
+
 
     private static final String planetShaderID = "IDPlanetShader";
     private static final String planetShadowedID = "IDPlanetShadowedShader";
@@ -200,8 +199,6 @@ public class Planet extends Renderer implements TerrainInterface {
 
         planetRadius = terrainXZ / 2f;
         atmosphereRadius = planetRadius * 1.05f;
-        sqAtmosphereRadius = atmosphereRadius * atmosphereRadius;
-        worldSpaceCenter = new Vec3f(planetRadius, 0, planetRadius);
 
         //positioning of each cube face
         planetChunkN.transform.translate(0, planetRadius, 0);

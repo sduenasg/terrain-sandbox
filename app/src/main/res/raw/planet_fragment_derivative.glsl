@@ -31,7 +31,7 @@ in vec4 depthPosition;
 in vec3 barycentric;
 in float distancef;
 in float morph;
-in vec3 vertColor;
+in vec4 vertColor;
 in float incidenceAngle;
 
 out vec4 fragColor;
@@ -185,18 +185,21 @@ void main()
         //vec3 h = normalize(l+E); //half dir = lightdir + eyedir
         vec3 r = normalize(-reflect(l,n));
         const float shininess = 50.0;
-        const vec3 specularColor=vec3(1.0,1.0,1.0);
+        const vec3 specularColor=vec3(0.980, 0.922 , 0.608);
         //Specular term
-        vec3 Ispec = max(splatvalue.b,0.1)*ambientLight* pow(max(dot(r,E),0.0) , shininess);
+        vec3 Ispec = max(splatvalue.b,0.1)*specularColor* pow(max(dot(r,E),0.0) , shininess);
 
         float lightDot = dot(n,l);
         vec3 Idiff = colorMap * lightDot;
-        vec3 diffspec = Idiff+Ispec;
+        vec3 diffspec = Idiff*0.7+Ispec*0.3;
 
         vec2 gradientLevel = vec2(incidenceAngle, 0);
-        vec3 atmocol = vertColor.rgb* texture(u_atmoGradient, gradientLevel).rgb* 1.4;
-        atmocol=mix(atmocol,diffspec,0.8);
-        vec3 baseColor = mix(atmocol,diffspec, clamp(lightDot,0.0,1.0));
+        vec3 atmocol = vertColor.rgb * texture(u_atmoGradient, gradientLevel).rgb;
+
+        float atmofactor=clamp(vertColor.a,0.0,1.0);
+        atmocol=atmocol*atmofactor+diffspec*(1.0-atmofactor);//mix(atmocol,diffspec,0.9);
+
+        vec3 baseColor = mix(atmocol,diffspec, atmofactor);
         //vec3 baseColor = mix(atmocol,diffspec, vertColor.a);
         if((range.z==3.0 || range.z==7.0 )){ //wire + solid (texured or not)
            #ifdef GL_OES_standard_derivatives
