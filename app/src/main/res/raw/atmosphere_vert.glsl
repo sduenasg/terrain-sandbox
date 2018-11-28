@@ -1,6 +1,7 @@
-attribute vec4 a_Position;
-attribute vec4 a_Normal;
-attribute vec2 a_TexCoordinate;
+#version 300 es
+in vec4 a_Position;
+in vec4 a_Normal;
+in vec2 a_TexCoordinate;
 
 uniform mat4  u_Modelmatrix;
 uniform mat4  u_MVPMatrix;
@@ -8,8 +9,8 @@ uniform vec3  camPos;
 uniform vec3  lightPos;
 uniform vec3  u_atmosphere_color;
 
-varying float incidenceAngle;
-varying vec4 col;
+out float incidenceAngle;
+out vec4 col;
 
 float _TransitionWidth = 0.1;
 float _FresnelExponent = 0.1;
@@ -31,7 +32,7 @@ void main()
     // this ramp function lights up edges, especially the very edges of the sphere contour
     float perspectiveFactor = 0.3 + 0.2 * pow(angleToViewer, _FresnelExponent) + 0.5 * pow(angleToViewer, _FresnelExponent * 20.0);
 
-    col = vec4(u_atmosphere_color * perspectiveFactor * shadeFactor,(1.0-angleToViewer)*20.0);
+    col = vec4(u_atmosphere_color * perspectiveFactor * shadeFactor,(1.0-angleToViewer)*10.0);
     gl_Position = u_MVPMatrix * a_Position;
 }
 

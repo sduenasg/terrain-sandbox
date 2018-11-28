@@ -32,9 +32,8 @@ public class PlanetShader extends GLSLProgram {
         Sampler2D colormap=new Sampler2D("u_colorMap");
         Sampler2D normalmap=new Sampler2D("u_normalMap");
         Sampler2D splatmap=new Sampler2D("u_splatMap");
-        Sampler2D splatSheet=new Sampler2D("u_splatSheet");
         Sampler2D splatarray=new Sampler2D("u_splatArray");
-
+        Sampler2D gradient=new Sampler2D("u_atmoGradient");
         //uniforms
         ShaderUniform1f CDLODQuadScale = new ShaderUniform1f("quad_scale");
         ShaderUniform3F CDLODrange = new ShaderUniform3F("range");
@@ -64,8 +63,8 @@ public class PlanetShader extends GLSLProgram {
         addUniform(colormap);
         addUniform(normalmap);
         addUniform(splatmap);
-        addUniform(splatSheet);
         addUniform(splatarray);
+        addUniform(gradient);
 
         addUniform(CDLODQuadScale);
         addUniform(CDLODrange);

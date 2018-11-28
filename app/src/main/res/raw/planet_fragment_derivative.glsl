@@ -16,7 +16,7 @@ uniform sampler2D u_normalMap;
 uniform sampler2D u_splatMap;
 uniform sampler2D u_splatSheet;
 uniform sampler2DArray u_splatArray;
-
+uniform sampler2D u_atmoGradient;
 uniform float zfar;
 uniform float lodlevel;
 uniform vec3 ambientLight;
@@ -25,13 +25,16 @@ uniform vec3 u_LightPos; //in eye space
 uniform mat4 u_MVMatrix;
 uniform vec3 range;
 
-varying vec2 v_TexCoordinate;
-varying vec4 v_Position;
-varying vec4 depthPosition;
-varying vec3 barycentric;
-varying float distancef;
-varying float morph;
-varying vec3 vertColor;
+in vec2 v_TexCoordinate;
+in vec4 v_Position;
+in vec4 depthPosition;
+in vec3 barycentric;
+in float distancef;
+in float morph;
+in vec3 vertColor;
+in float incidenceAngle;
+
+out vec4 fragColor;
 
 const float shininess = 5.0;
 const vec3 specularColor = vec3(0.5, 0.5, 0.5);
@@ -55,7 +58,7 @@ vec3 getNormal(vec2 v) {
     The normal map is baked on Blender (object space normal map). Coordinates there are
     different than here (.xzy, y=-yb)
     */
-    vec3 nobj = texture2D( u_normalMap, v).xzy *2.0 - 1.0;
+    vec3 nobj = texture( u_normalMap, v).xzy *2.0 - 1.0;
     nobj.y = -nobj.y;
     nobj = ( u_MVMatrix * vec4(nobj, 0.0)).xyz;
 	return normalize(nobj);
@@ -96,23 +99,33 @@ float edgeFactor(){
 
 vec3 getSplatSheetColor(vec4 splatWeights)
 {
-    /*Array texture for the detail maps: Atlassing:
+    /*Array texture for the detail maps:
     Pros: Avoid a thousand problems related to atlassing, mipmapping and linear interpolation
     Cons: OpenGL ES 3.0 required
     */
-    vec2 coords = fract(v_TexCoordinate * 200.0);
+    vec2 coords = fract(v_TexCoordinate * 800.0);
+    vec2 coords2 = fract(v_TexCoordinate * 400.0).yx; //rotated and scaled to minimize tiling by mixing
 
     vec3 grassvalue=texture( u_splatArray  , vec3(coords,0.0)).rgb;
     vec3 snowvalue=texture(  u_splatArray  , vec3(coords,2.0)).rgb;
     vec3 watervalue=texture( u_splatArray  , vec3(coords,3.0)).rgb;
     vec3 cliffsvalue=texture(u_splatArray  , vec3(coords,1.0)).rgb;
 
+    vec3 grassvalue2=texture( u_splatArray  , vec3(coords2,0.0)).rgb;
+    vec3 snowvalue2=texture(  u_splatArray  , vec3(coords2,2.0)).rgb;
+    vec3 watervalue2=texture( u_splatArray  , vec3(coords2,3.0)).rgb;
+    vec3 cliffsvalue2=texture(u_splatArray  , vec3(coords2,1.0)).rgb;
+
     vec3 outcolor = splatWeights.r * grassvalue +
                     splatWeights.g * cliffsvalue+
                     splatWeights.b * watervalue +
                     splatWeights.a * snowvalue;
+    vec3 outcolor2=splatWeights.r * grassvalue2 +
+                   splatWeights.g * cliffsvalue2+
+                   splatWeights.b * watervalue2 +
+                   splatWeights.a * snowvalue2;
     //return cliffsvalue;
-    return outcolor;
+    return mix(outcolor,outcolor2,0.5);
 }
 
 void main()
@@ -126,28 +139,29 @@ void main()
         wirecolor=getWireColor();
         mixedColor= u_Fogcolor;
         wirecolor=mix(wirecolor, mixedColor, edgeFactor());
-        gl_FragColor =  vec4(mix(u_Fogcolor,wirecolor, fogFactor).xyz,1.0); //<-
+        fragColor =  vec4(mix(u_Fogcolor,wirecolor, fogFactor).xyz,1.0); //<-
     #else
         if(any(lessThan(barycentric, vec3(linewidth))))
         {
             wirecolor=getWireColor();
-            gl_FragColor =  vec4(mix(u_Fogcolor,wirecolor, fogFactor).xyz,1.0); //<-
+            fragColor =  vec4(mix(u_Fogcolor,wirecolor, fogFactor).xyz,1.0); //<-
         }
         else
         {
-            gl_FragColor = vec4(u_Fogcolor,1.0);
+            fragColor = vec4(u_Fogcolor,1.0);
         }
     #endif
     }
     else
     {
-        vec3 n = getNormal(v_TexCoordinate);
+
 
         vec3 colorMap;
         if(range.z==3.0 || range.z==1.0)
             colorMap = vec3(0.8,0.8,0.8); //no color texture
         else
             colorMap = texture(u_colorMap, v_TexCoordinate).rgb;
+
 
         vec4 splatvalue=texture(u_splatMap,v_TexCoordinate);
 
@@ -156,35 +170,50 @@ void main()
         splatvalue.g/=splatvalue.a;
         splatvalue.b/=splatvalue.a;
 
-        colorMap*=3.0*getSplatSheetColor(splatvalue);
-
+        vec3 splatcolor=getSplatSheetColor(splatvalue);
+        colorMap*=3.0*splatcolor;
+        //n=normalize(n+splatcolor);
         /*//debug the splatmap with solid colors
        colorMap =  splatvalue.r * rcolor +
                     splatvalue.g * gcolor +
                     splatvalue.b * bcolor +
                     splatvalue.a * acolor;*/
 
+        vec3 n = getNormal(v_TexCoordinate);
         vec3 l = normalize(u_LightPos - v_Position.xyz);
+        vec3 E = normalize(-v_Position.xyz);   // we are in Eye Coordinates, so EyePos is (0,0,0)
+        //vec3 h = normalize(l+E); //half dir = lightdir + eyedir
+        vec3 r = normalize(-reflect(l,n));
+        const float shininess = 50.0;
+        const vec3 specularColor=vec3(1.0,1.0,1.0);
+        //Specular term
+        vec3 Ispec = max(splatvalue.b,0.1)*ambientLight* pow(max(dot(r,E),0.0) , shininess);
+
         float lightDot = dot(n,l);
         vec3 Idiff = colorMap * lightDot;
-        vec3 baseColor = mix(Idiff*vertColor,Idiff,clamp(lightDot,0.0,1.0));
+        vec3 diffspec = Idiff+Ispec;
 
+        vec2 gradientLevel = vec2(incidenceAngle, 0);
+        vec3 atmocol = vertColor.rgb* texture(u_atmoGradient, gradientLevel).rgb* 1.4;
+        atmocol=mix(atmocol,diffspec,0.8);
+        vec3 baseColor = mix(atmocol,diffspec, clamp(lightDot,0.0,1.0));
+        //vec3 baseColor = mix(atmocol,diffspec, vertColor.a);
         if((range.z==3.0 || range.z==7.0 )){ //wire + solid (texured or not)
            #ifdef GL_OES_standard_derivatives
                wirecolor=mix(getWireColor(), baseColor.rgb, edgeFactor());
-               gl_FragColor =  vec4(mix(u_Fogcolor,wirecolor, fogFactor),1.0); //<-
+               fragColor =  vec4(mix(u_Fogcolor,wirecolor, fogFactor),1.0); //<-
            #else
                if(any(lessThan(barycentric, vec3(linewidth)))){
                   wirecolor=getWireColor();
-                  gl_FragColor =  vec4(mix(u_Fogcolor,wirecolor,fogFactor),1.0);
+                  fragColor =  vec4(mix(u_Fogcolor,wirecolor,fogFactor),1.0);
                }
                else{
-                  gl_FragColor =  vec4(mix(u_Fogcolor, baseColor, fogFactor),1.0);
+                  fragColor =  vec4(mix(u_Fogcolor, baseColor, fogFactor),1.0);
                }
            #endif
         }
         else{ //solid, no wire
-           gl_FragColor =  vec4(mix (u_Fogcolor, baseColor, fogFactor),1.0); //<-
+           fragColor =  vec4(mix (u_Fogcolor, baseColor, fogFactor),1.0); //<-
         }
     }
 }

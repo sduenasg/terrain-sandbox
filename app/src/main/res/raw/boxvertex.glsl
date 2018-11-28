@@ -1,5 +1,7 @@
+#version 300 es
+
 uniform mat4 u_MVPMatrix;
-attribute vec4 a_Position;
+in vec4 a_Position;
 
 void main()
 {

@@ -36,8 +36,6 @@ public class TerrainData {
     Texture[] TexSplatMaps;
 
     Texture TexArraySplat;
-    Texture TexSplatSheet;
-    String splatSheet;
 
     public TerrainData(String file, Resources res) {
         int resid = AndroidUtils.getResId(file, R.raw.class);
@@ -84,8 +82,7 @@ public class TerrainData {
                 splatMaps.addAll(Arrays.asList(values).subList(1, values.length));
             }
             else if (ln.contains("#ssheet")) {
-                splatSheet=values[1];
-                for(int i=2;i<values.length;i++)
+                for(int i=1;i<values.length;i++)
                     textureArraySplat.add(values[i]);
             }
         }
@@ -112,7 +109,6 @@ public class TerrainData {
             TexSplatMaps[i] = TextureManagerGL.addTexture(splatMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP, res, false);
         }
 
-        TexSplatSheet=TextureManagerGL.addTexture(splatSheet, true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP, res, false);
 
         TexArraySplat=TextureManagerGL.addArrayTexture(textureArraySplat.toArray(new String[textureArraySplat.size()]),true,false,Texture.FILTER_LINEAR,Texture.WRAP_REPEAT,res);
     }

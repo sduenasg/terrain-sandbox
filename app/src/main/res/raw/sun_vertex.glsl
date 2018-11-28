@@ -1,6 +1,7 @@
+#version 300 es
 uniform mat4 u_MVMatrix;
 uniform mat4 u_Projectionmatrix;
-attribute vec4 a_Position;
+in vec4 a_Position;
 
 void main()
 {

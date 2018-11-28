@@ -88,9 +88,9 @@ public class Planet extends Renderer implements TerrainInterface {
     private final int rangeDistMin = 1;
     private final int rangeDistSteps = 10;//number of steps between rangeDistMin and rangeDistMax
     private static final float morphstartratio = .1f;
-
-    public Color4f atmosphereColor = new Color4f(219, 246, 254, 1);
-
+//1 54 119
+   // public Color4f atmosphereColor = new Color4f(219, 246, 254, 1);
+    public Color4f atmosphereColor = new Color4f(12, 153, 251, 1);
     private float atmosphereRadius;
     private Vec3f worldSpaceCenter;
     private float planetRadius;
@@ -165,13 +165,6 @@ public class Planet extends Renderer implements TerrainInterface {
         materialC.addTexture(data.TexSplatMaps[1],splatmapUniformName);
         materialD.addTexture(data.TexSplatMaps[4],splatmapUniformName);
 
-        materialN.addTexture(data.TexSplatSheet,splatsheetUniformName);
-        materialS.addTexture(data.TexSplatSheet,splatsheetUniformName);
-        materialA.addTexture(data.TexSplatSheet,splatsheetUniformName);
-        materialB.addTexture(data.TexSplatSheet,splatsheetUniformName);
-        materialC.addTexture(data.TexSplatSheet,splatsheetUniformName);
-        materialD.addTexture(data.TexSplatSheet,splatsheetUniformName);
-
         materialN.addTexture(data.TexArraySplat,splatarrayUniformName);
         materialS.addTexture(data.TexArraySplat,splatarrayUniformName);
         materialA.addTexture(data.TexArraySplat,splatarrayUniformName);
@@ -179,6 +172,12 @@ public class Planet extends Renderer implements TerrainInterface {
         materialC.addTexture(data.TexArraySplat,splatarrayUniformName);
         materialD.addTexture(data.TexArraySplat,splatarrayUniformName);
 
+        materialN.addTexture(AppTextureManager.atmosphereGradient,"u_atmoGradient");
+        materialS.addTexture(AppTextureManager.atmosphereGradient,"u_atmoGradient");
+        materialA.addTexture(AppTextureManager.atmosphereGradient,"u_atmoGradient");
+        materialB.addTexture(AppTextureManager.atmosphereGradient,"u_atmoGradient");
+        materialC.addTexture(AppTextureManager.atmosphereGradient,"u_atmoGradient");
+        materialD.addTexture(AppTextureManager.atmosphereGradient,"u_atmoGradient");
         terrainXZ = rootQuadScale * gridSize;
 
         float maxverts = (float) Math.sqrt(Math.pow(4, nLods - 1) * (gridSize + 1) * (gridSize + 1));
@@ -200,7 +199,7 @@ public class Planet extends Renderer implements TerrainInterface {
         cube = new CDLODQuadTree[6];
 
         planetRadius = terrainXZ / 2f;
-        atmosphereRadius = planetRadius * 1.04f;
+        atmosphereRadius = planetRadius * 1.05f;
         sqAtmosphereRadius = atmosphereRadius * atmosphereRadius;
         worldSpaceCenter = new Vec3f(planetRadius, 0, planetRadius);
 

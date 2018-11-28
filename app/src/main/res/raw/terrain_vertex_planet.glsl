@@ -1,3 +1,4 @@
+#version 300 es
 #ifdef GL_FRAGMENT_PRECISION_HIGH
     precision highp float;
 #else
@@ -10,8 +11,8 @@
 *Vertex shaders default to highp if no precision is declared
 *Fragment shaders don't have a default precision, it's mandatory to declare it
 */
-attribute vec2 a_gridPosition; //position of this vertex in the vertex grid range: [0,gridSize]
-attribute vec3 a_barycentric;
+in vec2 a_gridPosition; //position of this vertex in the vertex grid range: [0,gridSize]
+in vec3 a_barycentric;
 
 //basic uniforms
 uniform mat4 u_MVPMatrix;
@@ -20,7 +21,6 @@ uniform vec3 u_LightPos; //Light position in eye space
 
 // terrain CDLOD
 uniform sampler2D u_heightMap;
-
 uniform float gridDim;
 uniform float quad_scale; //Quad size of the current lod grid mesh
 uniform vec3 range; //x= range, y= 1/(morphend-morphstart) - current range distance inverted
@@ -29,13 +29,14 @@ uniform vec3 meshInfo; //x=meshSize in distance units, y=patch size in distance 
 uniform vec3 nodeoffset;//position offset of the patch this vertex belongs to
 uniform vec3 ambientLight;
 
-varying vec4 v_Position;
-varying vec2 v_TexCoordinate;
-varying vec4 depthPosition;
-varying float distancef;
-varying vec3 barycentric;
-varying float morph;
-varying vec3 vertColor;
+out vec4 v_Position;
+out vec2 v_TexCoordinate;
+out vec4 depthPosition;
+out float distancef;
+out vec3 barycentric;
+out float morph;
+out vec3 vertColor;
+out float incidenceAngle;
 
 const float _TransitionWidth = 0.1;
 const float _FresnelExponent = 0.1;
@@ -48,10 +49,10 @@ const float textureSize=2080.0;
 // Bilinear texture sampling for the morphed areas (deprecated)
 float texture2D_bilinear(in sampler2D t, in vec2 uv)
 {
-    float center = texture2D(t, uv).r;
-    float right= texture2D(t, uv + vec2(texelSize, 0.0)).r;
-    float top = texture2D(t, uv + vec2(0.0, texelSize)).r;
-    float topright = texture2D(t, uv + vec2(texelSize, texelSize)).r;
+    float center = texture(t, uv).r;
+    float right= texture(t, uv + vec2(texelSize, 0.0)).r;
+    float top = texture(t, uv + vec2(0.0, texelSize)).r;
+    float topright = texture(t, uv + vec2(texelSize, texelSize)).r;
     vec2 f = fract( uv * textureSize );
     float tA = mix( center, right, f.x );
     float tB = mix( top, topright, f.x );
@@ -65,7 +66,7 @@ float getHeightuv(in vec2 uv, in bool usefilter) {
     /*if(usefilter)
         heightmap = texture2D_bilinear(u_heightMap,uv);//bilinear sample
     else*/
-        heightmap = texture2D(u_heightMap, uv).r;//make sure the heightmaps are loaded with the NEAREST mode(no filter)
+        heightmap = texture(u_heightMap, uv).r;//make sure the heightmaps are loaded with the NEAREST mode(no filter)
 	return meshInfo.z * heightmap;
 }
 
@@ -109,12 +110,12 @@ void calcAtmosphereValues(in vec4 eyepos, in vec3 eyenormal)
     vec3 lightDirection = normalize(u_LightPos-eyepos.xyz);
 
     // assuming the object is a sphere, the angles between normals and light determines the positions on the sphere
-    float incidenceAngle = acos(dot(lightDirection, eyenormal)) / PI;
+    incidenceAngle = acos(dot(lightDirection, eyenormal)) / PI;
     // shade atmosphere according to this ramp function from 0 to 180 degrees
     float shadeFactor = 0.1 * (1.0 - incidenceAngle) + 0.9 * (1.0 - (clamp(incidenceAngle, 0.5, 0.5 + _TransitionWidth) - 0.5) / _TransitionWidth);
     float angleToViewer = sin(acos(dot(eyenormal, viewDirection)));
     float perspectiveFactor = 0.3 + 0.2 * pow(angleToViewer, _FresnelExponent) + 0.5 * pow(angleToViewer, _FresnelExponent * 20.0);
-    vertColor = ambientLight *abs(shadeFactor*perspectiveFactor);
+    vertColor = ambientLight * shadeFactor*perspectiveFactor;
 }
 
 //morph original height with the fully morphed height using the morphLerpK value
