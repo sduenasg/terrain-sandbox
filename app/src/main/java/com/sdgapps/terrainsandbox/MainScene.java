@@ -9,7 +9,11 @@ import com.sdgapps.terrainsandbox.MiniEngine.Scene;
 import com.sdgapps.terrainsandbox.MiniEngine.behaviours.*;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.*;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture2D;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManagerGL;
 import com.sdgapps.terrainsandbox.MiniEngine.terrain.*;
+import com.sdgapps.terrainsandbox.shaders.SkyboxProgram;
 import com.sdgapps.terrainsandbox.shaders.SunProgram;
 
 public class MainScene extends Scene implements SceneInterface {
@@ -40,7 +44,7 @@ public class MainScene extends Scene implements SceneInterface {
         mTerrainData.LoadTextures(res);
 
         if (mTerrainData.isPlanetaryScene())
-            SetupPlanetScene(mTerrainData);
+            SetupPlanetScene(res,mTerrainData);
         else
             SetupFlatScene(res, mTerrainData);
     }
@@ -49,7 +53,7 @@ public class MainScene extends Scene implements SceneInterface {
 
     }
 
-    private void SetupPlanetScene(TerrainData terrainData) {
+    private void SetupPlanetScene(Resources res,TerrainData terrainData) {
         /*Camera initialization*/
         GameObject camGO = new GameObject();
 
@@ -75,6 +79,19 @@ public class MainScene extends Scene implements SceneInterface {
         sunMaterial.shader = SunProgram.createInstance("sunshader");
         sunGO.add(new CircleBillboard(30,defaultFB,sunMaterial,10000000));
         Singleton.systems.mainLight = sun;
+
+        /*Skybox initialization*/
+        GameObject skyboxGO=new GameObject();
+        Skybox skyboxBehavior=new Skybox();
+        Material skyboxMaterial=new Material();
+        skyboxMaterial.shader=SkyboxProgram.createInstance("skyboxshader");
+        skyboxBehavior.material=skyboxMaterial;
+        skyboxGO.add(skyboxBehavior);
+
+        String[] skyboxtextures=new String[]{"stars.png","stars.png","stars.png","stars.png","stars.png","stars.png"};
+        Texture skyboxtex = TextureManagerGL.addCubeTexture(skyboxtextures, res);
+        skyboxMaterial.addTexture(skyboxtex,"skyboxTex");
+        add(skyboxGO);
 
         /*Terrain initialization*/
         Planet planet = new Planet();

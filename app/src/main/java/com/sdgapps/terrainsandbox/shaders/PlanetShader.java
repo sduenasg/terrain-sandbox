@@ -2,6 +2,7 @@ package com.sdgapps.terrainsandbox.shaders;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Sampler2D;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Sampler2DArray;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform1f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3F;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
@@ -32,7 +33,7 @@ public class PlanetShader extends GLSLProgram {
         Sampler2D colormap=new Sampler2D("u_colorMap");
         Sampler2D normalmap=new Sampler2D("u_normalMap");
         Sampler2D splatmap=new Sampler2D("u_splatMap");
-        Sampler2D splatarray=new Sampler2D("u_splatArray");
+        Sampler2DArray splatarray=new Sampler2DArray("u_splatArray");
         Sampler2D gradient=new Sampler2D("u_atmoGradient");
         //uniforms
         ShaderUniform1f CDLODQuadScale = new ShaderUniform1f("quad_scale");

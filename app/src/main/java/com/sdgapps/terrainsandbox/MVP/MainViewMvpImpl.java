@@ -285,10 +285,6 @@ public class MainViewMvpImpl implements MainViewMvp,
         CompoundButton wireframeSwitchView = (CompoundButton) MenuItemCompat.getActionView(wireframeSwitchItem);
         wireframeSwitchView.setOnCheckedChangeListener(null);
 
-        MenuItem solidSwitchItem = mNavView.getMenu().findItem(R.id.solid);
-        CompoundButton solidSwitchView = (CompoundButton) MenuItemCompat.getActionView(solidSwitchItem);
-        solidSwitchView.setOnCheckedChangeListener(null);
-
         MenuItem debugSwitchItem = mNavView.getMenu().findItem(R.id.debug);
         CompoundButton debugSwitchView = (CompoundButton) MenuItemCompat.getActionView(debugSwitchItem);
         debugSwitchView.setOnCheckedChangeListener(null);
@@ -445,14 +441,6 @@ public class MainViewMvpImpl implements MainViewMvp,
             }
         });
 
-        MenuItem solidSwitchItem = mNavView.getMenu().findItem(R.id.solid);
-        CompoundButton solidSwitchView = (CompoundButton) MenuItemCompat.getActionView(solidSwitchItem);
-        solidSwitchView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mListener.onSolidModeClicked(isChecked);
-            }
-        });
 
         MenuItem debugSwitchItem = mNavView.getMenu().findItem(R.id.debug);
         CompoundButton debugSwitchView = (CompoundButton) MenuItemCompat.getActionView(debugSwitchItem);

@@ -12,7 +12,7 @@ precision mediump float;
 
 uniform sampler2D u_colorMap;  //color map
 uniform sampler2D u_heightMap; //heightmap (for debugging)
-uniform sampler2D u_normalMap;
+//uniform sampler2D u_normalMap;
 uniform sampler2D u_splatMap;
 uniform sampler2D u_splatSheet;
 uniform sampler2DArray u_splatArray;
@@ -33,13 +33,13 @@ in float distancef;
 in float morph;
 in vec4 vertColor;
 in float incidenceAngle;
-
+in vec3 v_normal;
 out vec4 fragColor;
 
 const float shininess = 5.0;
 const vec3 specularColor = vec3(0.5, 0.5, 0.5);
 const float fogScale=0.6;
-const float detailThreshold = 0.59;
+
 const float detailTextureMult = 100.0;
 
 //usethe splat map with these flat colors instead of textures for testing
@@ -47,22 +47,22 @@ const vec3 rcolor=vec3(0.0,1.0,0.0);
 const vec3 gcolor=vec3(0.27,0.21,0.13);//cliffs
 const vec3 bcolor=vec3(0.0,0.0,1.0);
 const vec3 acolor=vec3(1.0,1.0,1.0);
-
+const float detailThreshold = 0.99;//distance [0,1] threshold at which detail will start showing
 // Functions
 float calcFogLinear(float distanceToEye);
 float calcFogExp(float distanceToEye);
 vec3 getNormal(vec2 v);
-
+/*
 vec3 getNormal(vec2 v) {
-    /*
-    The normal map is baked on Blender (object space normal map). Coordinates there are
-    different than here (.xzy, y=-yb)
-    */
+
+    //The normal map is baked on Blender (object space normal map). Coordinates there are
+    //different than here (.xzy, y=-yb)
+
     vec3 nobj = texture( u_normalMap, v).xzy *2.0 - 1.0;
     nobj.y = -nobj.y;
     nobj = ( u_MVMatrix * vec4(nobj, 0.0)).xyz;
 	return normalize(nobj);
-}
+}*/
 
 float calcFogLinear(float distanceToEye)
 {
@@ -99,12 +99,13 @@ float edgeFactor(){
 
 vec3 getSplatSheetColor(vec4 splatWeights)
 {
+
     /*Array texture for the detail maps:
     Pros: Avoid a thousand problems related to atlassing, mipmapping and linear interpolation
     Cons: OpenGL ES 3.0 required
     */
-    vec2 coords = fract(v_TexCoordinate * 800.0);
-    vec2 coords2 = fract(v_TexCoordinate * 400.0).yx; //rotated and scaled to minimize tiling by mixing
+    vec2 coords = fract(v_TexCoordinate * 1200.0);
+    vec2 coords2 = fract(v_TexCoordinate * 600.0).yx; //rotated and scaled to minimize tiling by mixing
 
     vec3 grassvalue=texture( u_splatArray  , vec3(coords,0.0)).rgb;
     vec3 snowvalue=texture(  u_splatArray  , vec3(coords,2.0)).rgb;
@@ -133,91 +134,75 @@ void main()
     float fogFactor = calcFogLinear(distancef);
     vec3 wirecolor;
     vec3 mixedColor;
-    if(range.z==2.0 ||range.z==6.0)//wireframe, no solid
-    {
-    #ifdef GL_OES_standard_derivatives
-        wirecolor=getWireColor();
-        mixedColor= u_Fogcolor;
-        wirecolor=mix(wirecolor, mixedColor, edgeFactor());
-        fragColor =  vec4(mix(u_Fogcolor,wirecolor, fogFactor).xyz,1.0); //<-
-    #else
-        if(any(lessThan(barycentric, vec3(linewidth))))
-        {
-            wirecolor=getWireColor();
-            fragColor =  vec4(mix(u_Fogcolor,wirecolor, fogFactor).xyz,1.0); //<-
-        }
-        else
-        {
-            fragColor = vec4(u_Fogcolor,1.0);
-        }
-    #endif
-    }
+    vec3 colorMap;
+
+    if(range.z==3.0 || range.z==1.0)
+        colorMap = vec3(0.8,0.8,0.8); //no color texture
     else
-    {
+        colorMap = texture(u_colorMap, v_TexCoordinate).rgb;
 
+    vec4 splatvalue=texture(u_splatMap,v_TexCoordinate);
 
-        vec3 colorMap;
-        if(range.z==3.0 || range.z==1.0)
-            colorMap = vec3(0.8,0.8,0.8); //no color texture
-        else
-            colorMap = texture(u_colorMap, v_TexCoordinate).rgb;
+    //alpha comes in pre-multiplied from android. //TODO investigate
+    splatvalue.r/=splatvalue.a;
+    splatvalue.g/=splatvalue.a;
+    splatvalue.b/=splatvalue.a;
 
+    //avoiding the if statement (if depthValue>detailthresh)
+    float depthValue = depthPosition.z /depthPosition.w;
+    float detailFactor= (depthValue-detailThreshold)/(0.999-detailThreshold);
+    vec3 splatcolor=getSplatSheetColor(splatvalue);
 
-        vec4 splatvalue=texture(u_splatMap,v_TexCoordinate);
+    splatcolor=mix(2.0*splatcolor,vec3(1.0),clamp(detailFactor,0.0,1.0));
+    colorMap*=splatcolor;//apply the detail value
 
-        //alpha comes in pre-multiplied from android.
-        splatvalue.r/=splatvalue.a;
-        splatvalue.g/=splatvalue.a;
-        splatvalue.b/=splatvalue.a;
+    /*//debug the splatmap with solid colors
+   colorMap =  splatvalue.r * rcolor +
+                splatvalue.g * gcolor +
+                splatvalue.b * bcolor +
+                splatvalue.a * acolor;*/
 
-        vec3 splatcolor=getSplatSheetColor(splatvalue);
-        colorMap*=3.0*splatcolor;
-        //n=normalize(n+splatcolor);
-        /*//debug the splatmap with solid colors
-       colorMap =  splatvalue.r * rcolor +
-                    splatvalue.g * gcolor +
-                    splatvalue.b * bcolor +
-                    splatvalue.a * acolor;*/
+    vec3 n = v_normal;// getNormal(v_TexCoordinate);
+    vec3 l = normalize(u_LightPos - v_Position.xyz);
+    vec3 E = normalize(-v_Position.xyz);   // we are in Eye Coordinates, so EyePos is (0,0,0)
+    //vec3 h = normalize(l+E); //half dir = lightdir + eyedir
+    vec3 r = normalize(-reflect(l,n));
+    const float shininess = 50.0;
+    const vec3 specularColor=vec3(0.980, 0.922 , 0.608);
 
-        vec3 n = getNormal(v_TexCoordinate);
-        vec3 l = normalize(u_LightPos - v_Position.xyz);
-        vec3 E = normalize(-v_Position.xyz);   // we are in Eye Coordinates, so EyePos is (0,0,0)
-        //vec3 h = normalize(l+E); //half dir = lightdir + eyedir
-        vec3 r = normalize(-reflect(l,n));
-        const float shininess = 50.0;
-        const vec3 specularColor=vec3(0.980, 0.922 , 0.608);
-        //Specular term
-        vec3 Ispec = max(splatvalue.b,0.1)*specularColor* pow(max(dot(r,E),0.0) , shininess);
+    float specularity=splatvalue.b;//water
+    //Specular term
+    vec3 Ispec = max(splatvalue.b,0.1)*specularColor* pow(max(dot(r,E),0.0) , shininess);
 
-        float lightDot = dot(n,l);
-        vec3 Idiff = colorMap * lightDot;
-        vec3 diffspec = Idiff*0.7+Ispec*0.3;
+    float lightDot = dot(n,l);
+    vec3 Idiff = colorMap * lightDot;
+    vec3 diffspec = Idiff;//+Ispec;
 
-        vec2 gradientLevel = vec2(incidenceAngle, 0);
-        vec3 atmocol = vertColor.rgb * texture(u_atmoGradient, gradientLevel).rgb;
+    vec2 gradientLevel = vec2(incidenceAngle, 0);
+    vec3 atmocol = vertColor.rgb * texture(u_atmoGradient, gradientLevel).rgb;
 
-        float atmofactor=clamp(vertColor.a,0.0,1.0);
-        atmocol=atmocol*atmofactor+diffspec*(1.0-atmofactor);//mix(atmocol,diffspec,0.9);
+    float atmofactor=clamp(vertColor.a,0.0,1.0);
+    atmocol=atmocol*atmofactor+diffspec*(1.0-atmofactor);//mix(atmocol,diffspec,0.9);
 
-        vec3 baseColor = mix(atmocol,diffspec, atmofactor);
-        //vec3 baseColor = mix(atmocol,diffspec, vertColor.a);
-        if((range.z==3.0 || range.z==7.0 )){ //wire + solid (texured or not)
-           #ifdef GL_OES_standard_derivatives
-               wirecolor=mix(getWireColor(), baseColor.rgb, edgeFactor());
-               fragColor =  vec4(mix(u_Fogcolor,wirecolor, fogFactor),1.0); //<-
-           #else
-               if(any(lessThan(barycentric, vec3(linewidth)))){
-                  wirecolor=getWireColor();
-                  fragColor =  vec4(mix(u_Fogcolor,wirecolor,fogFactor),1.0);
-               }
-               else{
-                  fragColor =  vec4(mix(u_Fogcolor, baseColor, fogFactor),1.0);
-               }
-           #endif
-        }
-        else{ //solid, no wire
-           fragColor =  vec4(mix (u_Fogcolor, baseColor, fogFactor),1.0); //<-
-        }
+    vec3 baseColor = mix(atmocol,diffspec, atmofactor);
+
+    if((range.z==3.0 || range.z==7.0 )){ //wireframe
+       #ifdef GL_OES_standard_derivatives
+           wirecolor=mix(getWireColor(), baseColor.rgb, edgeFactor());
+           fragColor =  vec4(mix(u_Fogcolor,wirecolor, fogFactor),1.0); //<-
+       #else
+           if(any(lessThan(barycentric, vec3(linewidth)))){
+              wirecolor=getWireColor();
+              fragColor =  vec4(mix(u_Fogcolor,wirecolor,fogFactor),1.0);
+           }
+           else{
+              fragColor =  vec4(mix(u_Fogcolor, baseColor, fogFactor),1.0);
+           }
+       #endif
     }
+    else{ // no wireframe
+       fragColor =  vec4(mix (u_Fogcolor, baseColor, fogFactor),1.0); //<-
+    }
+
 }
 

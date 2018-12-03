@@ -15,11 +15,6 @@
                     app:actionLayout="@layout/widget_switch_off"
                     />
             <item
-                    android:title="@string/solid"
-                    android:id="@+id/solid"
-                    app:actionLayout="@layout/widget_switch_on"
-                    />
-            <item
                     android:title="@string/debug"
                     android:id="@+id/debug"
                     app:actionLayout="@layout/widget_switch_off"

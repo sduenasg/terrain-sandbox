@@ -21,6 +21,8 @@ uniform vec3 u_LightPos; //Light position in eye space
 
 // terrain CDLOD
 uniform sampler2D u_heightMap;
+uniform sampler2D u_normalMap;
+
 uniform float gridDim;
 uniform float quad_scale; //Quad size of the current lod grid mesh
 uniform vec3 range; //x= range, y= 1/(morphend-morphstart) - current range distance inverted
@@ -37,10 +39,12 @@ out vec3 barycentric;
 out float morph;
 out vec4 vertColor;
 out float incidenceAngle;
+out vec3 v_normal;
 
 const float _TransitionWidth = .03;
 const float _FresnelExponent = .1;
 const float atmoBorderWidth=1.9;
+
 #define PI 3.14159265;
 
 // 1/(size of the texture) = the value to move one pixel up/down/left/right
@@ -126,6 +130,17 @@ float interpolateHeights(in float oldheight, in vec2 newUvCoords,in float morph)
     return(mix(oldheight,getHeightuv(newUvCoords,false),morph));
 }
 
+vec3 getNormal(vec2 uv) {
+    /*
+    The normal map is baked on Blender (object space normal map). Coordinates there are
+    different than here (.xzy, y=-yb)
+    */
+    vec3 nobj = texture( u_normalMap, uv).xzy *2.0 - 1.0;
+    nobj.y = -nobj.y;
+    nobj = ( u_MVMatrix * vec4(nobj, 0.0)).xyz;
+	return normalize(nobj);
+}
+
 
 void main()                                                 	
 {
@@ -165,4 +180,5 @@ void main()
 
     vec3 radiusVector = getRadiusVector(hmpos,radius);
     calcAtmosphereValues(v_Position,normalize((u_MVMatrix * vec4(radiusVector,0.0)).xyz));
+    v_normal=getNormal(uvcoords);
 }

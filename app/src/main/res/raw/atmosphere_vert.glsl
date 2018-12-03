@@ -12,7 +12,7 @@ uniform vec3  u_atmosphere_color;
 out float incidenceAngle;
 out vec4 col;
 
-float _TransitionWidth = 0.1;
+float _TransitionWidth = 0.05;
 float _FresnelExponent = 0.1;
 #define PI 3.14159265;
 

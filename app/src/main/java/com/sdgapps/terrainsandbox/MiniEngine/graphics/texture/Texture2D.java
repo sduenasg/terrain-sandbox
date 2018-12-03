@@ -241,7 +241,6 @@ public class Texture2D extends Texture{
             GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_REPEAT);
             GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_REPEAT);
         }
-
         GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, temp, 0);
 //GLUtils.texImage2D(GLES30.GL_TEXTURE_2D,0,GLES30.GL_RGBA,temp,0);
         //Generate the mipmaps
@@ -251,64 +250,6 @@ public class Texture2D extends Texture{
 
         return glID;
     }
-
-    private int loadArrayTexture(Resources res) {
-        this.glID = newTextureID();
-
-        /*Disable android's drawable auto-scaling*/
-        BitmapFactory.Options opts = new BitmapFactory.Options();
-        opts.inScaled = false;
-
-        Bitmap temp = BitmapFactory.decodeResource(res, this.resID, opts);
-
-        height = temp.getHeight();
-        width = temp.getWidth();
-
-        if (needsPixels) {
-
-            pixels = new int[width * height];
-            temp.getPixels(pixels, 0, width, 0, 0, width, height);
-        }
-
-        //  Bitmap bmp = Bitmap.createBitmap(temp, 0, 0, temp.getWidth(), temp.getHeight(), flip, true);
-
-        /*
-        Android treats image coordinates differently than OpenGL. Android considers Y=0 to be at the top of the image, while OpenGL's interpretation of Y=0 is the bottom.
-        We can invert the images here, but it is less costly to just input images with the Y inverted in an image editor.
-        */
-
-        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, glID);
-
-
-        // Texture2D parameters
-        if (interpolation == Texture2D.FILTER_LINEAR)
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER,
-                    GLES30.GL_LINEAR_MIPMAP_LINEAR);
-        else
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER,
-                    GLES30.GL_LINEAR_MIPMAP_NEAREST);//bilineal
-
-        GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER,
-                GLES30.GL_LINEAR);//mag filter
-
-        if (wrapMode == WRAP_CLAMP) {
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
-        } else {
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_REPEAT);
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_REPEAT);
-        }
-
-        GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, temp, 0);
-//GLUtils.texImage2D(GLES30.GL_TEXTURE_2D,0,GLES30.GL_RGBA,temp,0);
-        //Generate the mipmaps
-        GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D);
-
-        temp.recycle();
-
-        return glID;
-    }
-
 
     public float getVal(int x, int y) {
         int color = Color.red(pixels[x + y * width]);

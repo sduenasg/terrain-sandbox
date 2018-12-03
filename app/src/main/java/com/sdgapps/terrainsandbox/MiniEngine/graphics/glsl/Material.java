@@ -42,7 +42,7 @@ public class Material {
         for (Map.Entry<String, Texture> entry  : textures.entrySet())
         {
             //TODO optimize
-            Sampler2D sampler=(Sampler2D)shader.getUniform(entry.getKey());
+            Sampler sampler=(Sampler)shader.getUniform(entry.getKey());
             sampler.setTexture(entry.getValue());
             sampler.bind();
         }

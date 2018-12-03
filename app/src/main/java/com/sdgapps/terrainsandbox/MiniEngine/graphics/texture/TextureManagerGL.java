@@ -66,7 +66,23 @@ public class TextureManagerGL {
         }
     }
 
+    public static Texture addCubeTexture(String[] files, Resources res)
+    {
+        int[] resids=new int[files.length];
 
+        int i=0;
+        for(String s : files)
+        {
+            String[] aux = s.split("[.]+");
+            resids[i]= AndroidUtils.getResId(aux[0],  R.drawable.class);
+            i++;
+        }
+
+        CubeTexture t=new CubeTexture(files, resids);
+        t.loadTexture(res);
+        texMap.put(files[0], t);
+        return t;
+    }
     public static Texture addArrayTexture(String[] files, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode, Resources res)
     {
         int[] resids=new int[files.length];
@@ -82,7 +98,7 @@ public class TextureManagerGL {
         ArrayTexture t=new ArrayTexture(files, mipmapping, alpha, interpolation, wrapMode, resids);
         t.loadTexture(res);
         texMap.put(files[0], t);
-        return null;
+        return t;
     }
     /**
      * Adds a texture using a resource name, if ETC1 textures are supported and an ETC1 version of the texture is present, it replaces the png by
@@ -135,10 +151,6 @@ public class TextureManagerGL {
         }
     }
 
-    public static void addDummy(String name) {
-        Texture2D t = new Texture2D(name, false, false, false, false, -1, false);
-        texMap.put(name, t);
-    }
 
     public static void reuploadTextures(Resources res) {
 
