@@ -63,6 +63,7 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
             Logger.log("Lifecycle: ON SURFACE CREATED");
             first_load = false;
             SimpleVec3fPool.init();
+            SimpleQuaternionPool.init();
             OpenGLChecks.runChecks();
             if (OpenGLChecks.standard_derivatives) {
                 //Accuracy of the derivative calculations. Default is GL_DONT_CARE, other possible values are GL_NICEST, GL_FASTEST

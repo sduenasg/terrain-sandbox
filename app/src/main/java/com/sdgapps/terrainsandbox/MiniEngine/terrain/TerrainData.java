@@ -36,6 +36,7 @@ public class TerrainData {
     Texture[] TexSplatMaps;
 
     Texture TexArraySplat;
+    Texture Clouds;
 
     public TerrainData(String file, Resources res) {
         int resid = AndroidUtils.getResId(file, R.raw.class);
@@ -109,8 +110,8 @@ public class TerrainData {
             TexSplatMaps[i] = TextureManagerGL.addTexture(splatMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP, res, false);
         }
 
-
         TexArraySplat=TextureManagerGL.addArrayTexture(textureArraySplat.toArray(new String[textureArraySplat.size()]),true,false,Texture.FILTER_LINEAR,Texture.WRAP_REPEAT,res);
+        Clouds=TextureManagerGL.addTexture("clouds.png",true,false,true, Texture.WRAP_CLAMP,res,false);
     }
 
     public boolean isPlanetaryScene() {

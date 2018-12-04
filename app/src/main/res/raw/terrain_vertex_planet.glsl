@@ -51,7 +51,7 @@ const float atmoBorderWidth=1.9;
 const float texelSize=1.0/2080.0;
 const float textureSize=2080.0;
 
-// Bilinear texture sampling for the morphed areas (deprecated)
+// Bilinear texture sampling for the morphed areas
 float texture2D_bilinear(in sampler2D t, in vec2 uv)
 {
     float center = texture(t, uv).r;

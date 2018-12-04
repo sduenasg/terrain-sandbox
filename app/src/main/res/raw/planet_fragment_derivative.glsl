@@ -42,7 +42,7 @@ const float fogScale=0.6;
 
 const float detailTextureMult = 100.0;
 
-//usethe splat map with these flat colors instead of textures for testing
+//use the splat map with these flat colors instead of textures for testing
 const vec3 rcolor=vec3(0.0,1.0,0.0);
 const vec3 gcolor=vec3(0.27,0.21,0.13);//cliffs
 const vec3 bcolor=vec3(0.0,0.0,1.0);
@@ -80,8 +80,8 @@ vec3 getWireColor()
     else if(lod==2.0) return mix(vec3(0.0,0.0,1.0),vec3(0.0,1.0,0.0),morph);
     else if(lod==3.0) return mix(vec3(0.0,1.0,0.0),vec3(0.6,0.0,1.0),morph);
     else if(lod==4.0) return mix(vec3(0.6,0.0,1.0),vec3(1.0,1.0,0.0),morph);
-    else if(lod==5.0) return mix( vec3(1.0,1.0,0.0),vec3(1.0,0.2,0.1),morph);
-    else if(lod==6.0) return mix( vec3(1.0,0.2,0.1),vec3(0.9,0.0,0.0),morph);
+    else if(lod==5.0) return mix(vec3(1.0,1.0,0.0),vec3(1.0,0.2,0.1),morph);
+    else if(lod==6.0) return mix(vec3(1.0,0.2,0.1),vec3(0.9,0.0,0.0),morph);
     else return vec3(1.0,0.3,0.0);
 }
 

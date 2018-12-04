@@ -10,9 +10,13 @@ import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Sphere;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.*;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.*;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.AppTextureManager;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManagerGL;
+import com.sdgapps.terrainsandbox.SimpleQuaternionPool;
 import com.sdgapps.terrainsandbox.Singleton;
 import com.sdgapps.terrainsandbox.shaders.AtmosphereProgram;
 import com.sdgapps.terrainsandbox.shaders.BoundingBoxProgram;
+import com.sdgapps.terrainsandbox.shaders.CloudProgram;
 import com.sdgapps.terrainsandbox.shaders.PlanetShader;
 import com.sdgapps.terrainsandbox.utils.Logger;
 import com.sdgapps.terrainsandbox.utils.TimingHelper;
@@ -62,6 +66,7 @@ public class Planet extends Renderer implements TerrainInterface {
      */
     private GridMesh gridMesh;
     private Sphere atmosphere;
+    private Sphere clouds;
 
     /**
      * Render configuration of this CDLODQuadTree terrain
@@ -73,7 +78,7 @@ public class Planet extends Renderer implements TerrainInterface {
 
     private int gridSize = 64;
     private float rootQuadScale = 100000;
-    private int nLods = 6;
+    private int nLods = 7;
     private float yscale = 60000;
     public float terrainXZ;
 
@@ -91,7 +96,7 @@ public class Planet extends Renderer implements TerrainInterface {
 //1 54 119
    // public Color4f atmosphereColor = new Color4f(219, 246, 254, 1);
     public Color4f atmosphereColor = new Color4f(218, 220, 255, 1);
-    private float atmosphereRadius;
+    private float atmosphereRadius,cloudlayerRadius;
     private float planetRadius;
 
 
@@ -199,6 +204,7 @@ public class Planet extends Renderer implements TerrainInterface {
 
         planetRadius = terrainXZ / 2f;
         atmosphereRadius = planetRadius * 1.05f;
+        cloudlayerRadius=planetRadius*1.02f;
 
         //positioning of each cube face
         planetChunkN.transform.translate(0, planetRadius, 0);
@@ -239,6 +245,14 @@ public class Planet extends Renderer implements TerrainInterface {
         ShaderUniform3F atmosphereCol = (ShaderUniform3F) atmosphere.material.shader.getUniform("u_atmosphere_color");
         atmosphereCol.set(atmosphereColor);
 
+        //setup up the cloud layer
+        clouds = new Sphere(
+                CloudProgram.createInstance("cloudShader"),
+                cloudlayerRadius, 64, 64);
+
+        clouds.GenBuffersAndSubmitToGL();
+        clouds.transform.position.add(planetRadius, 0, planetRadius);
+        clouds.material.addTexture(data.Clouds,"u_Texture");
 
         //Planet position and rotation
         this.transform.objectPivotPosition.set(planetRadius, 0, planetRadius);
@@ -291,6 +305,9 @@ public class Planet extends Renderer implements TerrainInterface {
     public void update() {
         //run the node selection
         LodSelect();
+        Quaternion rotation = SimpleQuaternionPool.create();
+        rotation.fromAngleNormalAxis(0.0001f,Vec3f.Yvector);
+        clouds.transform.rotation.multLocal(rotation);
     }
 
     @Override
@@ -321,6 +338,7 @@ public class Planet extends Renderer implements TerrainInterface {
         }
 
         renderAtmosphere();
+        renderClouds();
 
         if (config.debug) {
             //GLES30.glDisable(GLES30.GL_DEPTH_TEST);
@@ -330,7 +348,28 @@ public class Planet extends Renderer implements TerrainInterface {
             //GLES30.glEnable(GLES30.GL_DEPTH_TEST);
         }
     }
+    private void renderClouds() {
 
+        clouds.material.bindShader();
+
+        ShaderUniform3F camPos = (ShaderUniform3F) clouds.material.shader.getUniform("camPos");
+        camPos.set(Singleton.systems.mainCamera.transform.position);
+        camPos.bind();
+
+        ShaderUniform3F lightPos = (ShaderUniform3F) clouds.material.shader.getUniform("lightPos");
+        lightPos.set(Singleton.systems.mainLight.transform.position);
+        lightPos.bind();
+
+        GLES30.glEnable(GLES30.GL_BLEND);
+        GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE);
+
+        if(clouds.isPointInside(Singleton.systems.mainCamera.transform.position))
+            GLES30.glCullFace(GLES30.GL_FRONT);
+        clouds.draw();
+
+        GLES30.glCullFace(GLES30.GL_BACK);
+        GLES30.glDisable(GLES30.GL_BLEND);
+    }
     private void renderAtmosphere() {
 
         atmosphere.material.bindShader();

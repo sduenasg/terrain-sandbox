@@ -6,10 +6,13 @@ import android.opengl.Matrix;
 import com.sdgapps.terrainsandbox.MiniEngine.MatrixManager;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.MiniMath;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.Transform;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec3f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
 import com.sdgapps.terrainsandbox.MiniEngine.terrain.GridMesh;
+import com.sdgapps.terrainsandbox.SimpleVec3fPool;
+import com.sdgapps.terrainsandbox.utils.Logger;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -27,12 +30,25 @@ public class Sphere extends Renderer {
     private short[] tris;
     private int buffers[];
     private int vertCount;
+    private float radiussq;
 
-    public Sphere(GLSLProgram shader, float radius, int longSegs, int latSegs) {
+    public Sphere(GLSLProgram shader, float _radius, int longSegs, int latSegs) {
         material = new Material();
         material.shader = shader;
-        generatePositionData(radius, longSegs, latSegs);
+        generatePositionData(_radius, longSegs, latSegs);
         transform = new Transform();
+        radiussq=_radius*_radius;
+    }
+
+    public boolean isPointInside(Vec3f worldCoords)
+    {
+
+        Vec3f pos=transform.position;
+
+        Vec3f posToPoint=SimpleVec3fPool.create(worldCoords);
+        posToPoint.sub(pos);
+
+        return posToPoint.length2()<radiussq;
     }
 
     private void generatePositionData(float radius, int longSegs, int latSegs) {
