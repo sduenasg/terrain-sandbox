@@ -49,29 +49,12 @@ const float atmoBorderWidth=1.9;
 
 // 1/(size of the texture) = the value to move one pixel up/down/left/right
 const float texelSize=1.0/2080.0;
-const float textureSize=2080.0;
-
-// Bilinear texture sampling for the morphed areas
-float texture2D_bilinear(in sampler2D t, in vec2 uv)
-{
-    float center = texture(t, uv).r;
-    float right= texture(t, uv + vec2(texelSize, 0.0)).r;
-    float top = texture(t, uv + vec2(0.0, texelSize)).r;
-    float topright = texture(t, uv + vec2(texelSize, texelSize)).r;
-    vec2 f = fract( uv * textureSize );
-    float tA = mix( center, right, f.x );
-    float tB = mix( top, topright, f.x );
-    return mix( tA, tB, f.y );
-}
 
 //Returns the Height value using uv coords as input
 float getHeightuv(in vec2 uv, in bool usefilter) {
 
     float heightmap=0.0;
-    /*if(usefilter)
-        heightmap = texture2D_bilinear(u_heightMap,uv);//bilinear sample
-    else*/
-        heightmap = texture(u_heightMap, uv).r;//make sure the heightmaps are loaded with the NEAREST mode(no filter)
+    heightmap = texture(u_heightMap, uv).r;//make sure the heightmaps are loaded with the NEAREST mode(no filter)
 	return meshInfo.z * heightmap;
 }
 
@@ -122,6 +105,8 @@ void calcAtmosphereValues(in vec4 eyepos, in vec3 eyenormal)
     float angleToViewer = sin(acos(dot(eyenormal, viewDirection)));
     float perspectiveFactor = 0.3 + 0.2 * pow(angleToViewer, _FresnelExponent) + 0.5 * pow(angleToViewer, _FresnelExponent * 20.0);
     vertColor = vec4(ambientLight * shadeFactor*perspectiveFactor,atmoBorderWidth-angleToViewer);
+
+     vertColor = vec4(ambientLight * shadeFactor*perspectiveFactor,atmoBorderWidth-angleToViewer);
 }
 
 //morph original height with the fully morphed height using the morphLerpK value

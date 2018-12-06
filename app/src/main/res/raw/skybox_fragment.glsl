@@ -7,6 +7,5 @@ out vec4 fragColor;
 
 void main()
 {
-
    fragColor = texture(skyboxTex,eyeDirection);
 }
