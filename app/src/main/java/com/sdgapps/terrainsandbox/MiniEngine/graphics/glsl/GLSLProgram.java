@@ -2,6 +2,8 @@ package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
 import android.content.res.Resources;
 import android.opengl.GLES30;
+
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.OpenGLChecks;
 import com.sdgapps.terrainsandbox.Singleton;
 import com.sdgapps.terrainsandbox.utils.Logger;
 import java.util.HashMap;
@@ -40,8 +42,8 @@ public class GLSLProgram {
     public GLSLProgram(String id, int vertexid, int fragmentid) {
         Resources res=Singleton.systems.sShaderSystem.res;
         this.shaderID = id;
-        vertex = new GLSLShader(vertexid, res, false);
-        fragment = new GLSLShader(fragmentid, res, true);
+        vertex = new GLSLShader(vertexid, res, false,id);
+        fragment = new GLSLShader(fragmentid, res, true,id);
 
         glHandle = createAndLinkProgram(vertex.glHandle,
                 fragment.glHandle, new String[]{
@@ -112,9 +114,9 @@ public class GLSLProgram {
 
     public void addUniform(ShaderUniform sv) {
 
-        if(sv instanceof Sampler2D)
+        if(sv instanceof Sampler)
         {
-            ((Sampler2D) sv).activeTarget=nsamplers;
+            ((Sampler) sv).activeTarget=nsamplers;
             nsamplers++;
         }
 
@@ -135,7 +137,7 @@ public class GLSLProgram {
      * @param attributes           Program attributes
      * @return OpenGL handle of the program
      */
-    private static int createAndLinkProgram(final int vertexShaderHandle,
+    private int createAndLinkProgram(final int vertexShaderHandle,
                                             final int fragmentShaderHandle, final String[] attributes) {
         int programHandle = GLES30.glCreateProgram();
 
@@ -163,10 +165,12 @@ public class GLSLProgram {
 
             //If the link failed, delete the program.
             if (linkStatus[0] == 0) {
-                Logger.log("Error compiling program: " + GLES30.glGetProgramInfoLog(programHandle));
+                Logger.err("Error linking program: "+shaderID+" " + GLES30.glGetProgramInfoLog(programHandle));
                 GLES30.glDeleteProgram(programHandle);
                 programHandle = 0;
             }
+            else
+                Logger.log("GLes linking log for "+shaderID+" " + GLES30.glGetProgramInfoLog(programHandle));
         }
 
         if (programHandle == 0) {
