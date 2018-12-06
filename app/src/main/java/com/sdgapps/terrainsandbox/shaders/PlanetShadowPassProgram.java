@@ -8,7 +8,8 @@ import com.sdgapps.terrainsandbox.Singleton;
 
 public class PlanetShadowPassProgram extends GLSLProgram {
     private PlanetShadowPassProgram(String id) {
-        super(id, R.raw.shadowmap_vertex, R.raw.shadowmap_fragment);
+        //super(id, R.raw.shadowmap_vertex, R.raw.shadowmap_fragment);
+        super(id, -1,-1);
         configureShadowmapShader();
     }
 

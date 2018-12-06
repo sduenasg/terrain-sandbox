@@ -72,24 +72,26 @@ public class OpenGLChecks {
             GL_VENDOR = GLES30.glGetString(GLES30.GL_VENDOR);
             GL_VERSION = GLES30.glGetString(GLES30.GL_VERSION);
 
-            //logDeviceGLinfo();
-            //log();
+            logDeviceGLinfo();
+            log();
+
         }
     }
 
     public static void log() {
-        Logger.log("GL_OES_ELEMENT_INDEX_UINT " + GL_UINT_INDEX); //required
-        Logger.log("GL_OES_DEPTH_TEXTURE extension -> " + oes_depth_texture); //required
-        Logger.log("GL_OES_standard_derivatives " + standard_derivatives); //optional
-        Logger.log("GL_MAX_TEXTURE_SIZE " + GL_MAX_TEXTURE_SIZE);
-        Logger.log("GL_MAX TEXTURE_IMAGE_UNITS " + GL_MAX_TEXTURE_IMAGE_UNITS);
-        Logger.log("GL_DEPTH_BITS " + GL_DEPTH_BITS); //optional
+        Logger.log("OpenGL Checks: GL_OES_ELEMENT_INDEX_UINT " + GL_UINT_INDEX); //required
+        Logger.log("OpenGL Checks: GL_OES_DEPTH_TEXTURE extension -> " + oes_depth_texture); //required
+        Logger.log("OpenGL Checks: GL_OES_standard_derivatives " + standard_derivatives); //optional
+        Logger.log("OpenGL Checks: GL_MAX_TEXTURE_SIZE " + GL_MAX_TEXTURE_SIZE);
+        Logger.log("OpenGL Checks: GL_MAX TEXTURE_IMAGE_UNITS " + GL_MAX_TEXTURE_IMAGE_UNITS);
+        Logger.log("OpenGL Checks: GL_DEPTH_BITS " + GL_DEPTH_BITS); //optional
+        logDeviceGLinfo();
     }
 
     public static void logDeviceGLinfo() {
-        Logger.log("GL_RENDERER = " + GL_RENDERER);
-        Logger.log("GL_VENDOR = " + GL_VENDOR);
-        Logger.log("GL_VERSION = " + GL_VERSION);
-        Logger.log("GL_EXTENSIONS = " + GLES30.glGetString(GLES30.GL_EXTENSIONS));
+        Logger.log("OpenGL Checks: GL_RENDERER = " + GL_RENDERER);
+        Logger.log("OpenGL Checks: GL_VENDOR = " + GL_VENDOR);
+        Logger.log("OpenGL Checks: GL_VERSION = " + GL_VERSION);
+        Logger.log("OpenGL Checks: GL_EXTENSIONS = " + GLES30.glGetString(GLES30.GL_EXTENSIONS));
     }
 }

@@ -2,8 +2,6 @@ package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
 import android.opengl.GLES30;
 
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
-
 /**
  * Represents a Sampler2D uniform in a shader
  */

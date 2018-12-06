@@ -45,12 +45,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Logger.log("Lifecycle: CREATE");
+        Logger.log("Lifecycle: CREATE ");
 
         final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
-        final boolean supportsEs2 = configurationInfo.reqGlEsVersion >= 0x20000;
-        if (supportsEs2) {
+        final boolean supportsEs3 = configurationInfo.reqGlEsVersion >= 0x30000;
+        //GLES300 0x30000
+        //GLES301 0x30001
+        //GLES301 0x30002
+        //Logger.log("GLES "+ configurationInfo.reqGlEsVersion + " " +  0x30000 + " " + 0x30002);
+
+        Logger.log("Supported OpenGL ES "+Double.parseDouble(configurationInfo.getGlEsVersion()));
+        if (supportsEs3) {
             MVPView = new MainViewMvpImpl(getLayoutInflater(), null);
             Singleton.systems.sTime.setPresenter(this);
             renderer = new GLSurfaceRenderer(this, getResources());
@@ -63,9 +69,10 @@ public class MainActivity extends AppCompatActivity
             setContentView(MVPView.getRootView());
 
         } else {
-            Toast.makeText(this, "Error: OpenGL ES2 not supported on this device", Toast.LENGTH_LONG)
+            Toast.makeText(this, "Error: OpenGL ES3 not supported on this device", Toast.LENGTH_LONG)
                     .show();
-            finish();
+            throw new RuntimeException("Open GL ES 3.0 was not found on device");
+            //finish();
         }
 
         Thread.UncaughtExceptionHandler h = new Thread.UncaughtExceptionHandler() {

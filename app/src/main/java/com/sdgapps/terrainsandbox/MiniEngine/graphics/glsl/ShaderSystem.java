@@ -28,8 +28,8 @@ public class ShaderSystem {
         {
             shaders.put(program.shaderID,program);
         }
-
-        Logger.warning("A program with id "+program.shaderID+" already exists in the system. Ignoring.");
+        else
+            Logger.warning("A program with id "+program.shaderID+" already exists in the system. Ignoring.");
     }
 
     /**

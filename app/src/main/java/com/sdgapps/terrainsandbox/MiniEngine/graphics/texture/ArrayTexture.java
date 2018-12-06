@@ -4,6 +4,10 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES30;
+import android.opengl.GLUtils;
+
+import com.sdgapps.terrainsandbox.utils.Logger;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -33,44 +37,46 @@ public class ArrayTexture extends Texture {
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inScaled = false;
 
-        int[] pixels;
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D_ARRAY, glID);
+        Bitmap temp = BitmapFactory.decodeResource(res, resIDs[0], opts);
+        height = temp.getHeight();
+        width = temp.getWidth();
+        GLES30.glTexStorage3D(GLES30.GL_TEXTURE_2D_ARRAY, mipmaplevels, GLES30.GL_RGBA8, width, height, layerCount);
+
         int i=0;
         for(int resID:resIDs) {
-            Bitmap temp = BitmapFactory.decodeResource(res, resID, opts);
+            temp = BitmapFactory.decodeResource(res, resID, opts);
 
             height = temp.getHeight();
             width = temp.getWidth();
 
             //get the pixel buffer
-            ByteBuffer pixelbuf= ByteBuffer.allocateDirect(width * height * IntBytes);
+            ByteBuffer pixelbuf= ByteBuffer.allocateDirect(width * height *IntBytes);
             pixelbuf.order(ByteOrder.nativeOrder());
             temp.copyPixelsToBuffer(pixelbuf);
             pixelbuf.position(0);
 
-            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D_ARRAY, glID);
-            GLES30.glTexStorage3D(GLES30.GL_TEXTURE_2D_ARRAY, mipmaplevels, GLES30.GL_RGBA8, width, height, layerCount);
-// Upload pixel data.
-// The first 0 refers to the mipmap level (level 0, since there's only 1)
-// The following 2 zeroes refers to the x and y offsets in case you only want to specify a subrectangle.
-// The i refers to the layer index offset (we start from index i and have 1 levels).
-// Altogether you can specify a 3D box subset of the overall texture, but only one mip level at a time.
-            GLES30.glTexSubImage3D(GLES30.GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, pixelbuf);
+            int internalFormat=GLUtils.getInternalFormat(temp); //like GLES30.RGBA
+            int type=GLUtils.getType(temp); //i.e GLES30.UNSIGNED_BYTE
+
+            // Upload pixel data.
+            GLES30.glTexSubImage3D(GLES30.GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1, internalFormat, type, pixelbuf);
 //https://www.khronos.org/opengl/wiki/Array_Texture
-            GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D_ARRAY);
+//https://www.khronos.org/registry/OpenGL-Refpages/es3.0/
             temp.recycle();
             i++;
         }
+        GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D_ARRAY);
 
         // Texture2D parameters
-        if (interpolation == FILTER_LINEAR)
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D_ARRAY, GLES30.GL_TEXTURE_MIN_FILTER,
-                    GLES30.GL_LINEAR_MIPMAP_LINEAR);
-        else
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D_ARRAY, GLES30.GL_TEXTURE_MIN_FILTER,
-                    GLES30.GL_LINEAR_MIPMAP_NEAREST);//bilineal
+        if (interpolation == FILTER_LINEAR) {
+            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D_ARRAY, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_LINEAR);
+        }
+        else {
+            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D_ARRAY, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_NEAREST);//bilinear
+        }
 
-        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D_ARRAY, GLES30.GL_TEXTURE_MAG_FILTER,
-                GLES30.GL_LINEAR);//mag filter
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D_ARRAY, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);//mag filter
 
         if (wrapMode == WRAP_CLAMP) {
             GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D_ARRAY, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);

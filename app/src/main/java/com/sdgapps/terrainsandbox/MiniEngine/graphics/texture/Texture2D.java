@@ -217,7 +217,7 @@ public class Texture2D extends Texture{
         
         /*
         Android treats image coordinates differently than OpenGL. Android considers Y=0 to be at the top of the image, while OpenGL's interpretation of Y=0 is the bottom.
-        We can invert the images here, but it is less costly to just input images with the Y inverted in an image editor.
+        We can invert the images here, but it is less costly to just input images with the Y inverted (easily done in a script or manually in an image editor).
         */
 
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, glID);
