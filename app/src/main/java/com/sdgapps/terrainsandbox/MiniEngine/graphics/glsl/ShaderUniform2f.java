@@ -5,23 +5,23 @@ import android.opengl.GLES30;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec3f;
 
 
-public class ShaderUniform2F extends ShaderUniform {
+public class ShaderUniform2f extends ShaderUniform {
 
     public float v0;
     public float v1;
 
 
-    public ShaderUniform2F(String name) {
+    public ShaderUniform2f(String name) {
         super(name);
     }
 
-    public ShaderUniform2F(String name, ShaderUniform2F copyValuesFrom) {
+    public ShaderUniform2f(String name, ShaderUniform2f copyValuesFrom) {
         super(name);
         v0 = copyValuesFrom.v0;
         v1 = copyValuesFrom.v1;
     }
 
-    public ShaderUniform2F(String name, float _v0, float _v1, float _v2) {
+    public ShaderUniform2f(String name, float _v0, float _v1, float _v2) {
         super(name);
         v0 = _v0;
         v1 = _v1;
@@ -44,7 +44,7 @@ public class ShaderUniform2F extends ShaderUniform {
         v1 = in.y;
     }
 
-    public void set(ShaderUniform2F in) {
+    public void set(ShaderUniform2f in) {
         v0 = in.v0;
         v1 = in.v1;
     }

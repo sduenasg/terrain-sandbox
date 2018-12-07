@@ -5,18 +5,18 @@ import android.opengl.GLES30;
 /**
  * 3-component vector array (vec3[])
  */
-public class ShaderUniform3Fv extends ShaderUniform {
+public class ShaderUniform3iv extends ShaderUniform {
 
-    public float[] array;
+    public int[] array;
 
-    public ShaderUniform3Fv(String name) {
+    public ShaderUniform3iv(String name) {
         super(name);
     }
 
     public void bind() {
         if (glHandle != -1) {
             super.bind();
-            GLES30.glUniform3fv(glHandle, array.length / 3, array, 0);
+            GLES30.glUniform3iv(glHandle, array.length / 3, array, 0);
         }
     }
 }

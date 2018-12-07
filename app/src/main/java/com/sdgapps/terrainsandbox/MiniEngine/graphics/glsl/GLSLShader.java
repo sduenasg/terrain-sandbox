@@ -64,7 +64,7 @@ public class GLSLShader {
 
             // If the compilation failed, delete the shader.
             if (compileStatus[0] == 0) {
-               // Logger.err("Error compiling "+(isFragment?"fragment":"vertex")+" shader in "+programID+" : "   + GLES30.glGetShaderInfoLog(shaderHandle));
+                Logger.err("Error compiling "+(isFragment?"fragment":"vertex")+" shader in "+programID+" : "   + GLES30.glGetShaderInfoLog(shaderHandle));
                 GLES30.glDeleteShader(shaderHandle);
                 shaderHandle = 0;
                 throw new RuntimeException("Error compiling "+(isFragment?"fragment":"vertex")+" shader in "+programID+" : "   + GLES30.glGetShaderInfoLog(shaderHandle));

@@ -2,23 +2,19 @@ package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
 import android.opengl.GLES30;
 
-/**
- * Float array
- */
-public class ShaderUniform1Fv extends ShaderUniform {
+public class ShaderUniform1i extends ShaderUniform {
 
-    public float[] array;
+    public int v = 0;
 
-    public ShaderUniform1Fv(String name) {
+    public ShaderUniform1i(String name) {
         super(name);
     }
 
+    @Override
     public void bind() {
-
         if (glHandle != -1) {
             super.bind();
-            GLES30.glUniform1fv(glHandle, array.length, array, 0);
-
+            GLES30.glUniform1i(glHandle, v);
         }
     }
 }
