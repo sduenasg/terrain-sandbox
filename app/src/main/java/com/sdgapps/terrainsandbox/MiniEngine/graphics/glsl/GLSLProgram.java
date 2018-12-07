@@ -165,9 +165,10 @@ public class GLSLProgram {
 
             //If the link failed, delete the program.
             if (linkStatus[0] == 0) {
-                Logger.err("Error linking program: "+shaderID+" " + GLES30.glGetProgramInfoLog(programHandle));
+                //Logger.err("Error linking program: "+shaderID+" " + GLES30.glGetProgramInfoLog(programHandle));
                 GLES30.glDeleteProgram(programHandle);
                 programHandle = 0;
+                throw new RuntimeException("Error linking program: "+shaderID+" " + GLES30.glGetProgramInfoLog(programHandle));
             }
             else
                 Logger.log("GLes linking log for "+shaderID+" " + GLES30.glGetProgramInfoLog(programHandle));

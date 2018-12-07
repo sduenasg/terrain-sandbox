@@ -1,8 +1,9 @@
 #version 300 es
-
+/*
+this extension is now default in GLES3.0 and up
 #ifdef GL_OES_standard_derivatives
 #extension GL_OES_standard_derivatives : enable
-#endif
+#endif*/
 
 #ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
@@ -12,12 +13,14 @@ precision mediump float;
 
 uniform sampler2D u_colorMap;  //color map
 uniform sampler2D u_heightMap; //heightmap (for debugging)
-//uniform sampler2D u_normalMap;
 uniform sampler2D u_splatMap;
 uniform sampler2D u_splatSheet;
-uniform sampler2DArray u_splatArray;
+/*
+*asus tablet requires a separate precision qualifier for the sampler2DArray type
+*renderer: PowerVR Rogue GX6250
+*/
+uniform mediump sampler2DArray u_splatArray;
 uniform sampler2D u_atmoGradient;
-
 uniform float zfar;
 uniform float lodlevel;
 uniform vec3 ambientLight;
@@ -74,17 +77,16 @@ vec3 getWireColor()
     else return vec3(1.0,0.3,0.0);
 }
 
-#ifdef GL_OES_standard_derivatives
 float edgeFactor(){
 
-    /*
-     * http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates
-     */
+
+     // http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates
+
     vec3 d = fwidth(barycentric);
     vec3 a3 = smoothstep(vec3(0.0), d*3.0, barycentric);
     return min(min(a3.x, a3.y), a3.z);
 }
-#endif
+
 
 float getSplatSheetColor(vec4 splatWeights)
 {
@@ -125,14 +127,14 @@ void main()
     vec3 mixedColor;
     vec3 colorMap;
 
-    //if(range.z==3.0 || range.z==1.0)
-     //   colorMap = vec3(0.8,0.8,0.8); //no color texture
-    //else
+    if(range.z==3.0 || range.z==1.0)
+        colorMap = vec3(0.8,0.8,0.8); //no color texture
+    else
         colorMap = texture(u_colorMap, v_TexCoordinate).rgb;
 
     vec4 splatvalue=texture(u_splatMap,v_TexCoordinate);
 
-    /*alpha comes in pre-multiplied from android. //TODO investigate*/
+    /*alpha comes in pre-multiplied from android SDK. //TODO investigate*/
     splatvalue.r/=splatvalue.a;
     splatvalue.g/=splatvalue.a;
     splatvalue.b/=splatvalue.a;
@@ -176,18 +178,8 @@ void main()
     vec3 baseColor = mix(atmocol,diffspec, atmofactor);
 
     if((range.z==3.0 || range.z==7.0 )){ //wireframe
-       #ifdef GL_OES_standard_derivatives
            wirecolor=mix(getWireColor(), baseColor.rgb, edgeFactor());
            fragColor =  vec4(mix(u_Fogcolor,wirecolor, fogFactor),1.0); //<-
-       #else
-           if(any(lessThan(barycentric, vec3(linewidth)))){
-              wirecolor=getWireColor();
-              fragColor =  vec4(mix(u_Fogcolor,wirecolor,fogFactor),1.0);
-           }
-           else{
-              fragColor =  vec4(mix(u_Fogcolor, baseColor, fogFactor),1.0);
-           }
-       #endif
     }
     else{ // no wireframe
        fragColor =  vec4(mix (u_Fogcolor, baseColor, fogFactor),1.0); //<-
