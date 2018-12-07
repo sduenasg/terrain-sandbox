@@ -19,7 +19,7 @@ public class GridMesh {
 
     //grid size in vertices
     private int vdim = 0;
-    private int gridDim = 0;
+    int gridDim = 0;
     private int[] index_array;
     private float[] gridPositions_array;
 
@@ -72,13 +72,13 @@ public class GridMesh {
 
         indexArraySize = 6 * (gridDim * gridDim);
         index_array = new int[indexArraySize];
-
         int start;
         int k = 0;
 
         int halfd = vdim / 2;
         int fulld = gridDim;
 
+        int sq=0;
         partialArraySize = indexArraySize / 4;
         for (int i = 0; i < halfd; i++) { //row
             for (int j = 0; j < halfd; j++) { //column
@@ -110,6 +110,7 @@ public class GridMesh {
                 index_array[k++] = start + (fulld + 1); //v4
                 index_array[k++] = start + (fulld + 2); //v5
                 index_array[k++] = start + 1; //v6
+
             }
         }
 
@@ -206,6 +207,7 @@ public class GridMesh {
             indexBuffer.put(index_array);
             indexBuffer.position(0);
 
+
             ByteBuffer aBuf = ByteBuffer.allocateDirect(gridPositions_array.length * FloatBytes);
             aBuf.order(ByteOrder.nativeOrder());
             FloatBuffer gridPositionsBuffer = aBuf.asFloatBuffer();
@@ -225,13 +227,16 @@ public class GridMesh {
             //submit to opengl
             GLES30.glGenBuffers(3, buffers, 0);
 
+            //0 - index buf
+            //1 - gridpositions buf
+            //2 - barycentric coord buf
+            //3 - subquad index buf
             GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
             GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER,
                     indexBuffer.capacity() * GridMesh.IntBytes, indexBuffer,
                     GLES30.GL_STATIC_DRAW);
             GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
             indexBuffer.clear();
-
 
             GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, buffers[1]);
             GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, gridPositionsBuffer.capacity() * GridMesh.FloatBytes, gridPositionsBuffer,
@@ -269,23 +274,35 @@ public class GridMesh {
         GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
     }
 
+    public void instancedFullmeshDraw(int ninstances)
+    {
+        GLES30.glDrawElementsInstanced(GLES30.GL_TRIANGLES,indexArraySize,GLES30.GL_UNSIGNED_INT,0,ninstances);
+        Singleton.systems.sTime.drawcalls++;
+    }
+
+    public void instancedQuarterMeshDraw(int ninstances)
+    {
+        GLES30.glDrawElementsInstanced(GLES30.GL_TRIANGLES,partialArraySize,GLES30.GL_UNSIGNED_INT,0,ninstances);
+        Singleton.systems.sTime.drawcalls++;
+    }
+
     public void draw(boolean[] selection) {
         if (selection[4]) {//the whole node got selected
             GLES30.glDrawElements(GLES30.GL_TRIANGLES, indexArraySize, GLES30.GL_UNSIGNED_INT, 0);
             Singleton.systems.sTime.drawcalls++;
-        } else {//only parts of the node got selected (covering for it's children)
+
+        } else {//only parts of the node got selected (parent covering for it's children)
             for (int j = 0; j < 4; j++) {
                 if (selection[j]) {//if  node covers child j's area
                     int offset = offsets[j];
                     int size = partialArraySize;
                     int k = j + 1;
 
-                    while (selection[k] && k < 4) { //consecutive parts will be rendered in one go
+                    while (selection[k] && k < 4) { //consecutive sub-quads will be rendered in one go
                         size += partialArraySize;
                         k++;
                         j++;
                     }
-
                     GLES30.glDrawElements(GLES30.GL_TRIANGLES, size, GLES30.GL_UNSIGNED_INT, offset);//offset in bytes
                     Singleton.systems.sTime.drawcalls++;
                 }

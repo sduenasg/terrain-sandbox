@@ -1,6 +1,8 @@
 #version 300 es
 /*
-this extension is now default in GLES3.0 and up
+this extension is now default in GLES3.0 and up.
+The shader silently crashes during compilation on the following device if this is used on GLES3.0
+(ASUS zenpad)
 #ifdef GL_OES_standard_derivatives
 #extension GL_OES_standard_derivatives : enable
 #endif*/
@@ -10,6 +12,16 @@ precision highp float;
 #else
 precision mediump float;
 #endif
+
+const float shininess = 5.0;
+const vec3 specularColor = vec3(0.5, 0.5, 0.5);
+const float fogScale=0.6;
+const float detailTextureMult = 100.0;
+const vec3 rcolor=vec3(0.0,1.0,0.0);
+const vec3 gcolor=vec3(0.27,0.21,0.13);//cliffs
+const vec3 bcolor=vec3(0.0,0.0,1.0);
+const vec3 acolor=vec3(1.0,1.0,1.0);
+const float detailThreshold = 0.99;//distance [0,1] threshold at which detail will start showing
 
 uniform sampler2D u_colorMap;  //color map
 uniform sampler2D u_heightMap; //heightmap (for debugging)
@@ -22,12 +34,12 @@ uniform sampler2D u_splatSheet;
 uniform mediump sampler2DArray u_splatArray;
 uniform sampler2D u_atmoGradient;
 uniform float zfar;
-uniform float lodlevel;
+
 uniform vec3 ambientLight;
 uniform vec3 u_Fogcolor;
 uniform vec3 u_LightPos; //in eye space
 uniform mat4 u_MVMatrix;
-uniform vec3 range;
+uniform float mode;
 
 in vec2 v_TexCoordinate;
 in vec4 v_Position;
@@ -38,20 +50,9 @@ in float morph;
 in vec4 vertColor;
 in float incidenceAngle;
 in vec3 v_normal;
+flat in float v_lod;
+
 out vec4 fragColor;
-
-const float shininess = 5.0;
-const vec3 specularColor = vec3(0.5, 0.5, 0.5);
-const float fogScale=0.6;
-
-const float detailTextureMult = 100.0;
-
-//use the splat map with these flat colors instead of textures for testing
-const vec3 rcolor=vec3(0.0,1.0,0.0);
-const vec3 gcolor=vec3(0.27,0.21,0.13);//cliffs
-const vec3 bcolor=vec3(0.0,0.0,1.0);
-const vec3 acolor=vec3(1.0,1.0,1.0);
-const float detailThreshold = 0.99;//distance [0,1] threshold at which detail will start showing
 // Functions
 float calcFogLinear(float distanceToEye);
 float calcFogExp(float distanceToEye);
@@ -66,7 +67,7 @@ float calcFogLinear(float distanceToEye)
 
 vec3 getWireColor()
 {
-    float lod=mod(lodlevel,7.0);
+    float lod=mod(v_lod,7.0);
     if(lod==0.0)      return mix(vec3(0.9,0.0,0.0),vec3(0.95,0.0,1.0),morph);
     else if(lod==1.0) return mix(vec3(0.95,0.0,1.0),vec3(0.0,0.0,1.0),morph);
     else if(lod==2.0) return mix(vec3(0.0,0.0,1.0),vec3(0.0,1.0,0.0),morph);
@@ -126,11 +127,9 @@ void main()
     vec3 wirecolor;
     vec3 mixedColor;
     vec3 colorMap;
+       // colorMap = vec3(0.8,0.8,0.8); //no color texture
 
-    if(range.z==3.0 || range.z==1.0)
-        colorMap = vec3(0.8,0.8,0.8); //no color texture
-    else
-        colorMap = texture(u_colorMap, v_TexCoordinate).rgb;
+    colorMap = texture(u_colorMap, v_TexCoordinate).rgb;
 
     vec4 splatvalue=texture(u_splatMap,v_TexCoordinate);
 
@@ -177,7 +176,7 @@ void main()
 
     vec3 baseColor = mix(atmocol,diffspec, atmofactor);
 
-    if((range.z==3.0 || range.z==7.0 )){ //wireframe
+    if((mode==3.0 || mode==7.0 )){ //wireframe
            wirecolor=mix(getWireColor(), baseColor.rgb, edgeFactor());
            fragColor =  vec4(mix(u_Fogcolor,wirecolor, fogFactor),1.0); //<-
     }

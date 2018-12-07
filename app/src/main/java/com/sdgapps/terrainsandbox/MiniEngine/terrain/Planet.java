@@ -10,8 +10,6 @@ import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Sphere;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.*;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.*;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.AppTextureManager;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManagerGL;
 import com.sdgapps.terrainsandbox.SimpleQuaternionPool;
 import com.sdgapps.terrainsandbox.Singleton;
 import com.sdgapps.terrainsandbox.shaders.AtmosphereProgram;
@@ -78,7 +76,7 @@ public class Planet extends Renderer implements TerrainInterface {
 
     private int gridSize = 64;
     private float rootQuadScale = 100000;
-    private int nLods = 7;
+    private int nLods = 6;
     private float yscale = 60000;
     public float terrainXZ;
 
@@ -242,7 +240,7 @@ public class Planet extends Renderer implements TerrainInterface {
         atmosphereColor.normalize_noalpha();
         atmosphere.material.addTexture(AppTextureManager.atmosphereGradient,"u_Texture");
 
-        ShaderUniform3F atmosphereCol = (ShaderUniform3F) atmosphere.material.shader.getUniform("u_atmosphere_color");
+        ShaderUniform3f atmosphereCol = (ShaderUniform3f) atmosphere.material.shader.getUniform("u_atmosphere_color");
         atmosphereCol.set(atmosphereColor);
 
         //setup up the cloud layer
@@ -309,7 +307,7 @@ public class Planet extends Renderer implements TerrainInterface {
         rotation.fromAngleNormalAxis(0.0001f,Vec3f.Yvector);
         clouds.transform.rotation.multLocal(rotation);
     }
-
+    private SelectionResults selection = new SelectionResults();
     @Override
     public void draw() {
 
@@ -319,12 +317,11 @@ public class Planet extends Renderer implements TerrainInterface {
         if (!atmosphere.uploadedVBO)
             atmosphere.GenBuffersAndSubmitToGL();
 
-        setRenderMode();
-
         for (RenderPackage pass : renderPackages) {
             pass.bind();//binds the frame buffer
             GLSLProgram targetShader = pass.targetProgram;
             targetShader.useProgram();
+            setRenderMode();
             gridMesh.bindAttributes(targetShader, false);
             bindPlanetInfo(targetShader);
 
@@ -352,11 +349,11 @@ public class Planet extends Renderer implements TerrainInterface {
 
         clouds.material.bindShader();
 
-        ShaderUniform3F camPos = (ShaderUniform3F) clouds.material.shader.getUniform("camPos");
+        ShaderUniform3f camPos = (ShaderUniform3f) clouds.material.shader.getUniform("camPos");
         camPos.set(Singleton.systems.mainCamera.transform.position);
         camPos.bind();
 
-        ShaderUniform3F lightPos = (ShaderUniform3F) clouds.material.shader.getUniform("lightPos");
+        ShaderUniform3f lightPos = (ShaderUniform3f) clouds.material.shader.getUniform("lightPos");
         lightPos.set(Singleton.systems.mainLight.transform.position);
         lightPos.bind();
 
@@ -373,14 +370,14 @@ public class Planet extends Renderer implements TerrainInterface {
     private void renderAtmosphere() {
 
         atmosphere.material.bindShader();
-        ShaderUniform3F atmosphereCol = (ShaderUniform3F) atmosphere.material.shader.getUniform("u_atmosphere_color");
+        ShaderUniform3f atmosphereCol = (ShaderUniform3f) atmosphere.material.shader.getUniform("u_atmosphere_color");
         atmosphereCol.bind();
 
-        ShaderUniform3F camPos = (ShaderUniform3F) atmosphere.material.shader.getUniform("camPos");
+        ShaderUniform3f camPos = (ShaderUniform3f) atmosphere.material.shader.getUniform("camPos");
         camPos.set(Singleton.systems.mainCamera.transform.position);
         camPos.bind();
 
-        ShaderUniform3F lightPos = (ShaderUniform3F) atmosphere.material.shader.getUniform("lightPos");
+        ShaderUniform3f lightPos = (ShaderUniform3f) atmosphere.material.shader.getUniform("lightPos");
         lightPos.set(Singleton.systems.mainLight.transform.position);
         lightPos.bind();
 
@@ -396,11 +393,11 @@ public class Planet extends Renderer implements TerrainInterface {
     }
 
     private void bindPlanetInfo(GLSLProgram shader) {
-        ShaderUniform3F meshInfoUniform = (ShaderUniform3F) shader.getUniform("meshInfo");
+        ShaderUniform3f meshInfoUniform = (ShaderUniform3f) shader.getUniform("meshInfo");
         meshInfoUniform.set(terrainXZ, gridSize * rootQuadScale, yscale);
         meshInfoUniform.bind();
 
-        ShaderUniform3F v = (ShaderUniform3F) shader.getUniform("u_Fogcolor");
+        ShaderUniform3f v = (ShaderUniform3f) shader.getUniform("u_Fogcolor");
         if (v != null) {
             Color4f fogColor = Singleton.systems.mainLight.fogColor;
             v.set(fogColor.r, fogColor.g, fogColor.b);
@@ -413,20 +410,20 @@ public class Planet extends Renderer implements TerrainInterface {
             zfarVar.bind();
         }
 
-        ShaderUniform3F camPosVar = (ShaderUniform3F) shader.getUniform("cameraPosition");
+        ShaderUniform3f camPosVar = (ShaderUniform3f) shader.getUniform("cameraPosition");
         if (camPosVar != null) {
             camPosVar.set(Singleton.systems.mainCamera.transform.position);
             camPosVar.bind();
         }
         Light l = Singleton.systems.mainLight;
-        ShaderUniform3F lightpos = (ShaderUniform3F) shader.getUniform("u_LightPos");
+        ShaderUniform3f lightpos = (ShaderUniform3f) shader.getUniform("u_LightPos");
         if (lightpos != null) {
 
             lightpos.set(l.mLightPosInEyeSpace[0],l.mLightPosInEyeSpace[1],l.mLightPosInEyeSpace[2]);
             lightpos.bind();
         }
 
-        ShaderUniform3F ambientcolor = (ShaderUniform3F) shader.getUniform("ambientLight");
+        ShaderUniform3f ambientcolor = (ShaderUniform3f) shader.getUniform("ambientLight");
         if (ambientcolor != null) {
             ambientcolor.set(l.lightAmbient[0],l.lightAmbient[1],l.lightAmbient[2]);
             ambientcolor.bind();
@@ -445,8 +442,9 @@ public class Planet extends Renderer implements TerrainInterface {
         if (config.texture)
             texture = 4;
 
-        ShaderUniform3F meshInfoUniform = (ShaderUniform3F) material.shader.getUniform("range");
-        meshInfoUniform.v2 = (solid | wire | texture);
+        ShaderUniform1f meshMode = (ShaderUniform1f) material.shader.getUniform("mode");
+        meshMode.v = (solid | wire | texture);
+        meshMode.bind();
     }
 
     public void initializeRenderModes(FrameBufferInterface defaultFB, FrameBufferInterface shadowmapFB) {

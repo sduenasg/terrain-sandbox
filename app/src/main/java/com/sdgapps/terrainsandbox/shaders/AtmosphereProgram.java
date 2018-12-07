@@ -2,7 +2,7 @@ package com.sdgapps.terrainsandbox.shaders;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Sampler2D;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3F;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
 import com.sdgapps.terrainsandbox.R;
 import com.sdgapps.terrainsandbox.Singleton;
@@ -29,13 +29,13 @@ public class AtmosphereProgram extends GLSLProgram {
         Sampler2D atmotexture = new Sampler2D("u_Texture");
         addUniform(atmotexture);
 
-        ShaderUniform3F atmosphereColor = new ShaderUniform3F("u_atmosphere_color");
+        ShaderUniform3f atmosphereColor = new ShaderUniform3f("u_atmosphere_color");
         addUniform(atmosphereColor);
 
-        ShaderUniform3F campos = new ShaderUniform3F("camPos");
+        ShaderUniform3f campos = new ShaderUniform3f("camPos");
         addUniform(campos);
 
-        ShaderUniform3F lightposworld = new ShaderUniform3F("lightPos");
+        ShaderUniform3f lightposworld = new ShaderUniform3f("lightPos");
         addUniform(lightposworld);
 
         ShaderUniformMatrix4fv MVPMatrix=new ShaderUniformMatrix4fv("u_MVPMatrix");

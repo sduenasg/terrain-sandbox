@@ -4,7 +4,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.*;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform1f;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3F;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform2f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture2D;
 import com.sdgapps.terrainsandbox.SimpleVec3fPool;
 import com.sdgapps.terrainsandbox.Singleton;
@@ -12,11 +12,11 @@ import com.sdgapps.terrainsandbox.Singleton;
 class CDLODNode extends SelectableNode {
 
     private CDLODNode[] children;
-    private int lod;
+    int lod;
     private BoundingBox AABB;
-    private float xoffset;
-    private float zoffset;
-    private float quadScale;
+    float xoffset;
+    float zoffset;
+    float quadScale;
     private CDLODQuadTree quadTree;
 
     CDLODNode(boolean sphere, int _lod, float _quadScale, float _xoffset, float _yoffset, int gridsize,
@@ -370,12 +370,20 @@ class CDLODNode extends SelectableNode {
         return dot > CV.length2() - radius * radius;
     }
 
+    float getMorphContz()
+    {
+        return quadTree.morphconstz[lod];
+    }
+    float getRangeDistance()
+    {
+        return quadTree.rangeDistance[lod];
+    }
     void renderSelectedParts(GridMesh mesh, GLSLProgram shader) {
-        ShaderUniform3F range = (ShaderUniform3F) shader.getUniform("range");
+        ShaderUniform2f range = (ShaderUniform2f) shader.getUniform("range");
         ShaderUniform1f qScale = (ShaderUniform1f) shader.getUniform("quad_scale");
         ShaderUniform1f gridDim = (ShaderUniform1f) shader.getUniform("gridDim");
         ShaderUniform1f lodLevel = (ShaderUniform1f) shader.getUniform("lodlevel");
-        ShaderUniform3F offset = (ShaderUniform3F) shader.getUniform("nodeoffset");
+        ShaderUniform2f offset = (ShaderUniform2f) shader.getUniform("nodeoffset");
 
         if (range != null) {
             range.v0 = quadTree.morphconstz[lod];
@@ -399,7 +407,7 @@ class CDLODNode extends SelectableNode {
 
         if (offset != null) {
             offset.v0 = xoffset;
-            offset.v2 = zoffset;
+            offset.v1 = zoffset;
             offset.bind();
         }
 

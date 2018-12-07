@@ -4,7 +4,10 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Sampler2D;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Sampler2DArray;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform1f;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3F;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform1fv;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform2f;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform2fv;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
 import com.sdgapps.terrainsandbox.R;
 import com.sdgapps.terrainsandbox.Singleton;
@@ -35,18 +38,31 @@ public class PlanetShader extends GLSLProgram {
         Sampler2D splatmap=new Sampler2D("u_splatMap");
         Sampler2DArray splatarray=new Sampler2DArray("u_splatArray");
         Sampler2D gradient=new Sampler2D("u_atmoGradient");
+
+
         //uniforms
-        ShaderUniform1f CDLODQuadScale = new ShaderUniform1f("quad_scale");
-        ShaderUniform3F CDLODrange = new ShaderUniform3F("range");
-        ShaderUniform3F CDLODcampos = new ShaderUniform3F("cameraPosition");
-        ShaderUniform1f CDLODGriddim = new ShaderUniform1f("gridDim");
-        ShaderUniform3F CDLODMeshInfo = new ShaderUniform3F("meshInfo");
+        ShaderUniform1f mode = new ShaderUniform1f("mode");
+
+        ShaderUniform3f CDLODcampos = new ShaderUniform3f("cameraPosition");
+
+        ShaderUniform3f CDLODMeshInfo = new ShaderUniform3f("meshInfo");
         ShaderUniform1f CDLODzfar = new ShaderUniform1f("zfar");
+
+        ShaderUniform3f fogcolorTerrain = new ShaderUniform3f("u_Fogcolor");
+        ShaderUniform3f lightpos = new ShaderUniform3f("u_LightPos");
+        ShaderUniform3f lightambient = new ShaderUniform3f("ambientLight");
+
+        /*
+        *  ShaderUniform1f CDLODGriddim = new ShaderUniform1f("gridDim");
         ShaderUniform1f CDLODLodlevel = new ShaderUniform1f("lodlevel");
-        ShaderUniform3F CDLODNodeOffset = new ShaderUniform3F("nodeoffset");
-        ShaderUniform3F fogcolorTerrain = new ShaderUniform3F("u_Fogcolor");
-        ShaderUniform3F lightpos = new ShaderUniform3F("u_LightPos");
-        ShaderUniform3F lightambient = new ShaderUniform3F("ambientLight");
+        ShaderUniform2f CDLODNodeOffset = new ShaderUniform2f("nodeoffset");
+        ShaderUniform2f CDLODrange = new ShaderUniform2f("range");
+        ShaderUniform1f CDLODQuadScale = new ShaderUniform1f("quad_scale");
+        * */
+        ShaderUniform1fv CDLODLodlevel = new ShaderUniform1fv  ("lodlevel");
+        ShaderUniform2fv CDLODNodeOffset = new ShaderUniform2fv("nodeoffset");
+        ShaderUniform2fv CDLODrange = new ShaderUniform2fv     ("range");
+        ShaderUniform1fv CDLODQuadScale = new ShaderUniform1fv ("quad_scale");
 
         //matrices
         ShaderUniformMatrix4fv MVPMatrix=new ShaderUniformMatrix4fv("u_MVPMatrix");
@@ -60,6 +76,7 @@ public class PlanetShader extends GLSLProgram {
         addUniform(MVMatrix);
         addUniform(MVPMatrix);
 
+        addUniform(mode);
         addUniform(heightmap);
         addUniform(colormap);
         addUniform(normalmap);
@@ -70,7 +87,6 @@ public class PlanetShader extends GLSLProgram {
         addUniform(CDLODQuadScale);
         addUniform(CDLODrange);
         addUniform(CDLODcampos);
-        addUniform(CDLODGriddim);
         addUniform(CDLODMeshInfo);
         addUniform(CDLODzfar);
         addUniform(CDLODLodlevel);

@@ -1,8 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.terrain;
 
-import android.opengl.GLES30;
 import android.opengl.Matrix;
-
 import com.sdgapps.terrainsandbox.MiniEngine.MatrixManager;
 import com.sdgapps.terrainsandbox.MiniEngine.RenderPackage;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.*;
@@ -68,7 +66,6 @@ public class CDLODQuadTree {
     float[] morphconstz;
     float[] ranges;
 
-
     boolean planetTerrain;
 
     public Material material;
@@ -115,6 +112,7 @@ public class CDLODQuadTree {
     void draw(RenderPackage pass, GridMesh gridMesh, Transform planetTransform) {
         if (selection.getSelectionList().size() > 0) {
             if (initialized) {
+
                 GLSLProgram targetShader = pass.targetProgram;
 
                 Matrix.multiplyMM(MatrixManager.modelMatrix, 0, planetTransform.modelMatrix, 0, transform.modelMatrix, 0);
@@ -122,9 +120,8 @@ public class CDLODQuadTree {
                // pass.setupForRendering(MatrixManager.modelMatrix, shadowMapMVPMatrix, material, targetShader);
                 material.bindTextures();
                 sendMatrices();
-                for (SelectableNode snode : selection.getSelectionList()) {
-                    ((CDLODNode) snode).renderSelectedParts(gridMesh, targetShader);
-                }
+                selection.renderSelectionInstanced(gridMesh,targetShader);
+                //selection.renderSelection(gridMesh,targetShader);
                 Matrix.setIdentityM(MatrixManager.modelMatrix, 0);
             }
         }

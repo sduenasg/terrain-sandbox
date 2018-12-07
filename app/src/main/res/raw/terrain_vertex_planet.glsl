@@ -4,6 +4,7 @@
 #else
     precision mediump float;
 #endif
+
 /*
 *The spec doesn't define a default float precision for fragment shaders. It's not mandatory for devices
 *to provide the highp precision, so we fallback to mediump on those devices where highp is not supported
@@ -11,6 +12,12 @@
 *Vertex shaders default to highp if no precision is declared
 *Fragment shaders don't have a default precision, it's mandatory to declare it
 */
+
+const int numberOfChunks = 50;
+const float _TransitionWidth = .03;
+const float _FresnelExponent = .1;
+const float atmoBorderWidth=1.9;
+
 in vec2 a_gridPosition; //position of this vertex in the vertex grid range: [0,gridSize]
 in vec3 a_barycentric;
 
@@ -23,12 +30,15 @@ uniform vec3 u_LightPos; //Light position in eye space
 uniform sampler2D u_heightMap;
 uniform sampler2D u_normalMap;
 
-uniform float gridDim;
-uniform float quad_scale; //Quad size of the current lod grid mesh
-uniform vec3 range; //x= range, y= 1/(morphend-morphstart) - current range distance inverted
+//specific node uniforms (instanced)
+uniform float quad_scale[numberOfChunks]; //Quad size of the current lod grid mesh
+uniform vec2 range[numberOfChunks]; //x= range, y= 1/(morphend-morphstart) - current range distance inverted
+uniform vec2 nodeoffset[numberOfChunks];//position offset of the patch this vertex belongs to
+uniform float lodlevel[numberOfChunks];
+
+//general uniforms
 uniform vec3 cameraPosition;
 uniform vec3 meshInfo; //x=meshSize in distance units, y=patch size in distance units, z= yscale
-uniform vec3 nodeoffset;//position offset of the patch this vertex belongs to
 uniform vec3 ambientLight;
 
 out vec4 v_Position;
@@ -40,10 +50,7 @@ out float morph;
 out vec4 vertColor;
 out float incidenceAngle;
 out vec3 v_normal;
-
-const float _TransitionWidth = .03;
-const float _FresnelExponent = .1;
-const float atmoBorderWidth=1.9;
+flat out float v_lod;
 
 #define PI 3.14159265;
 
@@ -66,7 +73,8 @@ vec2 getuvsxy(in vec2 v)
 }
 
 vec2 morphVertex( in vec2 gridPos, in vec2 worldPos, in float morph) {
-	vec2 fracPart = vec2(quad_scale) * fract(gridPos.xy * vec2(gridDim)*0.5) * 2.0/vec2(gridDim);
+	//vec2 fracPart = vec2(quad_scale[gl_InstanceID]) * fract(gridPos.xy * vec2(gridDim[gl_InstanceID])*0.5) * 2.0/vec2(gridDim[gl_InstanceID]);
+	vec2 fracPart = vec2(quad_scale[gl_InstanceID]) * fract(gridPos.xy);
     return worldPos - fracPart * morph;
 }
 
@@ -132,7 +140,7 @@ void main()
     float radius=meshInfo.x * 0.5;
 	vec4 hmpos=vec4(0);
     hmpos.w = 1.0;
-	hmpos.xz = a_gridPosition * quad_scale + nodeoffset.xz ;
+	hmpos.xz = a_gridPosition * quad_scale[gl_InstanceID] + nodeoffset[gl_InstanceID].xy ;
 
     vec2 uvcoords = getuvsxy(hmpos.xz);
 
@@ -141,7 +149,7 @@ void main()
 
     //distance from the spherized and model-transformed vertex to the camera
     float dist = length(u_MVMatrix * applyHeightmapToSpherizedPoint(spherizePointNormalization(hmpos,radius),height));
-    float morphLerpK = 1.0 - clamp(range.x - dist * range.y, 0.0, 1.0 );
+    float morphLerpK = 1.0 - clamp(range[gl_InstanceID].x - dist * range[gl_InstanceID].y, 0.0, 1.0 );
 
     hmpos.xz = morphVertex(a_gridPosition, hmpos.xz, morphLerpK); //morphed vertex
 
@@ -166,4 +174,5 @@ void main()
     vec3 radiusVector = getRadiusVector(hmpos,radius);
     calcAtmosphereValues(v_Position,normalize((u_MVMatrix * vec4(radiusVector,0.0)).xyz));
     v_normal=getNormal(uvcoords);
+    v_lod=lodlevel[gl_InstanceID];
 }
