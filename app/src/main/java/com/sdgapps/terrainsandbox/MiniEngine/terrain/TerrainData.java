@@ -92,26 +92,26 @@ public class TerrainData {
     public void LoadTextures(Resources res) {
         TexColorMaps = new Texture[colorMaps.size()];
         for (int i = 0; i < colorMaps.size(); i++) {
-            TexColorMaps[i] = TextureManagerGL.addTexture(colorMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP, res, false);
+            TexColorMaps[i] = TextureManagerGL.addTexture(colorMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP, res, false,true);
         }
 
         TexNormalMaps = new Texture2D[normalMaps.size()];
         for (int i = 0; i < normalMaps.size(); i++) {
-            TexNormalMaps[i] = TextureManagerGL.addTexture(normalMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP, res, false);
+            TexNormalMaps[i] = TextureManagerGL.addTexture(normalMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP, res, false,true);
         }
 
         TexDisplacementMaps = new Texture2D[displacementMaps.size()];
         for (int i = 0; i < displacementMaps.size(); i++) {
-            TexDisplacementMaps[i] = TextureManagerGL.addTexture(displacementMaps.get(i), false, false, Texture2D.FILTER_NEAREST, Texture2D.WRAP_CLAMP, res, true);
+            TexDisplacementMaps[i] = TextureManagerGL.addTexture(displacementMaps.get(i), false, false, Texture2D.FILTER_NEAREST, Texture2D.WRAP_CLAMP, res, true,true);
         }
 
         TexSplatMaps = new Texture2D[splatMaps.size()];
         for (int i = 0; i < splatMaps.size(); i++) {
-            TexSplatMaps[i] = TextureManagerGL.addTexture(splatMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP, res, false);
+            TexSplatMaps[i] = TextureManagerGL.addTexture(splatMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP, res, false,false);
         }
 
         TexArraySplat=TextureManagerGL.addArrayTexture(textureArraySplat.toArray(new String[textureArraySplat.size()]),true,false,Texture.FILTER_LINEAR,Texture.WRAP_REPEAT,res);
-        Clouds=TextureManagerGL.addTexture("clouds.png",true,false,true, Texture.WRAP_CLAMP,res,false);
+        Clouds=TextureManagerGL.addTexture("clouds.png",true,false,true, Texture.WRAP_CLAMP,res,false,true);
     }
 
     public boolean isPlanetaryScene() {

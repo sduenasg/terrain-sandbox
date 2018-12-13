@@ -1,6 +1,7 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics;
 
 import com.sdgapps.terrainsandbox.SimpleVec3fPool;
+import com.sdgapps.terrainsandbox.utils.Logger;
 
 /**
  * Class that represents a 3d plane using point and a normal vector.
@@ -9,10 +10,7 @@ public class Plane {
 
     public Vec3f normal;
     public Vec3f point;
-    float d = 1;
-
-    public Plane() {
-    }
+    private float d = 1;
 
     public Plane(Vec3f _normal, Vec3f _P) {
         normal = _normal;
@@ -20,7 +18,12 @@ public class Plane {
         d = -(normal.calcDot(point));
     }
 
+    public Plane() {
+
+    }
+
     public void set(Vec3f _normal, Vec3f _P) {
+
         normal = _normal;
         point = _P;
         d = -(normal.calcDot(point));
@@ -66,6 +69,11 @@ public class Plane {
         return p.calcDot(normal);
     }
 
+    public void set3Points(Vec3f a, Vec3f b, Vec3f c)
+    {
+
+
+    }
 
     float distance(Vec3f p) {
         return (d + normal.calcDot(p));

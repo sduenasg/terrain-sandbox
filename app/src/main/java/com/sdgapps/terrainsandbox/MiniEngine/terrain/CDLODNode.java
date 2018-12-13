@@ -272,7 +272,7 @@ class CDLODNode extends SelectableNode {
             return false;
         }
 
-        if (quadTree.planetTerrain && horizonTestBoundingBox()) {
+        if (horizonTestBoundingBox()) {
             culledHorizon++;
             return true;
         }

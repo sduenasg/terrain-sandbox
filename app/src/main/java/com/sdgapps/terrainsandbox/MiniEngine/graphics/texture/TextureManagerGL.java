@@ -21,7 +21,7 @@ public class TextureManagerGL {
 
 
     public static Texture2D getDummyTex(String name) {
-        Texture2D t = new Texture2D(name, false, false, false, false, 1, false);
+        Texture2D t = new Texture2D(name, false, false, false, false, 1, false,true);
         return t;
     }
 
@@ -29,7 +29,7 @@ public class TextureManagerGL {
     /**
      * Adds a texture using a resource name and a resource ID (i.e. R.drawable.x or R.raw.x)
      */
-    public static Texture addTexture(String name, int id, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode, Resources res) {
+    public static Texture addTexture(String name, int id, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode,boolean premultiplyAlpha, Resources res) {
         int resu;
 
         String[] aux = name.split("[.]+");
@@ -43,7 +43,7 @@ public class TextureManagerGL {
 
             if (extension.equals("pkm")) {
 
-                Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, id, false);
+                Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, id, false,premultiplyAlpha);
                 t.compressedETC1 = true;
                 resu = t.loadTexture(res);
                 texMap.put(name, t);
@@ -51,14 +51,14 @@ public class TextureManagerGL {
 
             } else {
 
-                Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, id, false);
+                Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, id, false,premultiplyAlpha);
                 resu = t.loadTexture(res);
 
                 texMap.put(name, t);
                 return t;
             }
         } else {
-            Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, id, false);
+            Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, id, false,premultiplyAlpha);
             resu = t.loadTexture(res);
 
             texMap.put(name, t);
@@ -104,7 +104,7 @@ public class TextureManagerGL {
      * Adds a texture using a resource name, if ETC1 textures are supported and an ETC1 version of the texture is present, it replaces the png by
      * the compressed ETC1 textures automatically. It falls back to using the png's otherwise
      */
-    public static Texture addTexture(String name, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode, Resources res, boolean needsPixels) {
+    public static Texture addTexture(String name, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode, Resources res, boolean needsPixels, boolean premultiplyAlpha) {
         int resu;
 
         if (texMap.containsKey(name)) {
@@ -124,7 +124,7 @@ public class TextureManagerGL {
             if (resid == -1 || !OpenGLChecks.etc1_texture_compression) {
                 //use the png
                 resid = AndroidUtils.getResId(aux[0], R.drawable.class);
-                Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, resid, needsPixels);
+                Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, resid, needsPixels,premultiplyAlpha);
                 resu = t.loadTexture(res);
 
                 texMap.put(name, t);
@@ -132,7 +132,7 @@ public class TextureManagerGL {
                 return t;
             } else {
                 //use ETC1 compression
-                Texture2D t = new Texture2D(compressed, mipmapping, alpha, interpolation, wrapMode, resid, needsPixels);
+                Texture2D t = new Texture2D(compressed, mipmapping, alpha, interpolation, wrapMode, resid, needsPixels,premultiplyAlpha);
                 t.compressedETC1 = true;
                 resu = t.loadTexture(res);
                 texMap.put(name, t);
@@ -142,7 +142,7 @@ public class TextureManagerGL {
             }
         } else {
             int resid = AndroidUtils.getResId(aux[0], R.drawable.class);
-            Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, resid, needsPixels);
+            Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, resid, needsPixels,premultiplyAlpha);
             resu = t.loadTexture(res);
 
             texMap.put(name, t);

@@ -278,10 +278,12 @@ public class Planet extends Renderer implements TerrainInterface {
             }
 
             int horizonCulled = CDLODNode.culledHorizon;
-            int frustumCulled = CDLODNode.culledFrustum;
-
+            int frustrumCulled = CDLODNode.culledFrustum;
+            int drawnNodes=SelectionResults.drawnNodes;
+            Logger.log("CULLED horizon: "+horizonCulled+ " frustrum cull:" + frustrumCulled + " total:"+drawnNodes);
             CDLODNode.culledHorizon = 0;
             CDLODNode.culledFrustum = 0;
+            SelectionResults.drawnNodes=0;
             if (minLod != Integer.MAX_VALUE) {
 
                 float factor = (minLod + 1) / ((float) cube[0].nLods + 1f);
@@ -296,6 +298,7 @@ public class Planet extends Renderer implements TerrainInterface {
 
                 //Singleton.systems.mainCamera.frustum.change_zvalues(znear*factor,zfar*factor);
             }
+
         }
     }
 
@@ -338,11 +341,11 @@ public class Planet extends Renderer implements TerrainInterface {
         renderClouds();
 
         if (config.debug) {
-            //GLES30.glDisable(GLES30.GL_DEPTH_TEST);
+            GLES30.glDisable(GLES30.GL_DEPTH_TEST);
             for (CDLODQuadTree chunk : cube) {
                 chunk.drawAABB();
             }
-            //GLES30.glEnable(GLES30.GL_DEPTH_TEST);
+            GLES30.glEnable(GLES30.GL_DEPTH_TEST);
         }
     }
     private void renderClouds() {

@@ -131,12 +131,8 @@ void main()
 
     colorMap = texture(u_colorMap, v_TexCoordinate).rgb;
 
+    //Splat maps must have a non-premultiplied alpha channel
     vec4 splatvalue=texture(u_splatMap,v_TexCoordinate);
-
-    /*alpha comes in pre-multiplied from android SDK. //TODO investigate*/
-    splatvalue.r/=splatvalue.a;
-    splatvalue.g/=splatvalue.a;
-    splatvalue.b/=splatvalue.a;
 
     //avoiding the if statement (if depthValue>detailthresh)
     float depthValue = depthPosition.z /depthPosition.w;
@@ -145,12 +141,6 @@ void main()
 
     splatcolor=mix(2.0*splatcolor,1.0,clamp(detailFactor,0.0,1.0));
     colorMap*=splatcolor;//apply the detail value
-
-    /*//debug the splatmap with solid colors
-   colorMap =  splatvalue.r * rcolor +
-                splatvalue.g * gcolor +
-                splatvalue.b * bcolor +
-                splatvalue.a * acolor;*/
 
     vec3 n = v_normal;// getNormal(v_TexCoordinate);
     vec3 l = normalize(u_LightPos - v_Position.xyz);

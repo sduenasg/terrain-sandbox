@@ -24,8 +24,8 @@ public class AppTextureManager extends TextureManagerGL {
 
     public static void load_terrain_detail_texture(String texturename, String normalmapname) {
 
-        atmosphereGradient = addTexture("atmogradient" + ".png", true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_REPEAT, res, false);
-        terrainDetailTexture = addTexture(texturename + ".png", true, true, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP, res, false);
-        terrainDetailNormalmap = addTexture(normalmapname + ".png", true, true, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP, res, false);
+        atmosphereGradient = addTexture("atmogradient" + ".png", true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_REPEAT, res, false,true);
+        terrainDetailTexture = addTexture(texturename + ".png", true, true, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP, res, false,true);
+        terrainDetailNormalmap = addTexture(normalmapname + ".png", true, true, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP, res, false,true);
     }
 }

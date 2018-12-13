@@ -58,8 +58,10 @@ public class SelectionResults {
         partialNodes=0;
     }
 
+    static int drawnNodes=0;
     public void renderSelectionInstanced(GridMesh gridMesh, GLSLProgram targetShader)
     {
+        //TODO investigate a more efficient way to gather the data
         int nFullNodes=fullnodes;
         int nSubquadlNodes=partialNodes;
         //Logger.log("TEST "+fullnodes + " " + nSubquadlNodes);
@@ -91,9 +93,11 @@ public class SelectionResults {
                 fullquadNodeOffsets[2 * i + 1] = node.zoffset;
                 fullquadLodLevel[i] = node.lod;
                 i++;
+                drawnNodes++;
             }
             else
             {
+                drawnNodes++;
                 float halfd=node.quadScale*(float)gridMesh.gridDim/2f;
                 if(snode.selection[0]) {
                     subquadQuadScales[sqi] = node.quadScale;
@@ -103,6 +107,7 @@ public class SelectionResults {
                     subquadNodeOffsets[2 * sqi] = node.xoffset;
                     subquadNodeOffsets[2 * sqi + 1] = node.zoffset;
                     sqi++;
+
                 }
                 if(snode.selection[1])
                 {
@@ -113,6 +118,7 @@ public class SelectionResults {
                     subquadNodeOffsets[2 * sqi] = node.xoffset + halfd;
                     subquadNodeOffsets[2 * sqi + 1] = node.zoffset;
                     sqi++;
+
                 }
                 if(snode.selection[2])
                 {
@@ -123,6 +129,7 @@ public class SelectionResults {
                     subquadNodeOffsets[2 * sqi] = node.xoffset;
                     subquadNodeOffsets[2 * sqi + 1] = node.zoffset + halfd;
                     sqi++;
+
                 }
                 if(snode.selection[3])
                 {
@@ -135,6 +142,7 @@ public class SelectionResults {
                     sqi++;
                 }
             }
+
 
         }
 

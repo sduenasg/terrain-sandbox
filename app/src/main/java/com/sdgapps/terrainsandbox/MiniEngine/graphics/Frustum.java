@@ -3,25 +3,26 @@ package com.sdgapps.terrainsandbox.MiniEngine.graphics;
 import android.opengl.Matrix;
 
 import com.sdgapps.terrainsandbox.SimpleVec3fPool;
+import com.sdgapps.terrainsandbox.utils.Logger;
 
 /**
  * Class that represents a view Frustum. Provides frustum culling functionality.
  */
 public class Frustum {
 
-    float top;
-    float bottom;
-    float left;
-    float right;
-
-
-    float aspectRatio;
+    private float top;
+    private float bottom;
+    private float left;
+    private float right;
+    private float aspectRatio;
 
     public float[] projectionMatrix = new float[16];
 
     public float znear = DEFAULT_ZNEAR;
     public float zfar = DEFAULT_ZFAR;
-    private float fov = DEFAULT_H_FOV;
+
+    //half of the horizontal field of view
+    private float horizontalFov_H = DEFAULT_H_FOV;
 
     private static final float DEFAULT_H_FOV = 42f;
     public static final float DEFAULT_ZNEAR = 1f;
@@ -78,9 +79,10 @@ public class Frustum {
         Theory: http://www.lighthouse3d.com/tutorials/view-frustum-culling/geometric-approach-extracting-the-planes/
         */
 
-        //width and height of the near plane
-        float Hnear = 2f * (float) Math.tan(Math.toRadians(fov)) * znear;
+        float Hnear = (float) Math.tan(Math.toRadians(horizontalFov_H*aspectRatio)) * znear;
         float Wnear = Hnear * aspectRatio;
+        //float Hfar = (float) Math.tan(Math.toRadians(horizontalFov_H*aspectRatio)) * zfar;
+        //float Wfar = Hfar * aspectRatio;
 
         //far plane
         farCenter.set(viewVec);
@@ -175,29 +177,36 @@ public class Frustum {
 
     public void change_fov(float _fov) {
 
-        fov = _fov;
+        horizontalFov_H = _fov;
         computeProjectionMatrix();
     }
 
     public void computeProjectionMatrix() {
-        float _fov = fov * aspectRatio;
-        top = (float) (Math.tan(_fov * Math.PI / 360.0f) * znear);
+        float verticalFovHalf = horizontalFov_H * 1f/aspectRatio;
+        top = (float) (Math.tan(Math.toRadians(verticalFovHalf)) * znear);
         bottom = -top;
         left = aspectRatio * bottom;
         right = -left;
         Matrix.frustumM(projectionMatrix, 0, left, right, bottom, top, znear, zfar);
+        /*
+        float _fov = horizontalFov_H * aspectRatio;
+        top = (float) (Math.tan(Math.toRadians(_fov)) * znear);
+        bottom = -top;
+        left = aspectRatio * bottom;
+        right = -left;
+        Matrix.frustumM(projectionMatrix, 0, left, right, bottom, top, znear, zfar);*/
     }
 
     public void change_zvalues(float znearin, float zfarin) {
         znear = znearin;
         zfar = zfarin;
-        change_fov(DEFAULT_H_FOV);//current fov
+        change_fov(DEFAULT_H_FOV);//current horizontalFov_H
     }
 
     public void setDefaultNearFar() {
         znear = DEFAULT_ZNEAR;
         zfar = DEFAULT_ZFAR;
-        change_fov(fov);
+        change_fov(horizontalFov_H);
     }
 
     public void setDefault() {
