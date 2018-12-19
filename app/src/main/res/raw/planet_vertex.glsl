@@ -31,10 +31,10 @@ uniform sampler2D u_heightMap;
 uniform sampler2D u_normalMap;
 
 //specific node uniforms (instanced)
-uniform float quad_scale[numberOfChunks]; //Quad size of the current lod grid mesh
-uniform vec2 range[numberOfChunks]; //x= range, y= 1/(morphend-morphstart) - current range distance inverted
-uniform vec2 nodeoffset[numberOfChunks];//position offset of the patch this vertex belongs to
-uniform float lodlevel[numberOfChunks];
+uniform float quad_scale; //Quad size of the current lod grid mesh
+uniform vec2 range; //x= range, y= 1/(morphend-morphstart) - current range distance inverted
+uniform vec2 nodeoffset;//position offset of the patch this vertex belongs to
+uniform float lodlevel;
 
 //general uniforms
 uniform vec3 cameraPosition;
@@ -50,7 +50,6 @@ out float morph;
 out vec4 vertColor;
 out float incidenceAngle;
 out vec3 v_normal;
-flat out float v_lod;
 
 #define PI 3.14159265;
 
@@ -73,8 +72,8 @@ vec2 getuvsxy(in vec2 v)
 }
 
 vec2 morphVertex( in vec2 gridPos, in vec2 worldPos, in float morph) {
-	//vec2 fracPart = vec2(quad_scale[gl_InstanceID]) * fract(gridPos.xy * vec2(gridDim[gl_InstanceID])*0.5) * 2.0/vec2(gridDim[gl_InstanceID]);
-	vec2 fracPart = vec2(quad_scale[gl_InstanceID]) * fract(gridPos.xy);
+	//vec2 fracPart = vec2(quad_scale) * fract(gridPos.xy * vec2(gridDim)*0.5) * 2.0/vec2(gridDim);
+	vec2 fracPart = vec2(quad_scale) * fract(gridPos.xy);
     return worldPos - fracPart * morph;
 }
 
@@ -140,7 +139,7 @@ void main()
     float radius=meshInfo.x * 0.5;
 	vec4 hmpos=vec4(0);
     hmpos.w = 1.0;
-	hmpos.xz = a_gridPosition * quad_scale[gl_InstanceID] + nodeoffset[gl_InstanceID].xy ;
+	hmpos.xz = a_gridPosition * quad_scale+ nodeoffset.xy ;
 
     vec2 uvcoords = getuvsxy(hmpos.xz);
 
@@ -149,7 +148,7 @@ void main()
 
     //distance from the spherized and model-transformed vertex to the camera
     float dist = length(u_MVMatrix * applyHeightmapToSpherizedPoint(spherizePointNormalization(hmpos,radius),height));
-    float morphLerpK = 1.0 - clamp(range[gl_InstanceID].x - dist * range[gl_InstanceID].y, 0.0, 1.0 );
+    float morphLerpK = 1.0 - clamp(range.x - dist * range.y, 0.0, 1.0 );
 
     hmpos.xz = morphVertex(a_gridPosition, hmpos.xz, morphLerpK); //morphed vertex
 
@@ -174,5 +173,5 @@ void main()
     vec3 radiusVector = getRadiusVector(hmpos,radius);
     calcAtmosphereValues(v_Position,normalize((u_MVMatrix * vec4(radiusVector,0.0)).xyz));
     v_normal=getNormal(uvcoords);
-    v_lod=lodlevel[gl_InstanceID];
+
 }

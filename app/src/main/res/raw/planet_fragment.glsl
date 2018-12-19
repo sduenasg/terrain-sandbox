@@ -27,6 +27,7 @@ uniform sampler2D u_colorMap;  //color map
 uniform sampler2D u_heightMap; //heightmap (for debugging)
 uniform sampler2D u_splatMap;
 uniform sampler2D u_splatSheet;
+uniform float lodlevel;
 /*
 *asus tablet requires a separate precision qualifier for the sampler2DArray type
 *renderer: PowerVR Rogue GX6250
@@ -50,7 +51,7 @@ in float morph;
 in vec4 vertColor;
 in float incidenceAngle;
 in vec3 v_normal;
-flat in float v_lod;
+
 
 out vec4 fragColor;
 // Functions
@@ -67,7 +68,7 @@ float calcFogLinear(float distanceToEye)
 
 vec3 getWireColor()
 {
-    float lod=mod(v_lod,7.0);
+    float lod=mod(lodlevel,7.0);
     if(lod==0.0)      return mix(vec3(0.9,0.0,0.0),vec3(0.95,0.0,1.0),morph);
     else if(lod==1.0) return mix(vec3(0.95,0.0,1.0),vec3(0.0,0.0,1.0),morph);
     else if(lod==2.0) return mix(vec3(0.0,0.0,1.0),vec3(0.0,1.0,0.0),morph);
@@ -79,8 +80,6 @@ vec3 getWireColor()
 }
 
 float edgeFactor(){
-
-
      // http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates
 
     vec3 d = fwidth(barycentric);

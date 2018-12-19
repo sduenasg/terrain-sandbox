@@ -14,7 +14,7 @@ import com.sdgapps.terrainsandbox.Singleton;
 
 public class PlanetShader extends GLSLProgram {
     private PlanetShader(String id) {
-        super(id, R.raw.terrain_vertex_planet, R.raw.planet_fragment_derivative);
+        super(id, R.raw.planet_vertex, R.raw.planet_fragment);
 
         configureTerrainShader();
     }
@@ -52,17 +52,10 @@ public class PlanetShader extends GLSLProgram {
         ShaderUniform3f lightpos = new ShaderUniform3f("u_LightPos");
         ShaderUniform3f lightambient = new ShaderUniform3f("ambientLight");
 
-        /*
-        *  ShaderUniform1f CDLODGriddim = new ShaderUniform1f("gridDim");
         ShaderUniform1f CDLODLodlevel = new ShaderUniform1f("lodlevel");
         ShaderUniform2f CDLODNodeOffset = new ShaderUniform2f("nodeoffset");
         ShaderUniform2f CDLODrange = new ShaderUniform2f("range");
         ShaderUniform1f CDLODQuadScale = new ShaderUniform1f("quad_scale");
-        * */
-        ShaderUniform1fv CDLODLodlevel = new ShaderUniform1fv  ("lodlevel");
-        ShaderUniform2fv CDLODNodeOffset = new ShaderUniform2fv("nodeoffset");
-        ShaderUniform2fv CDLODrange = new ShaderUniform2fv     ("range");
-        ShaderUniform1fv CDLODQuadScale = new ShaderUniform1fv ("quad_scale");
 
         //matrices
         ShaderUniformMatrix4fv MVPMatrix=new ShaderUniformMatrix4fv("u_MVPMatrix");

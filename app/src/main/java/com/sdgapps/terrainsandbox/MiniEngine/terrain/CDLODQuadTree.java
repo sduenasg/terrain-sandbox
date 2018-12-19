@@ -120,8 +120,8 @@ public class CDLODQuadTree {
                // pass.setupForRendering(MatrixManager.modelMatrix, shadowMapMVPMatrix, material, targetShader);
                 material.bindTextures();
                 sendMatrices();
-                selection.renderSelectionInstanced(gridMesh,targetShader);
-                //selection.renderSelection(gridMesh,targetShader);
+                //selection.renderSelectionInstanced(gridMesh,targetShader);
+                selection.renderSelection(gridMesh,targetShader);
                 Matrix.setIdentityM(MatrixManager.modelMatrix, 0);
             }
         }
