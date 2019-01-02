@@ -155,7 +155,6 @@ class CDLODNode extends SelectableNode {
         AABB.expand(heightMapMin);
         AABB.expand(heightMapMax);
 
-        AABB.prepareForRendering();
         //th.end();
     }
 
@@ -256,7 +255,6 @@ class CDLODNode extends SelectableNode {
 
         AABB.bMax.y = maxmin.x;
         AABB.bMin.y = maxmin.y;
-        AABB.prepareForRendering();
     }
 
 
@@ -440,15 +438,15 @@ class CDLODNode extends SelectableNode {
         return d <= radius * radius;
     }
 
-    void renderBox(Material boundingBoxMaterial) {
-        boundingBoxMaterial.shader.useProgram();
-        //AABB.draw(boundingBoxMaterial.shader);
-        if (selection[4])
+    void renderBox(Material boundingBoxMaterial,LineCube geometry) {
+
+        AABB.draw(boundingBoxMaterial.shader,geometry);
+        /*if (selection[4])
             AABB.draw(boundingBoxMaterial.shader);
         else//draw the boxes of the children we are covering for
             for (int i = 0; i < 4; i++)
                 if (selection[i])
-                    children[i].AABB.draw(boundingBoxMaterial.shader);
+                    children[i].AABB.draw(boundingBoxMaterial.shader);*/
 
     }
 

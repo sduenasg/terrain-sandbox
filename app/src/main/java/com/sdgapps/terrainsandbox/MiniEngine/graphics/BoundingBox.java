@@ -1,16 +1,8 @@
 
 package com.sdgapps.terrainsandbox.MiniEngine.graphics;
 
-import android.opengl.GLES30;
-import android.opengl.Matrix;
-
-import com.sdgapps.terrainsandbox.MiniEngine.MatrixManager;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
 import com.sdgapps.terrainsandbox.SimpleVec3fPool;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 /**
@@ -20,7 +12,6 @@ public class BoundingBox {
 
     public Vec3f bMin;
     public Vec3f bMax;
-    private boolean renderable = false;
 
     public BoundingBox() {
     }
@@ -170,9 +161,9 @@ public class BoundingBox {
 
     private Vec3f getCenter() {
         Vec3f center = SimpleVec3fPool.create();
-        center.x = (bMax.x + bMin.x) / 2f;
-        center.y = (bMax.y + bMin.y) / 2f;
-        center.z = (bMax.z + bMin.z) / 2f;
+        center.x = (bMax.x + bMin.x) * 0.5f;
+        center.y = (bMax.y + bMin.y) * 0.5f;
+        center.z = (bMax.z + bMin.z) * 0.5f;
 
         return center;
     }
@@ -280,8 +271,6 @@ public class BoundingBox {
     }
 
 
-
-
     public void updateBoxValues(Transform transform, Transform planetTransform) {
 
         //translate the box to the terrain's object space
@@ -314,9 +303,6 @@ public class BoundingBox {
 
         //the box rotation might mess up max/min values, swap them if necessary
         rearrangeMaxMin();
-
-        //regenerate rendering data for the box
-        prepareForRendering();
     }
 
     private void rearrangeMaxMin() {
@@ -347,64 +333,14 @@ public class BoundingBox {
      */
     private FloatBuffer mLineVertices;
 
-    public void draw(GLSLProgram shader) {
+    public void draw(GLSLProgram shader, LineCube geometry) {
 
-        if (renderable) {
-            int positionHandle=shader.getAttributeGLid("a_Position");
-            GLES30.glVertexAttribPointer(positionHandle, 3, GLES30.GL_FLOAT, false, 0, mLineVertices);
-            GLES30.glEnableVertexAttribArray(positionHandle);
 
-            GLES30.glLineWidth(6);
+        Vec3f center=this.getCenter();
+        Vec3f size=SimpleVec3fPool.create(bMax);
+        size.sub(center);
+        size.abs();
 
-            sendMatrix(shader);
-
-            GLES30.glDrawArrays(GLES30.GL_LINES, 0, 24);
-        }
+        geometry.draw(shader,center,size);
     }
-
-    private void sendMatrix(GLSLProgram shader)
-    {
-        Matrix.setIdentityM(MatrixManager.modelMatrix, 0);
-        Matrix.multiplyMM(MatrixManager.modelViewMatrix, 0, MatrixManager.viewMatrix, 0,
-                MatrixManager.modelMatrix, 0);
-
-        Matrix.multiplyMM(MatrixManager.MVPMatrix, 0, MatrixManager.projectionMatrix, 0,
-                MatrixManager.modelViewMatrix, 0);
-
-        ShaderUniformMatrix4fv MVPMatrix= (ShaderUniformMatrix4fv) shader.getUniform("u_MVPMatrix");
-        MVPMatrix.array=MatrixManager.MVPMatrix;
-        MVPMatrix.bind();
-    }
-
-    public void prepareForRendering() {
-
-        final float[] lineVertData = {
-                // X, Y, Z,
-                bMin.x, bMin.y, bMin.z, bMin.x, bMin.y, bMax.z,
-                bMin.x, bMin.y, bMin.z, bMin.x, bMax.y, bMin.z,
-                bMin.x, bMin.y, bMin.z, bMax.x, bMin.y, bMin.z,
-                //
-                bMin.x, bMin.y, bMax.z, bMin.x, bMax.y, bMax.z,
-                bMin.x, bMin.y, bMax.z, bMax.x, bMin.y, bMax.z,
-                //
-                bMin.x, bMax.y, bMin.z, bMax.x, bMax.y, bMin.z,
-                bMin.x, bMax.y, bMin.z, bMin.x, bMax.y, bMax.z,
-                //
-                bMax.x, bMin.y, bMin.z, bMax.x, bMin.y, bMax.z,
-                bMax.x, bMin.y, bMin.z, bMax.x, bMax.y, bMin.z,
-                //
-                bMax.x, bMin.y, bMax.z, bMax.x, bMax.y, bMax.z,
-                //
-                bMax.x, bMax.y, bMax.z, bMax.x, bMax.y, bMin.z,
-                //
-                bMax.x, bMax.y, bMax.z, bMin.x, bMax.y, bMax.z,
-        };
-
-        mLineVertices = ByteBuffer.allocateDirect(lineVertData.length * 4)
-                .order(ByteOrder.nativeOrder()).asFloatBuffer();
-        mLineVertices.put(lineVertData).position(0);
-        mLineVertices.position(0);
-        renderable = true;
-    }
-
 }

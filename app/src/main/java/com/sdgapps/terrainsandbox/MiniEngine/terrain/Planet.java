@@ -108,7 +108,12 @@ public class Planet extends Renderer implements TerrainInterface {
     static final String splatmapUniformName="u_splatMap";
     static final String splatsheetUniformName="u_splatSheet";
     static final String splatarrayUniformName="u_splatArray";
+
+    LineCube BoundingBoxGeometry;
     public void initialize(TerrainData data) {
+
+        BoundingBoxGeometry=new LineCube();
+        BoundingBoxGeometry.initializeVisuals();
 
         TimingHelper th=new TimingHelper("Planet initialization...");
         th.start();
@@ -330,10 +335,13 @@ public class Planet extends Renderer implements TerrainInterface {
         if (config.debug) {
             GLES30.glDisable(GLES30.GL_DEPTH_TEST);
             for (CDLODQuadTree chunk : cube) {
-                chunk.drawAABB();
+                chunk.drawAABB(BoundingBoxGeometry);
             }
             GLES30.glEnable(GLES30.GL_DEPTH_TEST);
         }
+
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
+        GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
     private void renderClouds() {
 

@@ -38,7 +38,7 @@ public class Transform {
         Matrix.rotateM(modelMatrix, 0, angle * (float) 180.0 / (float) Math.PI,
                 axis.x, axis.y, axis.z);
         //scale
-        Matrix.scaleM(modelMatrix, 0, scale.x, scale.x, scale.z);
+        Matrix.scaleM(modelMatrix, 0, scale.x, scale.y, scale.z);
 
         //center object's pivot on origin to perform rotation/scale
         Matrix.translateM(modelMatrix, 0, -objectPivotPosition.x, -objectPivotPosition.y, -objectPivotPosition.z);

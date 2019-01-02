@@ -1,7 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics;
 
 import com.sdgapps.terrainsandbox.SimpleVec3fPool;
-import com.sdgapps.terrainsandbox.utils.Logger;
 
 /**
  * Class that represents a 3d plane using point and a normal vector.

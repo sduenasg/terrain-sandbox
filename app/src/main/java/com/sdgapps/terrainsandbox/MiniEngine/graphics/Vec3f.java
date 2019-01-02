@@ -295,4 +295,10 @@ public class Vec3f {
         //return color / 255.0;
     }
 
+    public void abs()
+    {
+        x=Math.abs(x);
+        y=Math.abs(y);
+        z=Math.abs(z);
+    }
 }

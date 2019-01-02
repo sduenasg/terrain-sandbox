@@ -11,6 +11,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
+//TODO might be worth it to use short for indices and save some memory
 public class GridMesh {
 
     public static final int FloatBytes = Float.SIZE / 8;
@@ -233,18 +234,18 @@ public class GridMesh {
             //3 - subquad index buf
             GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
             GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER,
-                    indexBuffer.capacity() * GridMesh.IntBytes, indexBuffer,
+                    indexBuffer.capacity() * IntBytes, indexBuffer,
                     GLES30.GL_STATIC_DRAW);
             GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
             indexBuffer.clear();
 
             GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, buffers[1]);
-            GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, gridPositionsBuffer.capacity() * GridMesh.FloatBytes, gridPositionsBuffer,
+            GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, gridPositionsBuffer.capacity() * FloatBytes, gridPositionsBuffer,
                     GLES30.GL_STATIC_DRAW);
             GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
 
             GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, buffers[2]);
-            GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, barycentricBuffer.capacity() * GridMesh.ShortBytes, barycentricBuffer,
+            GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, barycentricBuffer.capacity() * ShortBytes, barycentricBuffer,
                     GLES30.GL_STATIC_DRAW);
             GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
 

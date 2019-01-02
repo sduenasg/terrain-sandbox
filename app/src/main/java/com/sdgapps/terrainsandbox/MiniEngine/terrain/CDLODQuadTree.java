@@ -145,12 +145,14 @@ public class CDLODQuadTree {
         MVPMatrix.bind();
     }
 
-    void drawAABB() {
-        //GLES30.glDisable(GLES30.GL_DEPTH_TEST);
+    void drawAABB(LineCube geometry) {
+        boundingBoxMaterial.shader.useProgram();
+        geometry.bindAttributes(boundingBoxMaterial.shader);
+
         for (SelectableNode snode : selection.getSelectionList()) {
-            ((CDLODNode) snode).renderBox(this.boundingBoxMaterial);
+            ((CDLODNode) snode).renderBox(this.boundingBoxMaterial,geometry);
         }
-        //GLES30.glEnable(GLES30.GL_DEPTH_TEST);
+
     }
 
     void transformBoundingBoxes(Transform planetTransform) {
