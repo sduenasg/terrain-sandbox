@@ -35,7 +35,24 @@ public class BoundingBox {
         bMax.x = maxx;
         bMax.y = maxy;
         bMax.z = maxz;
-        calcCenter();
+        getCenter();
+    }
+
+    public Vec3f[] getCornersAndCenter()
+    {
+        Vec3f[] res=new Vec3f[9];
+
+        res[0]=bMin;
+        res[1]=bMax;
+        res[2]=SimpleVec3fPool.create(bMin.x,bMin.y,bMax.z);
+        res[3]=SimpleVec3fPool.create(bMin.x,bMax.y,bMax.z);
+        res[4]=SimpleVec3fPool.create(bMin.x,bMax.y,bMax.z);
+
+        res[5]=SimpleVec3fPool.create(bMax.x,bMin.y,bMax.z);
+        res[6]=SimpleVec3fPool.create(bMax.x,bMax.y,bMin.z);
+        res[7]=SimpleVec3fPool.create(bMax.x,bMin.y,bMin.z);
+        res[8]=getCenter();
+        return res;
     }
 
     public Vec3f getP(Vec3f normal) {
@@ -151,8 +168,8 @@ public class BoundingBox {
 
     }
 
-    private Vec3f calcCenter() {
-        Vec3f center = new Vec3f();
+    private Vec3f getCenter() {
+        Vec3f center = SimpleVec3fPool.create();
         center.x = (bMax.x + bMin.x) / 2f;
         center.y = (bMax.y + bMin.y) / 2f;
         center.z = (bMax.z + bMin.z) / 2f;
@@ -166,7 +183,7 @@ public class BoundingBox {
     public BoundingBox[] subdivide8() {
         BoundingBox[] result = new BoundingBox[8];
 
-        Vec3f center = calcCenter();
+        Vec3f center = getCenter();
 
         result[0] = new BoundingBox(bMin.x, center.y, bMin.z, center.x, bMax.y, center.z); // A
         result[1] = new BoundingBox(center.x, center.y, bMin.z, bMax.x, bMax.y, center.z); // B
@@ -186,7 +203,7 @@ public class BoundingBox {
      */
     public BoundingBox[] subdivide4() {
         BoundingBox[] result = new BoundingBox[4];
-        Vec3f center = calcCenter();
+        Vec3f center = getCenter();
 
         result[0] = new BoundingBox(bMin.x, bMin.y, bMin.z, center.x, bMax.y, center.z);
         result[1] = new BoundingBox(center.x, bMin.y, bMin.z, bMax.x, bMax.y, center.z);
@@ -207,7 +224,7 @@ public class BoundingBox {
         if (this.isPointInside_OPT(scenter))
             return true;
 
-        Vec3f center = calcCenter();
+        Vec3f center = getCenter();
         Vec3f boxRadius = new Vec3f();
         boxRadius.set(bMax);
         boxRadius.sub(center);
@@ -262,6 +279,64 @@ public class BoundingBox {
         return false;
     }
 
+
+
+
+    public void updateBoxValues(Transform transform, Transform planetTransform) {
+
+        //translate the box to the terrain's object space
+        bMax.sub(transform.objectPivotPosition);
+        bMin.sub(transform.objectPivotPosition);
+
+        //rotate the max and min points
+        transform.rotation.multLocal(bMax);
+        transform.rotation.multLocal(bMin);
+
+        //translate the box back to it's original position
+        bMax.add(transform.objectPivotPosition);
+        bMin.add(transform.objectPivotPosition);
+
+        //translate it to the final terrain position
+        bMax.add(transform.position);
+        bMin.add(transform.position);
+
+        //Apply planet transform
+        //translate the box to the terrain's object space
+        bMax.sub(planetTransform.objectPivotPosition);
+        bMin.sub(planetTransform.objectPivotPosition);
+
+        //apply planet rotation
+        planetTransform.rotation.multLocal(bMax);
+        planetTransform.rotation.multLocal(bMin);
+
+        bMax.add(planetTransform.objectPivotPosition);
+        bMin.add(planetTransform.objectPivotPosition);
+
+        //the box rotation might mess up max/min values, swap them if necessary
+        rearrangeMaxMin();
+
+        //regenerate rendering data for the box
+        prepareForRendering();
+    }
+
+    private void rearrangeMaxMin() {
+        float aux;
+        if (bMax.x < bMin.x) {
+            aux = bMax.x;
+            bMax.x = bMin.x;
+            bMin.x = aux;
+        }
+        if (bMax.y < bMin.y) {
+            aux = bMax.y;
+            bMax.y = bMin.y;
+            bMin.y = aux;
+        }
+        if (bMax.z < bMin.z) {
+            aux = bMax.z;
+            bMax.z = bMin.z;
+            bMin.z = aux;
+        }
+    }
 
     public String toString() {
         return "bMin: " + bMin.toString() + " bMax: " + bMax.toString();
@@ -332,59 +407,4 @@ public class BoundingBox {
         renderable = true;
     }
 
-    public void updateBoxValues(Transform transform, Transform planetTransform) {
-
-        //translate the box to the terrain's object space
-        bMax.sub(transform.objectPivotPosition);
-        bMin.sub(transform.objectPivotPosition);
-
-        //rotate the max and min points
-        transform.rotation.multLocal(bMax);
-        transform.rotation.multLocal(bMin);
-
-        //translate the box back to it's original position
-        bMax.add(transform.objectPivotPosition);
-        bMin.add(transform.objectPivotPosition);
-
-        //translate it to the final terrain position
-        bMax.add(transform.position);
-        bMin.add(transform.position);
-
-        //Apply planet transform
-        //translate the box to the terrain's object space
-        bMax.sub(planetTransform.objectPivotPosition);
-        bMin.sub(planetTransform.objectPivotPosition);
-
-        //apply planet rotation
-        planetTransform.rotation.multLocal(bMax);
-        planetTransform.rotation.multLocal(bMin);
-
-        bMax.add(planetTransform.objectPivotPosition);
-        bMin.add(planetTransform.objectPivotPosition);
-
-        //the box rotation might mess up max/min values, swap them if necessary
-        rearrangeMaxMin();
-
-        //regenerate rendering data for the box
-        prepareForRendering();
-    }
-
-    private void rearrangeMaxMin() {
-        float aux;
-        if (bMax.x < bMin.x) {
-            aux = bMax.x;
-            bMax.x = bMin.x;
-            bMin.x = aux;
-        }
-        if (bMax.y < bMin.y) {
-            aux = bMax.y;
-            bMax.y = bMin.y;
-            bMin.y = aux;
-        }
-        if (bMax.z < bMin.z) {
-            aux = bMax.z;
-            bMax.z = bMin.z;
-            bMin.z = aux;
-        }
-    }
 }

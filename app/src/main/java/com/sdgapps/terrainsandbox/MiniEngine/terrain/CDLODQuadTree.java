@@ -102,7 +102,7 @@ public class CDLODQuadTree {
         Vec3f camerapos = Singleton.systems.mainCamera.gameObject.transform.position;
 
         if (initialized) {
-            root.LODSelect(camerapos, selection);
+            root.LODSelect(camerapos, selection, false);
         }
 
         transform.updateModelMatrix();

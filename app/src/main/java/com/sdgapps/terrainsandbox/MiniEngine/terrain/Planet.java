@@ -53,7 +53,6 @@ import com.sdgapps.terrainsandbox.utils.TimingHelper;
  * //TODO
  * -Splat map: Every channel in the image references a set color or texture. The value of the channel is that color's or texture's weight
  * on that area.
- * -Terrain color spritesheet: A spritesheet that conains different terrain detailmaps
  */
 public class Planet extends Renderer implements TerrainInterface {
     private CDLODQuadTree[] cube;
@@ -277,12 +276,6 @@ public class Planet extends Renderer implements TerrainInterface {
                 minLod = Math.min(minLod, res);
             }
 
-            int horizonCulled = CDLODNode.culledHorizon;
-            int frustrumCulled = CDLODNode.culledFrustum;
-            int drawnNodes=SelectionResults.drawnNodes;
-            Logger.log("CULLED horizon: "+horizonCulled+ " frustrum cull:" + frustrumCulled + " total:"+drawnNodes);
-            CDLODNode.culledHorizon = 0;
-            CDLODNode.culledFrustum = 0;
             SelectionResults.drawnNodes=0;
             if (minLod != Integer.MAX_VALUE) {
 
@@ -291,12 +284,6 @@ public class Planet extends Renderer implements TerrainInterface {
 
                 if(camFly!=null)
                     camFly.allowedSpeed = camFly.maxSpeed * factor;
-
-                float znear = Singleton.systems.mainCamera.frustum.znear;
-                float zfar = Singleton.systems.mainCamera.frustum.zfar;
-                float rangedist = zfar - znear;
-
-                //Singleton.systems.mainCamera.frustum.change_zvalues(znear*factor,zfar*factor);
             }
 
         }

@@ -264,25 +264,27 @@ class CDLODNode extends SelectableNode {
      * @return true-> area handled by current node
      * false-> area not handled by current node (parent node should handle it)
      **/
-    boolean LODSelect(Vec3f cameraPos, SelectionResults selection) {
+    boolean LODSelect(Vec3f cameraPos, SelectionResults selection,boolean parentCompletelyInFrustum) {
         ClearSelectionValues();
 
-        if (!inSphereQRI(quadTree.ranges[lod], cameraPos) && lod != quadTree.nLods - 1) {
-            // no node or child nodes were selected; return false so that our parent node handles our area
+
+        if (!inSphereQRI(quadTree.ranges[lod], cameraPos)) {
+            // no node or child nodes were selected (out of range); return false so that our parent node handles our area
             return false;
         }
 
         if (horizonTestBoundingBox()) {
-            culledHorizon++;
             return true;
         }
 
         Frustum f = Singleton.systems.mainCamera.frustum;
-        if (f.testBoundingBoxAgainstFrustum(AABB) == Frustum.OUTSIDE) {
+
+        //if the parent is fully inside the frustum, this child is too
+        int frustumTest = parentCompletelyInFrustum ? Frustum.INSIDE: f.testBoundingBox(AABB);
+        if (frustumTest == Frustum.OUTSIDE) {
 
             //this node is out of frustum, select nothing and return true ,so that our
             //parent node does not select itself over our area
-            culledFrustum++;
             return true;
         }
 
@@ -307,7 +309,7 @@ class CDLODNode extends SelectableNode {
 
                 for (int i = 0; i < children.length; i++) {
 
-                    if (!children[i].LODSelect(cameraPos, selection)) {
+                    if (!children[i].LODSelect(cameraPos, selection,frustumTest==Frustum.INSIDE)) {
                         // if a child node is outside of its LOD range, this node (parent) must handle it
                         // AddPartOfNodeToSelectionList( childNode.ParentSubArea ) ;
 
@@ -320,9 +322,6 @@ class CDLODNode extends SelectableNode {
             return true;
         }
     }
-
-    static int culledHorizon = 0;
-    static int culledFrustum = 0;
 
     /**
      * Test if the bounding box is occluded by the planet itself
@@ -350,24 +349,27 @@ class CDLODNode extends SelectableNode {
         normal.normalize();
 
         Vec3f targetPosition = AABB.getN(normal);
-
+        float vhMagnitudeSquared=CV.length2()-radius*radius;
         //plane test
-        boolean behindPlane = testPointHorizon(CV, viewPosition, targetPosition, radius);
+        boolean behindPlane = testPointHorizon(CV, viewPosition, targetPosition, vhMagnitudeSquared);
 
         if (!behindPlane) return false;
 
         targetPosition = AABB.getP(normal);
-        behindPlane = testPointHorizon(CV, viewPosition, targetPosition, radius);
+        behindPlane = testPointHorizon(CV, viewPosition, targetPosition,vhMagnitudeSquared);
 
         return behindPlane;
     }
 
-    private boolean testPointHorizon(Vec3f CV, Vec3f viewPosition, Vec3f targetPosition, float radius) {
+    private boolean testPointHorizon(Vec3f CV, Vec3f viewPosition, Vec3f targetPosition, float vhMagnitudeSquared) {
         Vec3f VT = SimpleVec3fPool.create(targetPosition);
         VT.sub(viewPosition);
 
+        //float vtMagnitudeSquared=VT.length2();
+
         float dot = -VT.calcDot(CV);
-        return dot > CV.length2() - radius * radius;
+        return dot > vhMagnitudeSquared;
+            // && dot*dot/vtMagnitudeSquared>vhMagnitudeSquared; //cone test
     }
 
     float getMorphContz()
@@ -440,6 +442,7 @@ class CDLODNode extends SelectableNode {
 
     void renderBox(Material boundingBoxMaterial) {
         boundingBoxMaterial.shader.useProgram();
+        //AABB.draw(boundingBoxMaterial.shader);
         if (selection[4])
             AABB.draw(boundingBoxMaterial.shader);
         else//draw the boxes of the children we are covering for
