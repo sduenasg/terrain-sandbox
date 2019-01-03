@@ -1,7 +1,3 @@
-# terrain-sandbox
-Android app that renders a planet using the CDLOD terrain technique and OpenGL ES 3.0
-
-
 # Planet Geometry
 The planet is a sphere composed of 6 CDLOD Planes forming the shape of a cube. Every terrain node for each plane is rendered using the same grid mesh to save memory.
 The grid mesh is modified to fit each node's requirements in the vertex shader (positioning, spacing, morphing...), where spherization is also done.
