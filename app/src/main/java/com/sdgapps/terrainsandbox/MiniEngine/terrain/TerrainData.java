@@ -111,7 +111,7 @@ public class TerrainData {
         }
 
         TexArraySplat=TextureManagerGL.addArrayTexture(textureArraySplat.toArray(new String[textureArraySplat.size()]),true,false,Texture.FILTER_LINEAR,Texture.WRAP_REPEAT,res);
-        Clouds=TextureManagerGL.addTexture("clouds.png",true,false,true, Texture.WRAP_CLAMP,res,false,true);
+        Clouds=TextureManagerGL.addTexture("clouds_mip_0.pkm",true,false,true, Texture.WRAP_CLAMP,res,false,true);
     }
 
     public boolean isPlanetaryScene() {

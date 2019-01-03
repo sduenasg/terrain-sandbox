@@ -8,7 +8,7 @@ import android.opengl.Matrix;
 import com.sdgapps.terrainsandbox.MVP.MainViewMvp;
 import com.sdgapps.terrainsandbox.MiniEngine.MatrixManager;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.OpenGLChecks;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.AppTextureManager;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManagerGL;
 import com.sdgapps.terrainsandbox.utils.Logger;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -71,7 +71,7 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
             }
 
             Singleton.systems.sTime.tickStart();
-            AppTextureManager.initialize(resources);
+            TextureManagerGL.reset();
             Singleton.systems.sShaderSystem.res = resources;
 
             if (OpenGLChecks.oes_depth_texture)
@@ -88,7 +88,7 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
              *
              */
             Singleton.systems.sShaderSystem.reloadShaders();
-            AppTextureManager.reuploadTextures(resources);
+            TextureManagerGL.reuploadTextures(resources);
 
             //Setup the shadow map depth render buffer again
             worldScene.setupShadowMapFB();

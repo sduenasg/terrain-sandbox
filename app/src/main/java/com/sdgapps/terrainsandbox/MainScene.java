@@ -6,13 +6,24 @@ import android.opengl.GLES30;
 import com.sdgapps.terrainsandbox.MVP.SceneInterface;
 import com.sdgapps.terrainsandbox.MiniEngine.GameObject;
 import com.sdgapps.terrainsandbox.MiniEngine.Scene;
-import com.sdgapps.terrainsandbox.MiniEngine.behaviours.*;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.*;
+import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Camera;
+import com.sdgapps.terrainsandbox.MiniEngine.behaviours.CircleBillboard;
+import com.sdgapps.terrainsandbox.MiniEngine.behaviours.FlyAround;
+import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Light;
+import com.sdgapps.terrainsandbox.MiniEngine.behaviours.OrbitAroundPivot;
+import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Skybox;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.Color4f;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.DefaultFrameBuffer;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.ShadowMapFrameBuffer;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec3f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture2D;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManagerGL;
-import com.sdgapps.terrainsandbox.MiniEngine.terrain.*;
+import com.sdgapps.terrainsandbox.MiniEngine.terrain.CDLODSettings;
+import com.sdgapps.terrainsandbox.MiniEngine.terrain.Planet;
+import com.sdgapps.terrainsandbox.MiniEngine.terrain.TerrainData;
+import com.sdgapps.terrainsandbox.MiniEngine.terrain.TerrainInterface;
 import com.sdgapps.terrainsandbox.shaders.SkyboxProgram;
 import com.sdgapps.terrainsandbox.shaders.SunProgram;
 
@@ -98,7 +109,8 @@ public class MainScene extends Scene implements SceneInterface {
         planet.camFly = cameraFly;
         GameObject terrainGameObject = new GameObject();
         terrainGameObject.add(planet);
-        planet.initialize(terrainData);
+        Texture atmosphereGradient = TextureManagerGL.addTexture("atmogradient.png", true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_REPEAT, res, false,true);
+        planet.initialize(terrainData,atmosphereGradient);
 
         float planetRadius = planet.terrainXZ / 2;
         float planetXZ = planet.terrainXZ;

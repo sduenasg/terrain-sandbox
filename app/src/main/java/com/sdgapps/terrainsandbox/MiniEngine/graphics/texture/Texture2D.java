@@ -4,17 +4,18 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.opengl.ETC1;
-import android.opengl.ETC1Util;
+import android.opengl.GLES20;
 import android.opengl.GLES30;
 import android.opengl.GLUtils;
-import android.util.Log;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec2f;
 import com.sdgapps.terrainsandbox.R;
 import com.sdgapps.terrainsandbox.utils.AndroidUtils;
+import com.sdgapps.terrainsandbox.utils.Logger;
+
 import java.io.IOException;
 import java.nio.Buffer;
+import java.nio.ByteBuffer;
 
 public class Texture2D extends Texture{
 
@@ -24,14 +25,13 @@ public class Texture2D extends Texture{
      * Android resource ID
      */
     private int resID;
-    boolean compressedETC1 = false;
     private boolean needsPixels = false;
     private int[] pixels;
     private int[] mipmapresids;
     private boolean loadedMippampsresids = false;
     private boolean preMultiplyAlpha=true;
 
-    Texture2D(String name, boolean mipmap, boolean alpha, boolean _interpolation, boolean _wrapMode, int resID, boolean _needsPixels,boolean _premultiplyAlpha) {
+    Texture2D(String name, boolean mipmap, boolean alpha, boolean _interpolation, boolean _wrapMode, int resID, boolean _needsPixels,boolean _premultiplyAlpha, byte compression) {
         this.name = name;
         this.mipmapping = mipmap;
         this.alpha = alpha;
@@ -40,120 +40,118 @@ public class Texture2D extends Texture{
         this.wrapMode = _wrapMode;
         needsPixels = _needsPixels;
         preMultiplyAlpha=_premultiplyAlpha;
+        this.compressionType=compression;
     }
 
     public int loadTexture(Resources res) {
-        if (compressedETC1) {
-            getETC1_mipmap_resids();
-            return loadCompressedTexturePKM(res);
-        } else {
-                return loadTextureInternal(res);
+        if(compressionType==compression_ETC2 ||compressionType==compression_ETC1) {
+
+            mipmaplevels=12;
+            getETC1MipmapResids();
+            return loadCompressedETC2(res);
+        }
+        else {
+            return loadTextureInternalUncompressed(res);
         }
     }
 
-    private void getETC1_mipmap_resids() {
-
+    /**grabs mipmaps for the current texture*/
+    private void getETC1MipmapResids() {
         if (!loadedMippampsresids) {
 
-            mipmapresids = new int[mipmaplevels];
-            String[] splitname = this.name.split("_mip");
-            String base = new String();
-            for (int i = 0; i < splitname.length - 1; i++) {
+            if(mipmapping) {
+                mipmapresids = new int[mipmaplevels];
+                String[] splitname = this.name.split("_mip");
+                String base = new String();
+                for (int i = 0; i < splitname.length - 1; i++) {
 
-                base += splitname[i];
+                    base += splitname[i];
+                }
+                base = base + "_mip_";
+
+                int id = -1;
+                mipmapresids[0] = this.resID;
+                for (int i = 1; i < mipmaplevels; i++) {
+
+                    String file = base + Integer.toString(i);
+                    file = file.trim();
+                    Logger.log("ETC2 print "+file);
+                    id = AndroidUtils.getResId(file, R.raw.class);
+                    mipmapresids[i] = id;
+                }
             }
-            base = base + "_mip_";
-
-            int id = -1;
-            mipmapresids[0] = this.resID;//mip0 es la base de esta textura
-            for (int i = 1; i < mipmaplevels; i++) {
-
-                String file = base + Integer.toString(i);
-                file = file.trim();
-                id = AndroidUtils.getResId(file, R.raw.class);
-                //Logger.log("kk " +  file +" " + actorId);
-                mipmapresids[i] = id;
+            else
+            {
+                mipmapresids = new int[1];
+                mipmapresids[0]=resID;
             }
-
             loadedMippampsresids = true;
         }
     }
 
     /**
-     * Mali texture compression tool outputs ETC1 compressed textures
+     * Mali texture compression tool outputs ETC1/ETC2 compressed textures
      */
-    private int loadCompressedTexturePKM(Resources res) {
+    private int loadCompressedETC2(Resources res) {
         this.glID = newTextureID();
+
 
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, glID);
 
-       /* GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
-        GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR);*/
-
-        if (wrapMode == WRAP_CLAMP) {
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
-        } else {
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_REPEAT);
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_REPEAT);
+        if(!mipmapping) {
+            if (interpolation == FILTER_LINEAR) {
+                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
+                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR);
+            } else {
+                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_NEAREST);
+                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_NEAREST);
+            }
         }
-
-        if (interpolation == Texture2D.FILTER_LINEAR)
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER,
-                    GLES30.GL_LINEAR_MIPMAP_LINEAR);//bilinear
         else
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER,
-                    GLES30.GL_LINEAR_MIPMAP_NEAREST);
-
-        GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER,
-                GLES30.GL_LINEAR);//mag filter
-
-        try {
-
-            for (int i = 0; i < mipmapresids.length; i++) {
-                int id = mipmapresids[i];
-                if (id >= 0) {
-                    ETC1Util.ETC1Texture etctex = ETC1Util.createTexture(res.openRawResource(id));
-                    width = etctex.getWidth();
-                    height = etctex.getHeight();
-
-
-                    Buffer data = etctex.getData();
-                    int imageSize = data.remaining();
-                    GLES30.glCompressedTexImage2D(GLES30.GL_TEXTURE_2D, i, ETC1.ETC1_RGB8_OES, etctex.getWidth(), etctex.getHeight(),
-                            0, imageSize, data);
-                }
+        {
+            if (interpolation == FILTER_LINEAR) {
+                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_LINEAR);
+            } else {
+                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_NEAREST);
             }
 
-            /*
-             * NOTE
-             * After some testing on my devices, only the Nvidia shield tablet autogenerates mipmaps
-             * for ETC1 textures
-             **/
-
-            //GLES30.glCompressedTexImage2D(GLES30.GL_TEXTURE_2D, 0, ETC1.ETC1_RGB8_OES, etctex.getWidth(),etctex.getHeight(),
-            //  0, imageSize, data);
-
-            // GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D); // no sirve con ETC1, en nvidia shield si, imagino que el driver de nvidia es mejor que el resto
-
-            // bitmap.recycle();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.w("ETC1 error", " " + e.getMessage());
+            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER,GLES30.GL_LINEAR);
         }
 
+        ETC2Util.ETC2Texture etctex=null;
+
+        for (int i = 0; i < mipmaplevels; i++) {
+            int id = mipmapresids[i];
+            try {
+                etctex = ETC2Util.createTexture(res.openRawResource(id));
+            } catch (IOException e) {
+                e.printStackTrace();
+                Logger.err(e.toString());
+            }
+            width = etctex.getWidth();
+            height = etctex.getHeight();
+            int datasize=etctex.getData().remaining();
+
+            GLES30.glCompressedTexImage2D(GLES30.GL_TEXTURE_2D, i, etctex.getCompressionFormat(), etctex.getWidth(), etctex.getHeight(),
+                    0, etctex.getData().remaining(), etctex.getData());
+        }
         return glID;
     }
 
-    private int loadTextureInternal(Resources res) {
+    private int loadTextureInternalUncompressed(Resources res) {
 
         this.glID = newTextureID();
 
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inScaled = false; //Disables android's automatic scaling of images
 
+        /*
+        * Disables bitmapfactory alpha channel premultiplication:
+        * Useful for images with an alpha channel that aren't used as actual images but as data of
+        * some kind (like a splatmap)
+        */
         if(!preMultiplyAlpha)
-            opts.inPremultiplied = false;//Disables bitmapfactory alpha channel premultiplication
+            opts.inPremultiplied = false;
 
         Bitmap temp = BitmapFactory.decodeResource(res, this.resID, opts);
         temp.setPremultiplied(false);
@@ -199,6 +197,7 @@ public class Texture2D extends Texture{
         }
 
         GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, temp, 0);
+
 
         if(mipmapping)
             GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D);

@@ -18,7 +18,14 @@ public class Texture implements TextureInterface{
 
     int height = 0;
     int width = 0;
-    final int mipmaplevels = 6;
+    int mipmaplevels = 6;
+    byte compressionType=0;
+
+    @Deprecated
+    static final byte compression_ETC1 =1;
+
+    static final byte compression_ETC2 =2;
+    static final byte compression_NONE =0;
     @Override
     public int getGlID() {
         return this.glID;

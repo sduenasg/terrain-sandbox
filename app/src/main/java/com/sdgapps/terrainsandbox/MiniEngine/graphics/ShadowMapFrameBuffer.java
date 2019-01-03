@@ -3,7 +3,6 @@ package com.sdgapps.terrainsandbox.MiniEngine.graphics;
 import android.opengl.GLES30;
 import android.util.Log;
 
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.AppTextureManager;
 import com.sdgapps.terrainsandbox.Singleton;
 import com.sdgapps.terrainsandbox.utils.Logger;
 
@@ -13,6 +12,7 @@ public class ShadowMapFrameBuffer implements FrameBufferInterface {
     private int mShadowMapHeight;
     private final int shadowmapSize = 8192;
 
+    int glID=0;
     @Override
     public void bind() {
         GLES30.glColorMask(false, false, false, false);
@@ -28,7 +28,7 @@ public class ShadowMapFrameBuffer implements FrameBufferInterface {
         // Clear color and buffers
         GLES30.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         GLES30.glClear(GLES30.GL_DEPTH_BUFFER_BIT);
-        AppTextureManager.shadowmap.glID = shadowmap_renderTex[0];
+        glID = shadowmap_renderTex[0];
     }
 
     @Override
@@ -84,7 +84,7 @@ public class ShadowMapFrameBuffer implements FrameBufferInterface {
                 throw new RuntimeException("GL_FRAMEBUFFER_COMPLETE failed, CANNOT use FBO");
             }
 
-            AppTextureManager.shadowmap.glID = shadowmap_renderTex[0];
+            glID = shadowmap_renderTex[0];
             GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, 0);
         }
     }

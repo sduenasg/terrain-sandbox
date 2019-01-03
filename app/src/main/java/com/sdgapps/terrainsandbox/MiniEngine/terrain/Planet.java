@@ -2,14 +2,23 @@ package com.sdgapps.terrainsandbox.MiniEngine.terrain;
 
 import android.opengl.GLES30;
 
-import com.sdgapps.terrainsandbox.MiniEngine.*;
+import com.sdgapps.terrainsandbox.MiniEngine.DefaultRenderPackage;
+import com.sdgapps.terrainsandbox.MiniEngine.RenderPackage;
 import com.sdgapps.terrainsandbox.MiniEngine.behaviours.FlyAround;
 import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Light;
 import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Renderer;
 import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Sphere;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.*;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.*;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.AppTextureManager;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.Color4f;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.FrameBufferInterface;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.LineCube;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.MiniMath;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.Quaternion;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec3f;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform1f;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3f;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
 import com.sdgapps.terrainsandbox.SimpleQuaternionPool;
 import com.sdgapps.terrainsandbox.Singleton;
 import com.sdgapps.terrainsandbox.shaders.AtmosphereProgram;
@@ -110,7 +119,7 @@ public class Planet extends Renderer implements TerrainInterface {
     static final String splatarrayUniformName="u_splatArray";
 
     LineCube BoundingBoxGeometry;
-    public void initialize(TerrainData data) {
+    public void initialize(TerrainData data, Texture atmosphereGradient) {
 
         BoundingBoxGeometry=new LineCube();
         BoundingBoxGeometry.initializeVisuals();
@@ -178,12 +187,12 @@ public class Planet extends Renderer implements TerrainInterface {
         materialC.addTexture(data.TexArraySplat,splatarrayUniformName);
         materialD.addTexture(data.TexArraySplat,splatarrayUniformName);
 
-        materialN.addTexture(AppTextureManager.atmosphereGradient,"u_atmoGradient");
-        materialS.addTexture(AppTextureManager.atmosphereGradient,"u_atmoGradient");
-        materialA.addTexture(AppTextureManager.atmosphereGradient,"u_atmoGradient");
-        materialB.addTexture(AppTextureManager.atmosphereGradient,"u_atmoGradient");
-        materialC.addTexture(AppTextureManager.atmosphereGradient,"u_atmoGradient");
-        materialD.addTexture(AppTextureManager.atmosphereGradient,"u_atmoGradient");
+        materialN.addTexture(atmosphereGradient,"u_atmoGradient");
+        materialS.addTexture(atmosphereGradient,"u_atmoGradient");
+        materialA.addTexture(atmosphereGradient,"u_atmoGradient");
+        materialB.addTexture(atmosphereGradient,"u_atmoGradient");
+        materialC.addTexture(atmosphereGradient,"u_atmoGradient");
+        materialD.addTexture(atmosphereGradient,"u_atmoGradient");
         terrainXZ = rootQuadScale * gridSize;
 
         float maxverts = (float) Math.sqrt(Math.pow(4, nLods - 1) * (gridSize + 1) * (gridSize + 1));
@@ -242,7 +251,7 @@ public class Planet extends Renderer implements TerrainInterface {
         atmosphere.GenBuffersAndSubmitToGL();
         atmosphere.transform.position.add(planetRadius, 0, planetRadius);
         atmosphereColor.normalize_noalpha();
-        atmosphere.material.addTexture(AppTextureManager.atmosphereGradient,"u_Texture");
+        atmosphere.material.addTexture(atmosphereGradient,"u_Texture");
 
         ShaderUniform3f atmosphereCol = (ShaderUniform3f) atmosphere.material.shader.getUniform("u_atmosphere_color");
         atmosphereCol.set(atmosphereColor);
