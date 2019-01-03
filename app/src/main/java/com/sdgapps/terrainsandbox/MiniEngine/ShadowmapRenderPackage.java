@@ -1,8 +1,5 @@
 package com.sdgapps.terrainsandbox.MiniEngine;
 
-import android.opengl.GLES30;
-import android.opengl.Matrix;
-
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.FrameBufferInterface;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;

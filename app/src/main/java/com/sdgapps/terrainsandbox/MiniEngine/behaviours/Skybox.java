@@ -1,7 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.behaviours;
 
 import android.opengl.GLES30;
-import android.opengl.Matrix;
 
 import com.sdgapps.terrainsandbox.MiniEngine.MatrixManager;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.Transform;
@@ -10,7 +9,6 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
 import com.sdgapps.terrainsandbox.MiniEngine.terrain.GridMesh;
-import com.sdgapps.terrainsandbox.utils.Logger;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

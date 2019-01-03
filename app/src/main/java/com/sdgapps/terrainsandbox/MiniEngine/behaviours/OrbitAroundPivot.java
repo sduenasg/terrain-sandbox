@@ -2,7 +2,9 @@ package com.sdgapps.terrainsandbox.MiniEngine.behaviours;
 
 import com.sdgapps.terrainsandbox.MiniEngine.Behaviour;
 import com.sdgapps.terrainsandbox.MiniEngine.TimeSystem;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.*;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.MiniMath;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.Quaternion;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec3f;
 import com.sdgapps.terrainsandbox.SimpleVec3fPool;
 import com.sdgapps.terrainsandbox.Singleton;
 

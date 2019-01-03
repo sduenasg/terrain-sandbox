@@ -4,7 +4,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.opengl.GLES20;
 import android.opengl.GLES30;
 import android.opengl.GLUtils;
 
@@ -14,8 +13,6 @@ import com.sdgapps.terrainsandbox.utils.AndroidUtils;
 import com.sdgapps.terrainsandbox.utils.Logger;
 
 import java.io.IOException;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
 
 public class Texture2D extends Texture{
 

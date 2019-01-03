@@ -7,7 +7,6 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture2D;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManagerGL;
 import com.sdgapps.terrainsandbox.R;
 import com.sdgapps.terrainsandbox.utils.AndroidUtils;
-import com.sdgapps.terrainsandbox.utils.Logger;
 import com.sdgapps.terrainsandbox.utils.RawResourceReader;
 
 import java.util.ArrayList;

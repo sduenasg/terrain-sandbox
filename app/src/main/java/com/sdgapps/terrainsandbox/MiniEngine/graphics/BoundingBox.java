@@ -3,7 +3,6 @@ package com.sdgapps.terrainsandbox.MiniEngine.graphics;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.SimpleVec3fPool;
-import java.nio.FloatBuffer;
 
 /**
  * Simple bounding box class
@@ -331,7 +330,6 @@ public class BoundingBox {
     /**
      * Box rendering
      */
-    private FloatBuffer mLineVertices;
 
     public void draw(GLSLProgram shader, LineCube geometry) {
 

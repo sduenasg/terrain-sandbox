@@ -1,10 +1,8 @@
 package com.sdgapps.terrainsandbox.MiniEngine.terrain;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform1f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform1fv;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform2fv;
-import com.sdgapps.terrainsandbox.utils.Logger;
 
 import java.util.HashSet;
 

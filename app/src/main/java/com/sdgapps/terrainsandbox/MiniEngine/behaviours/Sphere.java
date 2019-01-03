@@ -12,7 +12,6 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
 import com.sdgapps.terrainsandbox.MiniEngine.terrain.GridMesh;
 import com.sdgapps.terrainsandbox.SimpleVec3fPool;
-import com.sdgapps.terrainsandbox.utils.Logger;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

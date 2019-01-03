@@ -3,9 +3,9 @@ package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 import android.content.res.Resources;
 import android.opengl.GLES30;
 
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.OpenGLChecks;
 import com.sdgapps.terrainsandbox.Singleton;
 import com.sdgapps.terrainsandbox.utils.Logger;
+
 import java.util.HashMap;
 import java.util.Map;
 

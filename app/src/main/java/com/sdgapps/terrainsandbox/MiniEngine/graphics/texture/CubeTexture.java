@@ -6,11 +6,6 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLES30;
 import android.opengl.GLUtils;
 
-import com.sdgapps.terrainsandbox.utils.Logger;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 public class CubeTexture extends Texture {
 
     private int[] resIDs;

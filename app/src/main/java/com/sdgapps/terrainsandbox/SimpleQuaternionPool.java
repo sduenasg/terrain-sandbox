@@ -1,7 +1,6 @@
 package com.sdgapps.terrainsandbox;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.Quaternion;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec3f;
 
 /**
  * Use this pool VERY carefully. It is very simple and fast, but

@@ -1,7 +1,6 @@
 package com.sdgapps.terrainsandbox.shaders;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Sampler2D;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.SamplerCubemap;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
 import com.sdgapps.terrainsandbox.R;

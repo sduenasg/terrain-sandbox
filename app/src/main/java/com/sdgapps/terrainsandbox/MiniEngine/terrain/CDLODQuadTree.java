@@ -1,9 +1,12 @@
 package com.sdgapps.terrainsandbox.MiniEngine.terrain;
 
 import android.opengl.Matrix;
+
 import com.sdgapps.terrainsandbox.MiniEngine.MatrixManager;
 import com.sdgapps.terrainsandbox.MiniEngine.RenderPackage;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.*;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.LineCube;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.Transform;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec3f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
