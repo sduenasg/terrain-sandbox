@@ -11,9 +11,18 @@ import java.util.HashMap;
  */
 public class ShaderSystem {
 
-    public Resources res;
-    public GLSLProgram shadowMapProgram;
-    public HashMap<String,GLSLProgram> shaders=new HashMap<>();
+
+
+    private Resources res;
+    private HashMap<String,GLSLProgram> shaders=new HashMap<>();
+
+    public void setRes(Resources res) {
+        this.res = res;
+    }
+
+    public Resources getRes() {
+        return res;
+    }
 
     public void reloadShaders() {
 

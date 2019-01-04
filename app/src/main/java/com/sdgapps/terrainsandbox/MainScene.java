@@ -1,5 +1,6 @@
 package com.sdgapps.terrainsandbox;
 
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.opengl.GLES30;
 
@@ -47,24 +48,28 @@ public class MainScene extends Scene implements SceneInterface {
     private boolean initialized = false;
     private TerrainInterface activeTerrain;
 
+    Resources resources;
+    AssetManager assetMngr;
     /**
      * Requires to run on the GL thread
      */
-    public void loadScene(Resources res) {
-        TerrainData mTerrainData = new TerrainData(scenes[sceneIdx], res);
-        mTerrainData.LoadTextures(res);
+    public void loadScene(Resources r, AssetManager am) {
+        resources=r;
+        assetMngr=am;
+        TerrainData mTerrainData = new TerrainData(scenes[sceneIdx], resources);
+        mTerrainData.LoadTextures(resources);
 
         if (mTerrainData.isPlanetaryScene())
-            SetupPlanetScene(res,mTerrainData);
+            SetupPlanetScene(mTerrainData);
         else
-            SetupFlatScene(res, mTerrainData);
+            SetupFlatScene(mTerrainData);
     }
 
-    private void SetupFlatScene(Resources res, TerrainData terrainData) {
+    private void SetupFlatScene(TerrainData terrainData) {
 
     }
 
-    private void SetupPlanetScene(Resources res,TerrainData terrainData) {
+    private void SetupPlanetScene(TerrainData terrainData) {
         /*Camera initialization*/
         GameObject camGO = new GameObject();
 
@@ -100,7 +105,7 @@ public class MainScene extends Scene implements SceneInterface {
         skyboxGO.add(skyboxBehavior);
 
         String[] skyboxtextures=new String[]{"stars.png","stars.png","stars.png","stars.png","stars.png","stars.png"};
-        Texture skyboxtex = TextureManager.getInstance().addCubeTexture(skyboxtextures, res);
+        Texture skyboxtex = TextureManager.getInstance().addCubeTexture(skyboxtextures, resources);
         skyboxMaterial.addTexture(skyboxtex,"skyboxTex");
         add(skyboxGO);
 
@@ -109,7 +114,7 @@ public class MainScene extends Scene implements SceneInterface {
         planet.camFly = cameraFly;
         GameObject terrainGameObject = new GameObject();
         terrainGameObject.add(planet);
-        Texture atmosphereGradient = TextureManager.getInstance().addTexture("atmogradient.png", true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_REPEAT, res, false,true);
+        Texture atmosphereGradient = TextureManager.getInstance().addTexture("atmogradient.png", true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_REPEAT, resources, false,true);
         planet.initialize(terrainData,atmosphereGradient);
 
         float planetRadius = planet.terrainXZ / 2;

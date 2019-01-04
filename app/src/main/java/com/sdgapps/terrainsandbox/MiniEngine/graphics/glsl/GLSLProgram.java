@@ -40,7 +40,7 @@ public class GLSLProgram {
     String shaderID;
 
     public GLSLProgram(String id, int vertexid, int fragmentid) {
-        Resources res=Singleton.systems.sShaderSystem.res;
+        Resources res=Singleton.systems.sShaderSystem.getRes();
         this.shaderID = id;
         vertex = new GLSLShader(vertexid, res, false,id);
         fragment = new GLSLShader(fragmentid, res, true,id);

@@ -1,5 +1,6 @@
 package com.sdgapps.terrainsandbox;
 
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
@@ -17,7 +18,8 @@ import javax.microedition.khronos.opengles.GL10;
 public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
 
     private boolean firstSurfaceChange = false;
-    public Resources resources;
+    Resources resources;
+    AssetManager assetMngr;
     private boolean first_load = true;
     public static int surface_width = 0;
     public static int surface_height = 0;
@@ -29,9 +31,10 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
 
     static final int FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B;
 
-    public GLSurfaceRenderer(MainViewMvp.MainViewMvpListener _presenter, Resources _resources) {
+    public GLSurfaceRenderer(MainViewMvp.MainViewMvpListener _presenter, Resources _resources,AssetManager _assetMngr) {
         presenter = _presenter;
         resources = _resources;
+        assetMngr = _assetMngr;
     }
 
     @Override
@@ -64,14 +67,13 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
             SimpleVec3fPool.init();
             SimpleQuaternionPool.init();
             OpenGLChecks.runChecks();
-            if (OpenGLChecks.standard_derivatives) {
-                //Accuracy of the derivative calculations. Default is GL_DONT_CARE, other possible values are GL_NICEST, GL_FASTEST
-                GLES30.glHint(FRAGMENT_SHADER_DERIVATIVE_HINT_OES, GLES30.GL_FASTEST);
-            }
+
+            //Accuracy of the derivative calculations. Default is GL_DONT_CARE, other possible values are GL_NICEST, GL_FASTEST
+            GLES30.glHint(GLES30.GL_FRAGMENT_SHADER_DERIVATIVE_HINT, GLES30.GL_FASTEST);
 
             Singleton.systems.sTime.tickStart();
             TextureManager.getInstance().reset();
-            Singleton.systems.sShaderSystem.res = resources;
+            Singleton.systems.sShaderSystem.setRes(resources);
 
             if (OpenGLChecks.oes_depth_texture)
                 worldScene.setupShadowMapFB();

@@ -60,10 +60,9 @@ public class MainActivity extends AppCompatActivity
         if (supportsEs3) {
             MVPView = new MainViewMvpImpl(getLayoutInflater(), null);
             Singleton.systems.sTime.setPresenter(this);
-            renderer = new GLSurfaceRenderer(this, getResources());
+            renderer = new GLSurfaceRenderer(this, getResources(),getAssets());
             MVPModel = renderer.worldScene;
 
-            AssetManager assetMngr = getAssets();
             if (savedInstanceState != null) {
                 MVPModel.setLoadedData(unpackBundle(savedInstanceState));
             }
@@ -71,9 +70,9 @@ public class MainActivity extends AppCompatActivity
             setContentView(MVPView.getRootView());
 
         } else {
-            Toast.makeText(this, "Error: OpenGL ES3 not supported on this device", Toast.LENGTH_LONG)
+            Toast.makeText(this, "Error: OpenGL ES 3 not supported on this device", Toast.LENGTH_LONG)
                     .show();
-            throw new RuntimeException("Open GL ES 3.0 was not found on device");
+            throw new RuntimeException("Open GL ES 3.0 not supported");
         }
 
         Thread.UncaughtExceptionHandler h = new Thread.UncaughtExceptionHandler() {
@@ -230,10 +229,7 @@ public class MainActivity extends AppCompatActivity
         Runnable task = new Runnable() {
             @Override
             public void run() {
-
-                //renderer.loadScene();
-                MVPModel.loadScene(getResources());
-                //worldScene.SetupScene(resources);
+                MVPModel.loadScene(getResources(),getAssets());
                 onFinishedLoadingScene();
             }
         };
@@ -260,7 +256,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFinishedCreatingSurface() {
         //renderer.loadScene();
-        MVPModel.loadScene(getResources());
+        MVPModel.loadScene(getResources(),getAssets());
         onFinishedLoadingScene();
         /*
          * Be careful with runonuithread, if the activity gets destroyed
