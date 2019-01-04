@@ -9,19 +9,23 @@ import com.sdgapps.terrainsandbox.utils.Logger;
 import java.util.HashMap;
 
 
-public class TextureManagerGL {
+public class TextureManager {
 
-    static boolean init = false;
+    private static TextureManager instance;
+
+    public static TextureManager getInstance() {
+        if (instance == null) {
+            instance = new TextureManager();
+        }
+        return instance;
+    }
 
     /**
      * Maps texture string names to texture ids
      */
-    private static HashMap<String, Texture> texMap = new HashMap<String, Texture>();
+    private HashMap<String, Texture> texMap = new HashMap<String, Texture>();
 
-
-
-
-    public static Texture addCubeTexture(String[] files, Resources res)
+    public Texture addCubeTexture(String[] files, Resources res)
     {
         int[] resids=new int[files.length];
 
@@ -38,7 +42,8 @@ public class TextureManagerGL {
         texMap.put(files[0], t);
         return t;
     }
-    public static Texture addArrayTexture(String[] files, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode, Resources res)
+
+    public Texture addArrayTexture(String[] files, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode, Resources res)
     {
         int[] resids=new int[files.length];
 
@@ -59,7 +64,7 @@ public class TextureManagerGL {
      * Adds a texture using a resource name, if compression_ETC1 textures are supported and an compression_ETC1 version of the texture is present, it replaces the png by
      * the compressed compression_ETC1 textures. It falls back to using the png's otherwise
      */
-    private static byte getTextureType(String name)
+    private byte getTextureType(String name)
     {
         byte imageType=0;
         String[] aux = name.split("[.]+");
@@ -72,9 +77,10 @@ public class TextureManagerGL {
 
         return imageType;
     }
+
     /** Note: ETC2 texture mipmappping requires mip level images to be included. Generate them using Mali texture compression tool
      * and call addTexture for the mip0 file*/
-    public static Texture addTexture(String name, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode, Resources res, boolean needsPixels, boolean premultiplyAlpha) {
+    public  Texture addTexture(String name, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode, Resources res, boolean needsPixels, boolean premultiplyAlpha) {
         if (texMap.containsKey(name)) {
             Logger.log("Texture2D Manager: Warning: texture named: " + name + " already in texMap, no action taken");
             return texMap.get(name);
@@ -102,24 +108,22 @@ public class TextureManagerGL {
     }
 
 
-    public static void reuploadTextures(Resources res) {
+    public void reuploadTextures(Resources res) {
 
         for (Texture t : texMap.values()) {
             if (t.glID != -1) t.loadTexture(res);
         }
     }
 
-    public static void clearTM() {
+    public  void clearTM() {
 
         if (texMap != null) {
             texMap.clear();
         }
-        init = false;
     }
 
-    public static void reset() {
+    public  void reset() {
 
         if (texMap != null) texMap.clear();
-        init = false;
     }
 }
