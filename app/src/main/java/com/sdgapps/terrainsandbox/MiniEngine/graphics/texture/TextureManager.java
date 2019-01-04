@@ -1,5 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.texture;
 
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 
 import com.sdgapps.terrainsandbox.R;
@@ -13,6 +14,14 @@ public class TextureManager {
 
     private static TextureManager instance;
 
+    private Resources resources;
+    private AssetManager assetMngr;
+
+    public void setAssets(AssetManager am, Resources r)
+    {
+        resources=r;
+        assetMngr=am;
+    }
     public static TextureManager getInstance() {
         if (instance == null) {
             instance = new TextureManager();
@@ -25,7 +34,7 @@ public class TextureManager {
      */
     private HashMap<String, Texture> texMap = new HashMap<String, Texture>();
 
-    public Texture addCubeTexture(String[] files, Resources res)
+    public Texture addCubeTexture(String[] files)
     {
         int[] resids=new int[files.length];
 
@@ -38,12 +47,12 @@ public class TextureManager {
         }
 
         CubeTexture t=new CubeTexture(files, resids);
-        t.loadTexture(res);
+        t.loadTexture(resources);
         texMap.put(files[0], t);
         return t;
     }
 
-    public Texture addArrayTexture(String[] files, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode, Resources res)
+    public Texture addArrayTexture(String[] files, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode)
     {
         int[] resids=new int[files.length];
 
@@ -56,7 +65,7 @@ public class TextureManager {
         }
 
         ArrayTexture t=new ArrayTexture(files, mipmapping, alpha, interpolation, wrapMode, resids);
-        t.loadTexture(res);
+        t.loadTexture(resources);
         texMap.put(files[0], t);
         return t;
     }
@@ -80,7 +89,7 @@ public class TextureManager {
 
     /** Note: ETC2 texture mipmappping requires mip level images to be included. Generate them using Mali texture compression tool
      * and call addTexture for the mip0 file*/
-    public  Texture addTexture(String name, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode, Resources res, boolean needsPixels, boolean premultiplyAlpha) {
+    public  Texture addTexture(String name, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode, boolean needsPixels, boolean premultiplyAlpha) {
         if (texMap.containsKey(name)) {
             Logger.log("Texture2D Manager: Warning: texture named: " + name + " already in texMap, no action taken");
             return texMap.get(name);
@@ -100,7 +109,7 @@ public class TextureManager {
 
         Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, resid, needsPixels,premultiplyAlpha,imgType);
 
-        t.loadTexture(res);
+        t.loadTexture(resources);
 
         texMap.put(name, t);
         // Logger.log("Texture2D Manager: New texture loaded: "+name);
@@ -108,10 +117,9 @@ public class TextureManager {
     }
 
 
-    public void reuploadTextures(Resources res) {
-
+    public void reuploadTextures() {
         for (Texture t : texMap.values()) {
-            if (t.glID != -1) t.loadTexture(res);
+            if (t.glID != -1) t.loadTexture(resources);
         }
     }
 

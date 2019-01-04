@@ -105,7 +105,7 @@ public class MainScene extends Scene implements SceneInterface {
         skyboxGO.add(skyboxBehavior);
 
         String[] skyboxtextures=new String[]{"stars.png","stars.png","stars.png","stars.png","stars.png","stars.png"};
-        Texture skyboxtex = TextureManager.getInstance().addCubeTexture(skyboxtextures, resources);
+        Texture skyboxtex = TextureManager.getInstance().addCubeTexture(skyboxtextures);
         skyboxMaterial.addTexture(skyboxtex,"skyboxTex");
         add(skyboxGO);
 
@@ -114,7 +114,7 @@ public class MainScene extends Scene implements SceneInterface {
         planet.camFly = cameraFly;
         GameObject terrainGameObject = new GameObject();
         terrainGameObject.add(planet);
-        Texture atmosphereGradient = TextureManager.getInstance().addTexture("atmogradient.png", true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_REPEAT, resources, false,true);
+        Texture atmosphereGradient = TextureManager.getInstance().addTexture("atmogradient.png", true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_REPEAT, false,true);
         planet.initialize(terrainData,atmosphereGradient);
 
         float planetRadius = planet.terrainXZ / 2;
@@ -127,7 +127,6 @@ public class MainScene extends Scene implements SceneInterface {
         //radius of a 2d circle (xz) that contains the whole terrain mesh
         float gridMaxRadius = (float) Math.sqrt(planetXZ * planetXZ + planetXZ * planetXZ);
         sceneCamera.setupShadowMapCamera(gridMaxRadius);
-
 
         orb=new OrbitAroundPivot();
         sunGO.add(orb);

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.ConfigurationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import com.sdgapps.terrainsandbox.MVP.MainViewMvp;
 import com.sdgapps.terrainsandbox.MVP.MainViewMvpImpl;
 import com.sdgapps.terrainsandbox.MVP.SceneInterface;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManager;
 import com.sdgapps.terrainsandbox.MiniEngine.terrain.CDLODSettings;
 import com.sdgapps.terrainsandbox.utils.Logger;
 
@@ -60,8 +62,16 @@ public class MainActivity extends AppCompatActivity
         if (supportsEs3) {
             MVPView = new MainViewMvpImpl(getLayoutInflater(), null);
             Singleton.systems.sTime.setPresenter(this);
-            renderer = new GLSurfaceRenderer(this, getResources(),getAssets());
+
+            Resources resources=getResources();
+            AssetManager assetM=getAssets();
+
+            TextureManager.getInstance().setAssets(assetM,resources);
+            Singleton.systems.sShaderSystem.setRes(resources);
+
+            renderer = new GLSurfaceRenderer(this);
             MVPModel = renderer.worldScene;
+
 
             if (savedInstanceState != null) {
                 MVPModel.setLoadedData(unpackBundle(savedInstanceState));

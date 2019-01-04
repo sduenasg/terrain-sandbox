@@ -22,11 +22,11 @@ public class Texture2D extends Texture{
      * Android resource ID
      */
     private int resID;
-    private boolean needsPixels = false;
+    private boolean needsPixels;
     private int[] pixels;
     private int[] mipmapresids;
     private boolean loadedMippampsresids = false;
-    private boolean preMultiplyAlpha=true;
+    private boolean preMultiplyAlpha = true;
 
     Texture2D(String name, boolean mipmap, boolean alpha, boolean _interpolation, boolean _wrapMode, int resID, boolean _needsPixels,boolean _premultiplyAlpha, byte compression) {
         this.name = name;
@@ -42,7 +42,6 @@ public class Texture2D extends Texture{
 
     public int loadTexture(Resources res) {
         if(compressionType==compression_ETC2 ||compressionType==compression_ETC1) {
-
             mipmaplevels=12;
             getETC1MipmapResids();
             return loadCompressedETC2(res);

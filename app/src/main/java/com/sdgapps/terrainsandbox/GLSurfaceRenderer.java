@@ -1,7 +1,5 @@
 package com.sdgapps.terrainsandbox;
 
-import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -18,8 +16,6 @@ import javax.microedition.khronos.opengles.GL10;
 public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
 
     private boolean firstSurfaceChange = false;
-    Resources resources;
-    AssetManager assetMngr;
     private boolean first_load = true;
     public static int surface_width = 0;
     public static int surface_height = 0;
@@ -29,12 +25,11 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
     MainScene worldScene = new MainScene();
     private MainViewMvp.MainViewMvpListener presenter;
 
+    @Deprecated
     static final int FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B;
 
-    public GLSurfaceRenderer(MainViewMvp.MainViewMvpListener _presenter, Resources _resources,AssetManager _assetMngr) {
+    public GLSurfaceRenderer(MainViewMvp.MainViewMvpListener _presenter) {
         presenter = _presenter;
-        resources = _resources;
-        assetMngr = _assetMngr;
     }
 
     @Override
@@ -73,7 +68,6 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
 
             Singleton.systems.sTime.tickStart();
             TextureManager.getInstance().reset();
-            Singleton.systems.sShaderSystem.setRes(resources);
 
             if (OpenGLChecks.oes_depth_texture)
                 worldScene.setupShadowMapFB();
@@ -88,7 +82,7 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
              * long as they've been notified about the GL Context loss.
              */
             Singleton.systems.sShaderSystem.reloadShaders();
-            TextureManager.getInstance().reuploadTextures(resources);
+            TextureManager.getInstance().reuploadTextures();
 
             //Setup the shadow map depth render buffer again
             worldScene.setupShadowMapFB();
