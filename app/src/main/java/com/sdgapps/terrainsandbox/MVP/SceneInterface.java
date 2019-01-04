@@ -1,5 +1,7 @@
 package com.sdgapps.terrainsandbox.MVP;
 
+import android.content.res.Resources;
+
 import com.sdgapps.terrainsandbox.SceneDataPOJO;
 
 public interface SceneInterface {
@@ -20,7 +22,7 @@ public interface SceneInterface {
 
     void setRangeDistance(float f);
 
-    void loadScene(int s);
+    void loadScene(Resources res);
 
     void resetCamera();
 

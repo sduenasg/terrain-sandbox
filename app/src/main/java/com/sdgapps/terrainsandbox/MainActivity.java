@@ -3,6 +3,7 @@ package com.sdgapps.terrainsandbox;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity
             renderer = new GLSurfaceRenderer(this, getResources());
             MVPModel = renderer.worldScene;
 
+            AssetManager assetMngr = getAssets();
             if (savedInstanceState != null) {
                 MVPModel.setLoadedData(unpackBundle(savedInstanceState));
             }
@@ -72,7 +74,6 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, "Error: OpenGL ES3 not supported on this device", Toast.LENGTH_LONG)
                     .show();
             throw new RuntimeException("Open GL ES 3.0 was not found on device");
-            //finish();
         }
 
         Thread.UncaughtExceptionHandler h = new Thread.UncaughtExceptionHandler() {
@@ -230,7 +231,10 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run() {
 
-                renderer.loadScene();
+                //renderer.loadScene();
+                MVPModel.loadScene(getResources());
+                //worldScene.SetupScene(resources);
+                onFinishedLoadingScene();
             }
         };
 
@@ -255,10 +259,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFinishedCreatingSurface() {
-        renderer.loadScene();
-
+        //renderer.loadScene();
+        MVPModel.loadScene(getResources());
+        onFinishedLoadingScene();
         /*
-         * Be very careful with runonuithread, if the activity gets destroyed
+         * Be careful with runonuithread, if the activity gets destroyed
          * after the runnable has already been queued to run, it might attempt to reach
          * variables/fields that might have been destroyed (null)
          */
@@ -331,13 +336,6 @@ public class MainActivity extends AppCompatActivity
         if (MVPModel.isInitialized()) {
             float range = (f / MVPModel.getRangeDistFactor()) + MVPModel.getRangeDistMin();
             MVPModel.setRangeDistance(range);
-        }
-    }
-
-    @Override
-    public void onRequestLoadScene(int s) {
-        if (MVPModel.isInitialized()) {
-            MVPModel.loadScene(s);
         }
     }
 

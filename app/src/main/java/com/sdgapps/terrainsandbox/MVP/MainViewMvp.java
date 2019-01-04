@@ -25,8 +25,6 @@ public interface MainViewMvp extends ViewMvp {
 
         void onRangeDistanceChanged(float f);
 
-        void onRequestLoadScene(int s);
-
         void onResetCameraClicked();
 
         void onLightAutorotateClicked(boolean enabled);

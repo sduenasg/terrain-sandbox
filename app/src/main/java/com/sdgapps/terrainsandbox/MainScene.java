@@ -19,7 +19,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec3f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture2D;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManagerGL;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManager;
 import com.sdgapps.terrainsandbox.MiniEngine.terrain.CDLODSettings;
 import com.sdgapps.terrainsandbox.MiniEngine.terrain.Planet;
 import com.sdgapps.terrainsandbox.MiniEngine.terrain.TerrainData;
@@ -50,7 +50,7 @@ public class MainScene extends Scene implements SceneInterface {
     /**
      * Requires to run on the GL thread
      */
-    void SetupScene(Resources res) {
+    public void loadScene(Resources res) {
         TerrainData mTerrainData = new TerrainData(scenes[sceneIdx], res);
         mTerrainData.LoadTextures(res);
 
@@ -100,7 +100,7 @@ public class MainScene extends Scene implements SceneInterface {
         skyboxGO.add(skyboxBehavior);
 
         String[] skyboxtextures=new String[]{"stars.png","stars.png","stars.png","stars.png","stars.png","stars.png"};
-        Texture skyboxtex = TextureManagerGL.addCubeTexture(skyboxtextures, res);
+        Texture skyboxtex = TextureManager.getInstance().addCubeTexture(skyboxtextures, res);
         skyboxMaterial.addTexture(skyboxtex,"skyboxTex");
         add(skyboxGO);
 
@@ -109,7 +109,7 @@ public class MainScene extends Scene implements SceneInterface {
         planet.camFly = cameraFly;
         GameObject terrainGameObject = new GameObject();
         terrainGameObject.add(planet);
-        Texture atmosphereGradient = TextureManagerGL.addTexture("atmogradient.png", true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_REPEAT, res, false,true);
+        Texture atmosphereGradient = TextureManager.getInstance().addTexture("atmogradient.png", true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_REPEAT, res, false,true);
         planet.initialize(terrainData,atmosphereGradient);
 
         float planetRadius = planet.terrainXZ / 2;
@@ -218,11 +218,6 @@ public class MainScene extends Scene implements SceneInterface {
     @Override
     public void setRangeDistance(float f) {
         activeTerrain.setRangeDetail(f);
-    }
-
-    @Override
-    public void loadScene(int s) {
-
     }
 
     @Override

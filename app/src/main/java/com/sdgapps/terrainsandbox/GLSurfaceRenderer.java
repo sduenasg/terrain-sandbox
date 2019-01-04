@@ -8,7 +8,7 @@ import android.opengl.Matrix;
 import com.sdgapps.terrainsandbox.MVP.MainViewMvp;
 import com.sdgapps.terrainsandbox.MiniEngine.MatrixManager;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.OpenGLChecks;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManagerGL;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManager;
 import com.sdgapps.terrainsandbox.utils.Logger;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -57,10 +57,9 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
         /* Opengl configuration */
         configGL();
-
+        Logger.log("Lifecycle: ON SURFACE CREATED");
         if (first_load) // First surface creation
         {
-            Logger.log("Lifecycle: ON SURFACE CREATED");
             first_load = false;
             SimpleVec3fPool.init();
             SimpleQuaternionPool.init();
@@ -71,7 +70,7 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
             }
 
             Singleton.systems.sTime.tickStart();
-            TextureManagerGL.reset();
+            TextureManager.getInstance().reset();
             Singleton.systems.sShaderSystem.res = resources;
 
             if (OpenGLChecks.oes_depth_texture)
@@ -80,15 +79,14 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
             if (presenter != null)
                 presenter.onFinishedCreatingSurface();
         } else {
-            Logger.log("Lifecycle: ON SURFACE CREATED");
+
             /*
              * Assume EGL context loss, re-submit shaders and textures to the gpu.
              * The meshes will re-submit their data to the gpu themselves as
              * long as they've been notified about the GL Context loss.
-             *
              */
             Singleton.systems.sShaderSystem.reloadShaders();
-            TextureManagerGL.reuploadTextures(resources);
+            TextureManager.getInstance().reuploadTextures(resources);
 
             //Setup the shadow map depth render buffer again
             worldScene.setupShadowMapFB();
@@ -111,12 +109,6 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
 
         worldScene.update();
     }
-
-    public void loadScene() {
-        worldScene.SetupScene(resources);
-        presenter.onFinishedLoadingScene();
-    }
-
 
     @Override
     public void onDrawFrame(GL10 unused) {
