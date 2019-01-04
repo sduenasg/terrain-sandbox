@@ -1,5 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.texture;
 
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,7 +21,7 @@ public class CubeTexture extends Texture {
         this.resIDs=_resIDs;
     }
     @Override
-    public int loadTexture(Resources res) {
+    public int loadTexture(Resources res, AssetManager am) {
 
         this.glID = newTextureID();
 

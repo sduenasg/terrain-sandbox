@@ -1,5 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.texture;
 
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.opengl.GLES30;
 
@@ -20,19 +21,25 @@ public class Texture implements TextureInterface{
     int width = 0;
     int mipmaplevels = 6;
     byte compressionType=0;
+    byte pathType=0;
 
     @Deprecated
     static final byte compression_ETC1 =1;
 
     static final byte compression_ETC2 =2;
     static final byte compression_NONE =0;
+
+    static final byte isdirectory=1;
+    static final byte isfile = 0;
+
+    public static final int IntBytes = Integer.SIZE / 8;
     @Override
     public int getGlID() {
         return this.glID;
     }
 
     @Override
-    public int loadTexture(Resources res) {
+    public int loadTexture(Resources res, AssetManager assetMngr) {
         return 0;
     }
 

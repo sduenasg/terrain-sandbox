@@ -1,5 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.texture;
 
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,87 +9,122 @@ import android.opengl.GLES30;
 import android.opengl.GLUtils;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec2f;
-import com.sdgapps.terrainsandbox.R;
-import com.sdgapps.terrainsandbox.utils.AndroidUtils;
 import com.sdgapps.terrainsandbox.utils.Logger;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class Texture2D extends Texture{
 
-    public String name;
+    public String path;
 
     /**
      * Android resource ID
      */
-    private int resID;
     private boolean needsPixels;
     private int[] pixels;
-    private int[] mipmapresids;
-    private boolean loadedMippampsresids = false;
+    private String[] pathList;
     private boolean preMultiplyAlpha = true;
 
-    Texture2D(String name, boolean mipmap, boolean alpha, boolean _interpolation, boolean _wrapMode, int resID, boolean _needsPixels,boolean _premultiplyAlpha, byte compression) {
-        this.name = name;
+    Texture2D(String path, boolean mipmap, boolean alpha, boolean _interpolation, boolean _wrapMode, boolean _needsPixels,boolean _premultiplyAlpha) {
+        this.path = path;
         this.mipmapping = mipmap;
         this.alpha = alpha;
-        this.resID = resID;
         this.interpolation = _interpolation;
         this.wrapMode = _wrapMode;
         needsPixels = _needsPixels;
         preMultiplyAlpha=_premultiplyAlpha;
-        this.compressionType=compression;
     }
 
-    public int loadTexture(Resources res) {
-        if(compressionType==compression_ETC2 ||compressionType==compression_ETC1) {
-            mipmaplevels=12;
-            getETC1MipmapResids();
-            return loadCompressedETC2(res);
+    private void getMipMapPaths(AssetManager am)
+    {
+        String[] files=null;
+        try {
+            files=am.list(path);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        else {
-            return loadTextureInternalUncompressed(res);
+
+        mipmaplevels=files.length;
+        pathList=new String[mipmaplevels];
+        String[] tokens=files[0].split("_mip");
+        String base=tokens[0].trim();
+
+        String[] dotokens=files[0].split("[.]+");
+        String extension="."+dotokens[dotokens.length-1].trim();
+
+        if(extension.equals(".pkm"))
+            compressionType=compression_ETC2;
+        else
+            compressionType=compression_NONE;
+
+        for(int i=0;i<mipmaplevels;i++)
+        {
+            pathList[i]=path+"/"+base+"_mip_"+i+extension;
         }
     }
 
-    /**grabs mipmaps for the current texture*/
-    private void getETC1MipmapResids() {
-        if (!loadedMippampsresids) {
+    private void getPathType()
+    {
+        pathType=0;
+        String[] separate=path.split("[/]+");
+        String last=separate[separate.length-1];
+        if(last.contains("."))
+            pathType=isfile;
+        else
+            pathType=isdirectory;
 
-            if(mipmapping) {
-                mipmapresids = new int[mipmaplevels];
-                String[] splitname = this.name.split("_mip");
-                String base = new String();
-                for (int i = 0; i < splitname.length - 1; i++) {
+    }
 
-                    base += splitname[i];
-                }
-                base = base + "_mip_";
+    public int loadTexture(Resources res,AssetManager assetMngr) {
 
-                int id = -1;
-                mipmapresids[0] = this.resID;
-                for (int i = 1; i < mipmaplevels; i++) {
-
-                    String file = base + Integer.toString(i);
-                    file = file.trim();
-                    Logger.log("ETC2 print "+file);
-                    id = AndroidUtils.getResId(file, R.raw.class);
-                    mipmapresids[i] = id;
-                }
+        getPathType();
+        if(pathType==isdirectory)
+        {
+            getMipMapPaths(assetMngr);
+            if(compressionType==compression_ETC2 ||compressionType==compression_ETC1) {
+                return loadCompressedETC2(res,assetMngr);
             }
+            else {
+                return loadTextureInternalUncompressed(res,assetMngr);
+            }
+        }
+        else
+        {
+            String[] dotokens=path.split("[.]+");
+            String extension="."+dotokens[dotokens.length-1].trim();
+
+            if(extension.equals(".pkm"))
+                compressionType=compression_ETC2;
             else
+                compressionType=compression_NONE;
+
+            if(compressionType==compression_ETC2 && mipmapping)
             {
-                mipmapresids = new int[1];
-                mipmapresids[0]=resID;
+
+                Logger.err("Texture "+path+" is compressed and mipmapping is requested, but path " +
+                        "is not a directory that provides the mipmap images. Mipmaps cannot be autogenerated for compressed textures");
+                return -1;
             }
-            loadedMippampsresids = true;
+            pathList=new String[1];
+            pathList[0]=path;
+            mipmaplevels=1;
+
+            //at this point if the texture is compressed, mipmapping is disabled
+            if(compressionType==compression_ETC2 ||compressionType==compression_ETC1) {
+                return loadCompressedETC2(res,assetMngr);
+            }
+            else {
+                return loadTextureInternalUncompressed(res,assetMngr);
+            }
         }
     }
 
     /**
      * Mali texture compression tool outputs ETC1/ETC2 compressed textures
      */
-    private int loadCompressedETC2(Resources res) {
+    private int loadCompressedETC2(Resources res, AssetManager assetMngr) {
         this.glID = newTextureID();
 
 
@@ -117,9 +153,9 @@ public class Texture2D extends Texture{
         ETC2Util.ETC2Texture etctex=null;
 
         for (int i = 0; i < mipmaplevels; i++) {
-            int id = mipmapresids[i];
+            String path=pathList[i];
             try {
-                etctex = ETC2Util.createTexture(res.openRawResource(id));
+                etctex = ETC2Util.createTexture(assetMngr.open(path));
             } catch (IOException e) {
                 e.printStackTrace();
                 Logger.err(e.toString());
@@ -134,35 +170,10 @@ public class Texture2D extends Texture{
         return glID;
     }
 
-    private int loadTextureInternalUncompressed(Resources res) {
+    private int loadTextureInternalUncompressed(Resources res,AssetManager am) {
 
         this.glID = newTextureID();
-
-        BitmapFactory.Options opts = new BitmapFactory.Options();
-        opts.inScaled = false; //Disables android's automatic scaling of images
-
-        /*
-        * Disables bitmapfactory alpha channel premultiplication:
-        * Useful for images with an alpha channel that aren't used as actual images but as data of
-        * some kind (like a splatmap)
-        */
-        if(!preMultiplyAlpha)
-            opts.inPremultiplied = false;
-
-        Bitmap temp = BitmapFactory.decodeResource(res, this.resID, opts);
-        temp.setPremultiplied(false);
-
-        height = temp.getHeight();
-        width = temp.getWidth();
-
-        if (needsPixels) {
-
-            pixels = new int[width * height];
-            temp.getPixels(pixels, 0, width, 0, 0, width, height);
-        }
-
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, glID);
-
 
         if(!mipmapping) {
             if (interpolation == FILTER_LINEAR) {
@@ -192,10 +203,50 @@ public class Texture2D extends Texture{
             GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_REPEAT);
         }
 
-        GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, temp, 0);
 
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inScaled = false; //Disables android's automatic scaling of images
 
-        if(mipmapping)
+        /*
+         * Disables bitmapfactory alpha channel premultiplication:
+         * Useful for images with an alpha channel that aren't used as actual images but as data of
+         * some kind (like a splatmap)
+         */
+        if(!preMultiplyAlpha)
+            opts.inPremultiplied = false;
+        Bitmap temp = null;
+
+        for (int i = 0; i < mipmaplevels; i++) {
+
+            try {
+                temp = BitmapFactory.decodeStream(am.open(pathList[i]),null,opts);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            temp.setPremultiplied(false);
+
+            height = temp.getHeight();
+            width = temp.getWidth();
+
+            if (needsPixels && i==0) {
+                pixels = new int[width * height];
+                temp.getPixels(pixels, 0, width, 0, 0, width, height);
+            }
+
+            //get the pixel buffer
+            ByteBuffer pixelbuf = ByteBuffer.allocateDirect(width * height * IntBytes);
+            pixelbuf.order(ByteOrder.nativeOrder());
+            temp.copyPixelsToBuffer(pixelbuf);
+            pixelbuf.position(0);
+            int internalFormat = GLUtils.getInternalFormat(temp); //like GLES30.RGBA
+            int type = GLUtils.getType(temp); //i.e GLES30.UNSIGNED_BYTE
+
+            GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, i, internalFormat, width, height, 0, internalFormat, type, pixelbuf);
+        }
+
+        //autogen mipmaps if they were requested but not provided
+        if(mipmapping && pathType!=isdirectory)
             GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D);
 
         temp.recycle();

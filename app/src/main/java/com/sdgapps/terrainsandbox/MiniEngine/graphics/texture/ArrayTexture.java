@@ -1,5 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.texture;
 
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,7 +16,7 @@ public class ArrayTexture extends Texture {
     private int[] resIDs;
     private String[] files;
     private int layerCount;
-    public static final int IntBytes = Integer.SIZE / 8;
+
     ArrayTexture(String[] _names, boolean mipmap, boolean alpha, boolean _interpolation, boolean _wrapMode, int[] _resIDs) {
         this.files = _names;
         this.resIDs=_resIDs;
@@ -27,7 +28,7 @@ public class ArrayTexture extends Texture {
     }
 
     @Override
-    public int loadTexture(Resources res) {
+    public int loadTexture(Resources res, AssetManager am) {
 
         this.glID = newTextureID();
 

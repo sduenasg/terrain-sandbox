@@ -13,7 +13,7 @@ public class Material {
     private HashMap<String,Texture> textures=new HashMap<>();
 
     /**
-     * @param  nameInShader must be exactly the name of the sampler in the shader files
+     * @param  nameInShader must be exactly the path of the sampler in the shader files
      */
     public void addTexture(Texture t, String nameInShader)
     {
@@ -27,7 +27,7 @@ public class Material {
     }
     /**
      * Binds the shader, and the material's textures to the shader
-     * If the texture's nameInShader doesn't match a sampler's name in the GLSL shader, this will crash
+     * If the texture's nameInShader doesn't match a sampler's path in the GLSL shader, this will crash
      * For performance reasons, not null checking inside a loop in the middle of the render code.
      */
 

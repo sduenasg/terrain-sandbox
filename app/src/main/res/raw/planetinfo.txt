@@ -1,5 +1,5 @@
-#col earthcm00.png earthcm01.png earthcm02.png earthcm03.png earthcm04.png earthcm05.png
-#disp earthdisplacement00.png earthdisplacement01.png earthdisplacement02.png earthdisplacement03.png earthdisplacement04.png earthdisplacement05.png
-#norm earthnormals00.png earthnormals01.png earthnormals02.png earthnormals03.png earthnormals04.png earthnormals05.png
-#splat splatmap00.png splatmap01.png splatmap02.png splatmap03.png splatmap04.png splatmap05.png
+#col textures/earth/earthcm00.png textures/earth/earthcm01.png textures/earth/earthcm02.png textures/earth/earthcm03.png textures/earth/earthcm04.png textures/earth/earthcm05.png
+#disp textures/earth/earthdisplacement00.png textures/earth/earthdisplacement01.png textures/earth/earthdisplacement02.png textures/earth/earthdisplacement03.png textures/earth/earthdisplacement04.png textures/earth/earthdisplacement05.png
+#norm textures/earth/earthnormals00.png textures/earth/earthnormals01.png textures/earth/earthnormals02.png textures/earth/earthnormals03.png textures/earth/earthnormals04.png textures/earth/earthnormals05.png
+#splat textures/earth/splatmap00.png textures/earth/splatmap01.png textures/earth/splatmap02.png textures/earth/splatmap03.png textures/earth/splatmap04.png textures/earth/splatmap05.png
 #ssheet splatarray0.png splatarray1.png splatarray2.png splatarray3.png

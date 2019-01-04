@@ -47,7 +47,7 @@ public class TextureManager {
         }
 
         CubeTexture t=new CubeTexture(files, resids);
-        t.loadTexture(resources);
+        t.loadTexture(resources,assetMngr);
         texMap.put(files[0], t);
         return t;
     }
@@ -65,61 +65,39 @@ public class TextureManager {
         }
 
         ArrayTexture t=new ArrayTexture(files, mipmapping, alpha, interpolation, wrapMode, resids);
-        t.loadTexture(resources);
+        t.loadTexture(resources,assetMngr);
         texMap.put(files[0], t);
         return t;
     }
-    /**
-     * Adds a texture using a resource name, if compression_ETC1 textures are supported and an compression_ETC1 version of the texture is present, it replaces the png by
-     * the compressed compression_ETC1 textures. It falls back to using the png's otherwise
-     */
-    private byte getTextureType(String name)
-    {
-        byte imageType=0;
-        String[] aux = name.split("[.]+");
-        if (aux.length > 1 && aux[1].trim().toLowerCase().equals("pkm"))
-        {
-            imageType = Texture.compression_ETC2;
-        }
-        else
-            imageType= Texture.compression_NONE;
-
-        return imageType;
-    }
 
     /** Note: ETC2 texture mipmappping requires mip level images to be included. Generate them using Mali texture compression tool
-     * and call addTexture for the mip0 file*/
-    public  Texture addTexture(String name, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode, boolean needsPixels, boolean premultiplyAlpha) {
-        if (texMap.containsKey(name)) {
-            Logger.log("Texture2D Manager: Warning: texture named: " + name + " already in texMap, no action taken");
-            return texMap.get(name);
+     * and call add2DTexture for the mip0 file
+     *
+     * Note2: these paths don't come from the user so they should require minimal error checking
+     * */
+    public  Texture add2DTexture(String path, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode, boolean needsPixels, boolean premultiplyAlpha) {
+        path=path.trim();
+        while(path.endsWith("/") ||path.endsWith("\\"))
+            path=path.substring(0,path.length()-1);
+            path=path.trim();
+
+        if (texMap.containsKey(path)) {
+            Logger.log("Texture2D Manager: Warning: texture: " + path + " already in texMap, no action taken");
+            return texMap.get(path);
         }
 
-        byte imgType=getTextureType(name);
+        Texture2D t = new Texture2D(path, mipmapping, alpha, interpolation, wrapMode, needsPixels,premultiplyAlpha);
+        t.loadTexture(resources,assetMngr);
 
-        String[] aux = name.split("[.]+");
-
-        int resid;
-        if(imgType==Texture.compression_ETC2) {
-            resid = AndroidUtils.getResId(aux[0], R.raw.class);
-        }
-        else {//no compression
-             resid = AndroidUtils.getResId(aux[0], R.drawable.class);
-        }
-
-        Texture2D t = new Texture2D(name, mipmapping, alpha, interpolation, wrapMode, resid, needsPixels,premultiplyAlpha,imgType);
-
-        t.loadTexture(resources);
-
-        texMap.put(name, t);
-        // Logger.log("Texture2D Manager: New texture loaded: "+name);
+        texMap.put(path, t);
+        // Logger.log("Texture2D Manager: New texture loaded: "+path);
         return t;
     }
 
 
     public void reuploadTextures() {
         for (Texture t : texMap.values()) {
-            if (t.glID != -1) t.loadTexture(resources);
+            if (t.glID != -1) t.loadTexture(resources,assetMngr);
         }
     }
 

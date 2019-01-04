@@ -91,26 +91,26 @@ public class TerrainData {
     public void LoadTextures(Resources res) {
         TexColorMaps = new Texture[colorMaps.size()];
         for (int i = 0; i < colorMaps.size(); i++) {
-            TexColorMaps[i] = TextureManager.getInstance().addTexture(colorMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP,false,true);
+            TexColorMaps[i] = TextureManager.getInstance().add2DTexture(colorMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP,false,true);
         }
 
         TexNormalMaps = new Texture2D[normalMaps.size()];
         for (int i = 0; i < normalMaps.size(); i++) {
-            TexNormalMaps[i] = TextureManager.getInstance().addTexture(normalMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP,false,true);
+            TexNormalMaps[i] = TextureManager.getInstance().add2DTexture(normalMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP,false,true);
         }
 
         TexDisplacementMaps = new Texture2D[displacementMaps.size()];
         for (int i = 0; i < displacementMaps.size(); i++) {
-            TexDisplacementMaps[i] = TextureManager.getInstance().addTexture(displacementMaps.get(i), false, false, Texture2D.FILTER_NEAREST, Texture2D.WRAP_CLAMP,true,true);
+            TexDisplacementMaps[i] = TextureManager.getInstance().add2DTexture(displacementMaps.get(i), false, false, Texture2D.FILTER_NEAREST, Texture2D.WRAP_CLAMP,true,true);
         }
 
         TexSplatMaps = new Texture2D[splatMaps.size()];
         for (int i = 0; i < splatMaps.size(); i++) {
-            TexSplatMaps[i] = TextureManager.getInstance().addTexture(splatMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP,false,false);
+            TexSplatMaps[i] = TextureManager.getInstance().add2DTexture(splatMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP,false,false);
         }
 
         TexArraySplat=TextureManager.getInstance().addArrayTexture(textureArraySplat.toArray(new String[textureArraySplat.size()]),true,false,Texture.FILTER_LINEAR,Texture.WRAP_REPEAT);
-        Clouds=TextureManager.getInstance().addTexture("clouds_mip_0.pkm",true,false,true, Texture.WRAP_CLAMP,false,true);
+        Clouds=TextureManager.getInstance().add2DTexture("textures/cloudswithmips",true,false,true, Texture.WRAP_CLAMP,false,true);
     }
 
     public boolean isPlanetaryScene() {

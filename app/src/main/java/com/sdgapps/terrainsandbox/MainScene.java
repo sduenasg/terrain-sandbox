@@ -114,7 +114,7 @@ public class MainScene extends Scene implements SceneInterface {
         planet.camFly = cameraFly;
         GameObject terrainGameObject = new GameObject();
         terrainGameObject.add(planet);
-        Texture atmosphereGradient = TextureManager.getInstance().addTexture("atmogradient.png", true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_REPEAT, false,true);
+        Texture atmosphereGradient = TextureManager.getInstance().add2DTexture("textures/earth/atmogradient.png", true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_REPEAT, false,true);
         planet.initialize(terrainData,atmosphereGradient);
 
         float planetRadius = planet.terrainXZ / 2;

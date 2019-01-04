@@ -5,9 +5,9 @@ import java.lang.reflect.Field;
 public class AndroidUtils {
 
     /**
-     * Returns the id of a resource by supplying its name
+     * Returns the id of a resource by supplying its path
      *
-     * @param variableName Android resource name
+     * @param variableName Android resource path
      * @param c            Example: R.drawable
      */
     public static int getResId(String variableName, Class<?> c) {
