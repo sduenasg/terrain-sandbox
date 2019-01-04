@@ -126,9 +126,10 @@ void main()
     vec3 wirecolor;
     vec3 mixedColor;
     vec3 colorMap;
-       // colorMap = vec3(0.8,0.8,0.8); //no color texture
+        colorMap = vec3(0.8,0.8,0.8); //no color texture
 
     colorMap = texture(u_colorMap, v_TexCoordinate).rgb;
+
 
     //Splat maps must have a non-premultiplied alpha channel
     vec4 splatvalue=texture(u_splatMap,v_TexCoordinate);
@@ -139,7 +140,9 @@ void main()
     float splatcolor=getSplatSheetColor(splatvalue);
 
     splatcolor=mix(2.0*splatcolor,1.0,clamp(detailFactor,0.0,1.0));
-    colorMap*=splatcolor;//apply the detail value
+
+    //TODO Splat maps are killing performance on weaker devices, check that out
+    //colorMap*=splatcolor;//apply the detail value
 
     vec3 n = v_normal;// getNormal(v_TexCoordinate);
     vec3 l = normalize(u_LightPos - v_Position.xyz);
@@ -172,6 +175,5 @@ void main()
     else{ // no wireframe
        fragColor =  vec4(mix (u_Fogcolor, baseColor, fogFactor),1.0); //<-
     }
-
 }
 

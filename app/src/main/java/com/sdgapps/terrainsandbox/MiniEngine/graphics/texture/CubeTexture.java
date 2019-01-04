@@ -13,8 +13,6 @@ public class CubeTexture extends Texture {
     private String[] files;
 
     public static final int IntBytes = Integer.SIZE / 8;
-    private boolean needsPixels = false;
-    private int[] pixels;
 
     CubeTexture(String[] _names, int[] _resIDs) {
         this.files = _names;
