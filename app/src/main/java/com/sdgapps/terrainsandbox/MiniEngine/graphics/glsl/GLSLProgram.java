@@ -1,6 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
-import android.content.res.Resources;
+import android.content.res.AssetManager;
 import android.opengl.GLES30;
 
 import com.sdgapps.terrainsandbox.Singleton;
@@ -39,11 +39,11 @@ public class GLSLProgram {
     /**Shader identifier in the engine*/
     String shaderID;
 
-    public GLSLProgram(String id, int vertexid, int fragmentid) {
-        Resources res=Singleton.systems.sShaderSystem.getRes();
+    public GLSLProgram(String id, String vertexPath, String fragmentPath) {
+        AssetManager am =Singleton.systems.sShaderSystem.getAssetMngr();
         this.shaderID = id;
-        vertex = new GLSLShader(vertexid, res, false,id);
-        fragment = new GLSLShader(fragmentid, res, true,id);
+        vertex = new GLSLShader(vertexPath, am, false,id);
+        fragment = new GLSLShader(fragmentPath, am, true,id);
 
         glHandle = createAndLinkProgram(vertex.glHandle,
                 fragment.glHandle, new String[]{
@@ -53,12 +53,12 @@ public class GLSLProgram {
     }
 
     /**
-     * Useful for context changes where android destroys the egl context (shaders, textures etc. are
+     * Useful for context changes when android destroys the egl context (shaders, textures etc. are
      * removed from GPU memory)
      */
-    public void reloadToGPU(Resources res) {
-        this.vertex.reloadShader(res);
-        this.fragment.reloadShader(res);
+    public void reloadToGPU(AssetManager am) {
+        this.vertex.reloadShader(am);
+        this.fragment.reloadShader(am);
         int vertexhandle = this.vertex.glHandle;
         int fragmenthandle = this.fragment.glHandle;
 

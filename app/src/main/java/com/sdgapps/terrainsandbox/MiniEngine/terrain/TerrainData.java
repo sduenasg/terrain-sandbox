@@ -7,7 +7,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture2D;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManager;
 import com.sdgapps.terrainsandbox.R;
 import com.sdgapps.terrainsandbox.utils.AndroidUtils;
-import com.sdgapps.terrainsandbox.utils.RawResourceReader;
+import com.sdgapps.terrainsandbox.utils.StringFileReader;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +39,7 @@ public class TerrainData {
 
     public TerrainData(String file, Resources res) {
         int resid = AndroidUtils.getResId(file, R.raw.class);
-        String data = RawResourceReader.readTextFileFromRawResource(resid, res);
+        String data = StringFileReader.readTextFileFromRawResource(resid, res);
         String[] lines = data.split("\n");
         List<String> lst = new ArrayList<String>(Arrays.asList(lines));
 

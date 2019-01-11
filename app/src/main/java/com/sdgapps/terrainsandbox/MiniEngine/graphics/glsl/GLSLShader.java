@@ -1,44 +1,47 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
-import android.content.res.Resources;
+import android.content.res.AssetManager;
 import android.opengl.GLES30;
 
 import com.sdgapps.terrainsandbox.utils.Logger;
-import com.sdgapps.terrainsandbox.utils.RawResourceReader;
+import com.sdgapps.terrainsandbox.utils.StringFileReader;
 
+import java.io.IOException;
 
 public class GLSLShader {
 
     public int glHandle;
-    public boolean isFragment;
+    private boolean isFragment;
+    private String path;
+    private String programID;
 
-    //shader code resource id
-    public int resid;
-
-    String programID;
-    public GLSLShader(int resid, Resources res, boolean isFragment, String _programID) {
+    GLSLShader(String _path, AssetManager assetMngr, boolean isFragment, String _programID) {
         programID=_programID;
+        path=_path;
         this.isFragment = isFragment;
-        if (isFragment)
-            glHandle = compileShader(GLES30.GL_FRAGMENT_SHADER, getCode(resid, res));
-        else
-            glHandle = compileShader(GLES30.GL_VERTEX_SHADER, getCode(resid, res));
-
-
-
-        this.resid = resid;
-    }
-
-    protected void reloadShader(Resources res) {
 
         if (isFragment)
-            glHandle = compileShader(GLES30.GL_FRAGMENT_SHADER, getCode(resid, res));
+            glHandle = compileShader(GLES30.GL_FRAGMENT_SHADER, getCode(assetMngr));
         else
-            glHandle = compileShader(GLES30.GL_VERTEX_SHADER, getCode(resid, res));
+            glHandle = compileShader(GLES30.GL_VERTEX_SHADER, getCode(assetMngr));
     }
 
-    private static String getCode(int resid, Resources res) {
-        return RawResourceReader.readTextFileFromRawResource(resid, res);
+    void reloadShader(AssetManager assetMngr) {
+
+        if (isFragment)
+            glHandle = compileShader(GLES30.GL_FRAGMENT_SHADER, getCode(assetMngr));
+        else
+            glHandle = compileShader(GLES30.GL_VERTEX_SHADER, getCode(assetMngr));
+    }
+
+    private String getCode(AssetManager am) {
+        try {
+            return StringFileReader.readTextFromInputStream(am.open(path));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -71,8 +74,6 @@ public class GLSLShader {
             }
             else
                 Logger.warning("GLes log for " + (isFragment ? "fragment" : "vertex") + " shader in " + programID + " : " + GLES30.glGetShaderInfoLog(shaderHandle));
-
-
         }
 
         if (shaderHandle == 0) {
@@ -81,5 +82,4 @@ public class GLSLShader {
 
         return shaderHandle;
     }
-
 }

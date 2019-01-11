@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity
             AssetManager assetM=getAssets();
 
             TextureManager.getInstance().setAssets(assetM,resources);
-            Singleton.systems.sShaderSystem.setRes(resources);
+            Singleton.systems.sShaderSystem.setRes(assetM);
 
             renderer = new GLSurfaceRenderer(this);
             MVPModel = renderer.worldScene;

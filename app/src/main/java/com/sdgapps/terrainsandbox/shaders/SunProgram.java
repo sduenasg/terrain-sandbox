@@ -7,7 +7,7 @@ import com.sdgapps.terrainsandbox.Singleton;
 
 public class SunProgram extends GLSLProgram {
     private SunProgram(String id) {
-        super(id, R.raw.sun_vertex, R.raw.sun_fragment);
+        super(id, "shaders/sun_vertex.glsl", "shaders/sun_fragment.glsl");
         configure();
     }
 

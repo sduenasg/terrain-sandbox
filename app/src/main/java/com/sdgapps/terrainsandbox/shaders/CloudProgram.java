@@ -9,7 +9,7 @@ import com.sdgapps.terrainsandbox.Singleton;
 
 public class CloudProgram extends GLSLProgram {
     private CloudProgram(String id) {
-        super(id, R.raw.cloud_vert, R.raw.cloud_frag);
+        super(id,"shaders/cloud_vert.glsl","shaders/cloud_frag.glsl");
         initShader();
     }
 

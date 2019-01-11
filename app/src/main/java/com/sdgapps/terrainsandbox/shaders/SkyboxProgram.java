@@ -8,7 +8,7 @@ import com.sdgapps.terrainsandbox.Singleton;
 
 public class SkyboxProgram extends GLSLProgram {
     private SkyboxProgram(String id) {
-        super(id, R.raw.skybox_vertex, R.raw.skybox_fragment);
+        super(id, "shaders/skybox_vertex.glsl","shaders/skybox_fragment.glsl");
         configure();
     }
 

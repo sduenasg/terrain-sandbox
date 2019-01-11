@@ -1,5 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 
 import com.sdgapps.terrainsandbox.utils.Logger;
@@ -10,24 +11,21 @@ import java.util.HashMap;
  * Basic shader system implementation
  */
 public class ShaderSystem {
-
-
-
-    private Resources res;
+    private AssetManager assetMngr;
     private HashMap<String,GLSLProgram> shaders=new HashMap<>();
 
-    public void setRes(Resources res) {
-        this.res = res;
+    public void setRes(AssetManager am) {
+        this.assetMngr=am;
     }
 
-    public Resources getRes() {
-        return res;
+    public AssetManager getAssetMngr() {
+        return assetMngr;
     }
 
     public void reloadShaders() {
 
         for (GLSLProgram p : shaders.values()) {
-            if (p != null) p.reloadToGPU(res);
+            if (p != null) p.reloadToGPU(assetMngr);
         }
     }
 

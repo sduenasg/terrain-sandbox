@@ -7,7 +7,7 @@ import com.sdgapps.terrainsandbox.Singleton;
 
 public class BoundingBoxProgram extends GLSLProgram {
     private BoundingBoxProgram(String id) {
-        super(id, R.raw.boxvertex, R.raw.boxfragment);
+        super(id, "shaders/boxvertex.glsl", "shaders/boxfragment.glsl");
         ShaderUniformMatrix4fv MVPMatrix=new ShaderUniformMatrix4fv("u_MVPMatrix");
         addUniform(MVPMatrix);
         linkAttribute("a_Position");
