@@ -1,5 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.terrain;
 
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
@@ -9,6 +10,7 @@ import com.sdgapps.terrainsandbox.R;
 import com.sdgapps.terrainsandbox.utils.AndroidUtils;
 import com.sdgapps.terrainsandbox.utils.StringFileReader;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,9 +39,13 @@ public class TerrainData {
     Texture TexArraySplat;
     Texture Clouds;
 
-    public TerrainData(String file, Resources res) {
-        int resid = AndroidUtils.getResId(file, R.raw.class);
-        String data = StringFileReader.readTextFileFromRawResource(resid, res);
+    public TerrainData(String file, AssetManager assetMngr) {
+        String data= null;
+        try {
+            data = StringFileReader.readTextFromInputStream(assetMngr.open(file));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String[] lines = data.split("\n");
         List<String> lst = new ArrayList<String>(Arrays.asList(lines));
 

@@ -32,7 +32,7 @@ public class MainScene extends Scene implements SceneInterface {
 
     private static final String[] scenes = new String[]
             {
-                    "planetinfo", "sitgesinfo", "originalinfo"
+                    "planetinfo.txt"
             };
 
     private Light sun;
@@ -56,7 +56,7 @@ public class MainScene extends Scene implements SceneInterface {
     public void loadScene(Resources r, AssetManager am) {
         resources=r;
         assetMngr=am;
-        TerrainData mTerrainData = new TerrainData(scenes[sceneIdx], resources);
+        TerrainData mTerrainData = new TerrainData(scenes[sceneIdx],assetMngr);
         mTerrainData.LoadTextures();
 
         if (mTerrainData.isPlanetaryScene())
