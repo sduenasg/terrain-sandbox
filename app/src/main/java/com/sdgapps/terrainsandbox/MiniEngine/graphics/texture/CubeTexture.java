@@ -7,52 +7,47 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLES30;
 import android.opengl.GLUtils;
 
+import com.sdgapps.terrainsandbox.utils.Logger;
+
+import java.io.IOException;
+
 public class CubeTexture extends Texture {
 
-    private int[] resIDs;
     private String[] files;
 
     public static final int IntBytes = Integer.SIZE / 8;
 
-    CubeTexture(String[] _names, int[] _resIDs) {
+    CubeTexture(String[] _names) {
         this.files = _names;
-        this.resIDs=_resIDs;
     }
-    @Override
-    public int loadTexture(Resources res, AssetManager am) {
 
+    public int loadTextureInternal(Resources res, AssetManager am)
+    {
         this.glID = newTextureID();
 
         /*Disable android's drawable auto-scaling*/
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inScaled = false;
 
-        int i=0;
-        for(int resID:resIDs) {
-
-            Bitmap temp = BitmapFactory.decodeResource(res, resID, opts);
+        Bitmap temp=null;
+        for(int i=0;i<6;i++) {
+            try {
+                temp = BitmapFactory.decodeStream(am.open(files[i]),null,opts);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //Bitmap temp = BitmapFactory.decodeResource(res, resID, opts);
             height = temp.getHeight();
             width = temp.getWidth();
-
-            //get the pixel buffer
-            /*ByteBuffer pixelbuf= ByteBuffer.allocateDirect(width * height * IntBytes);
-            pixelbuf.order(ByteOrder.nativeOrder());
-            temp.copyPixelsToBuffer(pixelbuf);
-            pixelbuf.position(0);*/
 
             GLES30.glBindTexture(GLES30.GL_TEXTURE_CUBE_MAP, glID);
 
             GLUtils.texImage2D(GLES30.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, temp, 0);
-           /* GLES30.glTexImage2D(GLES30.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                    0, GLES30.GL_RGB, width, height, 0, GLES30.GL_RGB, GLES30.GL_UNSIGNED_BYTE, pixelbuf
-            );*/
-
             temp.recycle();
-            i++;
         }
 
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_CUBE_MAP, GLES30.GL_TEXTURE_MIN_FILTER,
-                    GLES30.GL_LINEAR);
+                GLES30.GL_LINEAR);
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_CUBE_MAP, GLES30.GL_TEXTURE_MAG_FILTER,
                 GLES30.GL_LINEAR);
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_CUBE_MAP, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
@@ -60,5 +55,10 @@ public class CubeTexture extends Texture {
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_CUBE_MAP, GLES30.GL_TEXTURE_WRAP_R, GLES30.GL_CLAMP_TO_EDGE);
 
         return glID;
+    }
+
+    @Override
+    public int loadTexture(Resources res, AssetManager am) {
+        return loadTextureInternal(res,am);
     }
 }

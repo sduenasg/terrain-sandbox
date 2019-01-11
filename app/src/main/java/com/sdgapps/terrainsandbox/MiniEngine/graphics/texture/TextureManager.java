@@ -36,17 +36,7 @@ public class TextureManager {
 
     public Texture addCubeTexture(String[] files)
     {
-        int[] resids=new int[files.length];
-
-        int i=0;
-        for(String s : files)
-        {
-            String[] aux = s.split("[.]+");
-            resids[i]= AndroidUtils.getResId(aux[0],  R.drawable.class);
-            i++;
-        }
-
-        CubeTexture t=new CubeTexture(files, resids);
+        CubeTexture t=new CubeTexture(files);
         t.loadTexture(resources,assetMngr);
         texMap.put(files[0], t);
         return t;

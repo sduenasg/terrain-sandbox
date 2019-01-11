@@ -104,7 +104,7 @@ public class MainScene extends Scene implements SceneInterface {
         skyboxBehavior.material=skyboxMaterial;
         skyboxGO.add(skyboxBehavior);
 
-        String[] skyboxtextures=new String[]{"stars.png","stars.png","stars.png","stars.png","stars.png","stars.png"};
+        String[] skyboxtextures=new String[]{"textures/stars.png","textures/stars.png","textures/stars.png","textures/stars.png","textures/stars.png","textures/stars.png"};
         Texture skyboxtex = TextureManager.getInstance().addCubeTexture(skyboxtextures);
         skyboxMaterial.addTexture(skyboxtex,"skyboxTex");
         add(skyboxGO);
