@@ -4,8 +4,6 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.opengl.GLES30;
 
-import java.io.IOException;
-
 public class Texture implements TextureInterface{
     public int glID = -1;
     public static final boolean FILTER_LINEAR = true;

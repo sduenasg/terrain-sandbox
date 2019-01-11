@@ -7,7 +7,6 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform1f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform2f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
-import com.sdgapps.terrainsandbox.R;
 import com.sdgapps.terrainsandbox.Singleton;
 
 public class PlanetShader extends GLSLProgram {

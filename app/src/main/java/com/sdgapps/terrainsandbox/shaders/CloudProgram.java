@@ -4,7 +4,6 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Sampler2D;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
-import com.sdgapps.terrainsandbox.R;
 import com.sdgapps.terrainsandbox.Singleton;
 
 public class CloudProgram extends GLSLProgram {
