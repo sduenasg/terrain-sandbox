@@ -1,13 +1,10 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.texture;
 
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES30;
 import android.opengl.GLUtils;
-
-import com.sdgapps.terrainsandbox.utils.Logger;
 
 import java.io.IOException;
 
@@ -15,13 +12,11 @@ public class CubeTexture extends Texture {
 
     private String[] files;
 
-    public static final int IntBytes = Integer.SIZE / 8;
-
     CubeTexture(String[] _names) {
         this.files = _names;
     }
 
-    public int loadTextureInternal(Resources res, AssetManager am)
+    public int loadTextureInternal(AssetManager am)
     {
         this.glID = newTextureID();
 
@@ -36,7 +31,6 @@ public class CubeTexture extends Texture {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //Bitmap temp = BitmapFactory.decodeResource(res, resID, opts);
             height = temp.getHeight();
             width = temp.getWidth();
 
@@ -58,7 +52,7 @@ public class CubeTexture extends Texture {
     }
 
     @Override
-    public int loadTexture(Resources res, AssetManager am) {
-        return loadTextureInternal(res,am);
+    public int loadTexture(AssetManager am) {
+        return loadTextureInternal(am);
     }
 }

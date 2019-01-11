@@ -37,7 +37,7 @@ public class TextureManager {
     public Texture addCubeTexture(String[] files)
     {
         CubeTexture t=new CubeTexture(files);
-        t.loadTexture(resources,assetMngr);
+        t.loadTexture(assetMngr);
         texMap.put(files[0], t);
         return t;
     }
@@ -55,7 +55,7 @@ public class TextureManager {
         }
 
         ArrayTexture t=new ArrayTexture(path, mipmapping, alpha, interpolation, wrapMode);
-        t.loadTexture(resources,assetMngr);
+        t.loadTexture(assetMngr);
         texMap.put(path, t);
         return t;
     }
@@ -77,7 +77,7 @@ public class TextureManager {
         }
 
         Texture2D t = new Texture2D(path, mipmapping, alpha, interpolation, wrapMode, needsPixels,premultiplyAlpha);
-        t.loadTexture(resources,assetMngr);
+        t.loadTexture(assetMngr);
 
         texMap.put(path, t);
         // Logger.log("Texture2D Manager: New texture loaded: "+path);
@@ -87,7 +87,7 @@ public class TextureManager {
 
     public void reuploadTextures() {
         for (Texture t : texMap.values()) {
-            if (t.glID != -1) t.loadTexture(resources,assetMngr);
+            if (t.glID != -1) t.loadTexture(assetMngr);
         }
     }
 

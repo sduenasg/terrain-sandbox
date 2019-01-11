@@ -75,14 +75,13 @@ public class ArrayTexture extends Texture {
         }
     }
 
-
     @Override
-    public int loadTexture(Resources res, AssetManager am) {
+    public int loadTexture(AssetManager am) {
         fetchTexturePaths(am);
         if(compressionType==compression_NONE)
-            return loadInternal(res,am);
+            return loadInternal(am);
         else
-            return loadInternalETC2(res,am);
+            return loadInternalETC2(am);
     }
 
     //given a path to a folder, fetches all the paths of the mipmap images inside and puts them in a list
@@ -112,7 +111,7 @@ public class ArrayTexture extends Texture {
         return mipPaths;
     }
 
-    private int loadInternalETC2(Resources res, AssetManager am)
+    private int loadInternalETC2(AssetManager am)
     {
         this.glID = newTextureID();
 
@@ -162,7 +161,7 @@ public class ArrayTexture extends Texture {
         return glID;
     }
 
-    private int loadInternal(Resources res, AssetManager am)
+    private int loadInternal(AssetManager am)
     {
         this.glID = newTextureID();
 

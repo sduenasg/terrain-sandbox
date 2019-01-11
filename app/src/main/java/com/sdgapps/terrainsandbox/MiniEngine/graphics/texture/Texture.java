@@ -1,7 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.texture;
 
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.opengl.GLES30;
 
 public class Texture implements TextureInterface{
@@ -39,7 +38,7 @@ public class Texture implements TextureInterface{
     }
 
     @Override
-    public int loadTexture(Resources res, AssetManager assetMngr) {
+    public int loadTexture(AssetManager assetMngr) {
         return 0;
     }
 

@@ -77,7 +77,8 @@ public class Texture2D extends Texture{
 
     }
 
-    public int loadTexture(Resources res,AssetManager assetMngr) {
+    @Override
+    public int loadTexture(AssetManager assetMngr) {
 
         getPathType();
         //textures whose path is a directory include mipmaps
@@ -85,10 +86,10 @@ public class Texture2D extends Texture{
         {
             fetchMipMapPaths(assetMngr);
             if(compressionType==compression_ETC2 ||compressionType==compression_ETC1) {
-                return loadInternalCompressedETC2(res,assetMngr);
+                return loadInternalCompressedETC2(assetMngr);
             }
             else {
-                return loadInternal(res,assetMngr);
+                return loadInternal(assetMngr);
             }
         }
         else
@@ -118,10 +119,10 @@ public class Texture2D extends Texture{
 
             //at this point if the texture is compressed, mipmapping is disabled
             if(compressionType==compression_ETC2 ||compressionType==compression_ETC1) {
-                return loadInternalCompressedETC2(res,assetMngr);
+                return loadInternalCompressedETC2(assetMngr);
             }
             else {
-                return loadInternal(res,assetMngr);
+                return loadInternal(assetMngr);
             }
         }
     }
@@ -129,7 +130,7 @@ public class Texture2D extends Texture{
     /**
      * Mali texture compression tool outputs ETC1/ETC2 compressed textures
      */
-    private int loadInternalCompressedETC2(Resources res, AssetManager assetMngr) {
+    private int loadInternalCompressedETC2(AssetManager assetMngr) {
         this.glID = newTextureID();
 
 
@@ -157,7 +158,7 @@ public class Texture2D extends Texture{
         return glID;
     }
 
-    private int loadInternal(Resources res, AssetManager am) {
+    private int loadInternal(AssetManager am) {
 
         this.glID = newTextureID();
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, glID);
