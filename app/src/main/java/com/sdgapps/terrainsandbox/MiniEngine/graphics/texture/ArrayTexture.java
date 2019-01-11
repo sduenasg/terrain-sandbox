@@ -8,7 +8,6 @@ import android.opengl.GLES30;
 import android.opengl.GLUtils;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.MiniMath;
-import com.sdgapps.terrainsandbox.utils.Logger;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -25,9 +24,9 @@ public class ArrayTexture extends Texture {
     /**
      * @param path assetmanager path to the folder that contains the textures for the array
      *
-     *  Inside this folder, there may be:
-     *             A - uncompressed texture files (e.g png files)
-     *             B - folders. Each folder contains an etc2 texture and its pre-generated mipmap levels
+     *  Inside this folder, there needs to be either:
+     *             A - Non ETC2 texture files (e.g png files)
+     *             B - Folders. Each folder containing a set of ETC2 (pkg) textures (all the mipmap levels of the texture)
      */
     ArrayTexture(String path, boolean mipmap, boolean alpha, boolean _interpolation, boolean _wrapMode) {
         this.path=path;
@@ -38,6 +37,7 @@ public class ArrayTexture extends Texture {
         if(!mipmapping)
             mipmaplevels=1;
     }
+
 
     private void fetchTexturePaths(AssetManager am)
     {
@@ -78,17 +78,17 @@ public class ArrayTexture extends Texture {
 
     @Override
     public int loadTexture(Resources res, AssetManager am) {
-
         fetchTexturePaths(am);
-
         if(compressionType==compression_NONE)
-            return loadInternalUncompressed(res,am);
+            return loadInternal(res,am);
         else
             return loadInternalETC2(res,am);
-
     }
 
-    private String[] getMipmapPaths(String texpath, AssetManager am)
+    //given a path to a folder, fetches all the paths of the mipmap images inside and puts them in a list
+    //the naming of the mipmaps corresponds to the default one that the Mali Texture compression tool outputs
+    //imagename_mip_X.pkm - where X is the mipmap level that corresponds to that image
+    String[] fetchPKMMipmapPaths(String texpath, AssetManager am)
     {
         String[] files=null;
         try {
@@ -117,7 +117,7 @@ public class ArrayTexture extends Texture {
         this.glID = newTextureID();
 
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D_ARRAY, glID);
-        String[] mips= getMipmapPaths(pathList[0],am);
+        String[] mips= fetchPKMMipmapPaths(pathList[0],am);
 
         ETC2Util.ETC2Texture etctex=null;
         try {
@@ -133,7 +133,7 @@ public class ArrayTexture extends Texture {
 
         for(int i=0;i<pathList.length;i++) {
             if(i>0) {
-                mips= getMipmapPaths(pathList[i],am);
+                mips= fetchPKMMipmapPaths(pathList[i],am);
             }
             for (int j=0;j<mipmaplevels;j++) {
                 if(i>0 || j>0) {
@@ -157,40 +157,12 @@ public class ArrayTexture extends Texture {
             }
         }
 
-        if(!mipmapping) {
-            if (interpolation == FILTER_LINEAR) {
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR);
-            } else {
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_NEAREST);
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_NEAREST);
-            }
-        }
-        else
-        {
-            if (interpolation == FILTER_LINEAR) {
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_LINEAR);
-            } else {
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_NEAREST);//bilineal
-            }
-
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER,GLES30.GL_LINEAR);
-        }
-
-
-        if (wrapMode == WRAP_CLAMP) {
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D_ARRAY, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D_ARRAY, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
-        } else {
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D_ARRAY, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_REPEAT);
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D_ARRAY, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_REPEAT);
-        }
-
+        setFiltering(GLES30.GL_TEXTURE_2D_ARRAY);
+        setWrapMode(GLES30.GL_TEXTURE_2D_ARRAY);
         return glID;
-
     }
 
-    private int loadInternalUncompressed(Resources res, AssetManager am)
+    private int loadInternal(Resources res, AssetManager am)
     {
         this.glID = newTextureID();
 
@@ -215,6 +187,7 @@ public class ArrayTexture extends Texture {
             mipmaplevels= (int)(1 + Math.floor(MiniMath.binlog2(t)));
         }
 
+        //Allocate storage space for the textures
         GLES30.glTexStorage3D(GLES30.GL_TEXTURE_2D_ARRAY, mipmaplevels, GLES30.GL_RGBA8, width, height, layerCount);
 
         for(int i=0;i<pathList.length;i++) {
@@ -235,8 +208,8 @@ public class ArrayTexture extends Texture {
             temp.copyPixelsToBuffer(pixelbuf);
             pixelbuf.position(0);
 
-            int internalFormat=GLUtils.getInternalFormat(temp); //like GLES30.RGBA
-            int type=GLUtils.getType(temp); //i.e GLES30.UNSIGNED_BYTE
+            int internalFormat=GLUtils.getInternalFormat(temp);
+            int type=GLUtils.getType(temp);
 
             // Upload pixel data.
             GLES30.glTexSubImage3D(GLES30.GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1, internalFormat, type, pixelbuf);
@@ -245,35 +218,8 @@ public class ArrayTexture extends Texture {
             temp.recycle();
         }
 
-        if(!mipmapping) {
-            if (interpolation == FILTER_LINEAR) {
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR);
-            } else {
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_NEAREST);
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_NEAREST);
-            }
-        }
-        else
-        {
-            GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D_ARRAY);
-            if (interpolation == FILTER_LINEAR) {
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_LINEAR);
-            } else {
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_NEAREST);//bilineal
-            }
-
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER,GLES30.GL_LINEAR);
-        }
-
-
-        if (wrapMode == WRAP_CLAMP) {
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D_ARRAY, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D_ARRAY, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
-        } else {
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D_ARRAY, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_REPEAT);
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D_ARRAY, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_REPEAT);
-        }
+        setFiltering(GLES30.GL_TEXTURE_2D_ARRAY);
+        setWrapMode(GLES30.GL_TEXTURE_2D_ARRAY);
 
         return glID;
     }

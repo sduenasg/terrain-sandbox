@@ -37,7 +37,7 @@ public class Texture2D extends Texture{
         preMultiplyAlpha=_premultiplyAlpha;
     }
 
-    private void getMipMapPaths(AssetManager am)
+    private void fetchMipMapPaths(AssetManager am)
     {
         String[] files=null;
         try {
@@ -83,12 +83,12 @@ public class Texture2D extends Texture{
         //textures whose path is a directory include mipmaps
         if(pathType==isdirectory)
         {
-            getMipMapPaths(assetMngr);
+            fetchMipMapPaths(assetMngr);
             if(compressionType==compression_ETC2 ||compressionType==compression_ETC1) {
                 return loadInternalCompressedETC2(res,assetMngr);
             }
             else {
-                return loadInternalUncompressed(res,assetMngr);
+                return loadInternal(res,assetMngr);
             }
         }
         else
@@ -121,7 +121,7 @@ public class Texture2D extends Texture{
                 return loadInternalCompressedETC2(res,assetMngr);
             }
             else {
-                return loadInternalUncompressed(res,assetMngr);
+                return loadInternal(res,assetMngr);
             }
         }
     }
@@ -135,33 +135,8 @@ public class Texture2D extends Texture{
 
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, glID);
 
-        if(!mipmapping) {
-            if (interpolation == FILTER_LINEAR) {
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR);
-            } else {
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_NEAREST);
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_NEAREST);
-            }
-        }
-        else
-        {
-            if (interpolation == FILTER_LINEAR) {
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_LINEAR);
-            } else {
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_NEAREST);
-            }
-
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER,GLES30.GL_LINEAR);
-        }
-
-        if (wrapMode == WRAP_CLAMP) {
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
-        } else {
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_REPEAT);
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_REPEAT);
-        }
+        setFiltering(GLES30.GL_TEXTURE_2D);
+        setWrapMode(GLES30.GL_TEXTURE_2D);
 
         ETC2Util.ETC2Texture etctex=null;
 
@@ -182,39 +157,13 @@ public class Texture2D extends Texture{
         return glID;
     }
 
-    private int loadInternalUncompressed(Resources res, AssetManager am) {
+    private int loadInternal(Resources res, AssetManager am) {
 
         this.glID = newTextureID();
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, glID);
 
-        if(!mipmapping) {
-            if (interpolation == FILTER_LINEAR) {
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR);
-            } else {
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_NEAREST);
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_NEAREST);
-            }
-        }
-        else
-        {
-            if (interpolation == FILTER_LINEAR) {
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_LINEAR);
-            } else {
-                GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_NEAREST);//bilineal
-            }
-
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER,GLES30.GL_LINEAR);
-        }
-
-        if (wrapMode == WRAP_CLAMP) {
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
-        } else {
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_REPEAT);
-            GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_REPEAT);
-        }
-
+        setFiltering(GLES30.GL_TEXTURE_2D);
+        setWrapMode(GLES30.GL_TEXTURE_2D);
 
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inScaled = false; //Disables android's automatic scaling of images (only on drawable resources though)
@@ -255,13 +204,12 @@ public class Texture2D extends Texture{
             int type = GLUtils.getType(temp); //i.e GLES30.UNSIGNED_BYTE
 
             GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, i, internalFormat, width, height, 0, internalFormat, type, pixelbuf);
+            temp.recycle();
         }
 
         //autogen mipmaps if they were requested but not provided
         if(mipmapping && pathType!=isdirectory)
             GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D);
-
-        temp.recycle();
         return glID;
     }
 
