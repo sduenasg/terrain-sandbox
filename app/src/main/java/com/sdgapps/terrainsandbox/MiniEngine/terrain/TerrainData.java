@@ -27,7 +27,7 @@ public class TerrainData {
     private ArrayList<String> displacementMaps;
     private ArrayList<String> normalMaps;
     private ArrayList<String> splatMaps;
-    private ArrayList<String> textureArraySplat;
+    private String textureArraySplat;
 
     Texture[] TexColorMaps;
     Texture[] TexDisplacementMaps;
@@ -50,7 +50,7 @@ public class TerrainData {
         displacementMaps = new ArrayList<String>();
         normalMaps = new ArrayList<String>();
         splatMaps = new ArrayList<String>();
-        textureArraySplat = new ArrayList<String>();
+
 
         while (!lst.isEmpty()) {
             ln = lst.get(0);
@@ -82,13 +82,12 @@ public class TerrainData {
                 splatMaps.addAll(Arrays.asList(values).subList(1, values.length));
             }
             else if (ln.contains("#ssheet")) {
-                for(int i=1;i<values.length;i++)
-                    textureArraySplat.add(values[i]);
+                    textureArraySplat=values[1].trim();
             }
         }
     }
 
-    public void LoadTextures(Resources res) {
+    public void LoadTextures() {
         TexColorMaps = new Texture[colorMaps.size()];
         for (int i = 0; i < colorMaps.size(); i++) {
             TexColorMaps[i] = TextureManager.getInstance().add2DTexture(colorMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP,false,true);
@@ -109,7 +108,7 @@ public class TerrainData {
             TexSplatMaps[i] = TextureManager.getInstance().add2DTexture(splatMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP,false,false);
         }
 
-        TexArraySplat=TextureManager.getInstance().addArrayTexture(textureArraySplat.toArray(new String[textureArraySplat.size()]),true,false,Texture.FILTER_LINEAR,Texture.WRAP_REPEAT);
+        TexArraySplat=TextureManager.getInstance().addArrayTexture(textureArraySplat,true,false,Texture.FILTER_LINEAR,Texture.WRAP_REPEAT);
         Clouds=TextureManager.getInstance().add2DTexture("textures/cloudswithmips",true,false,true, Texture.WRAP_CLAMP,false,true);
     }
 

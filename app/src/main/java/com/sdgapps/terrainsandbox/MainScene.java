@@ -57,7 +57,7 @@ public class MainScene extends Scene implements SceneInterface {
         resources=r;
         assetMngr=am;
         TerrainData mTerrainData = new TerrainData(scenes[sceneIdx], resources);
-        mTerrainData.LoadTextures(resources);
+        mTerrainData.LoadTextures();
 
         if (mTerrainData.isPlanetaryScene())
             SetupPlanetScene(mTerrainData);

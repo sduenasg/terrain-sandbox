@@ -142,7 +142,7 @@ void main()
     splatcolor=mix(2.0*splatcolor,1.0,clamp(detailFactor,0.0,1.0));
 
     //TODO Splat maps are killing performance on weaker devices, check that out
-    //colorMap*=splatcolor;//apply the detail value
+    colorMap*=splatcolor;//apply the detail value
 
     vec3 n = v_normal;// getNormal(v_TexCoordinate);
     vec3 l = normalize(u_LightPos - v_Position.xyz);

@@ -52,21 +52,21 @@ public class TextureManager {
         return t;
     }
 
-    public Texture addArrayTexture(String[] files, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode)
+    public Texture addArrayTexture(String path, boolean mipmapping, boolean alpha, boolean interpolation, boolean wrapMode)
     {
-        int[] resids=new int[files.length];
+        path=path.trim();
+        while(path.endsWith("/") ||path.endsWith("\\"))
+            path=path.substring(0,path.length()-1);
+        path=path.trim();
 
-        int i=0;
-        for(String s : files)
-        {
-            String[] aux = s.split("[.]+");
-            resids[i]= AndroidUtils.getResId(aux[0],  R.drawable.class);
-            i++;
+        if (texMap.containsKey(path)) {
+            Logger.log("Texture2D Manager: Warning: texture: " + path + " already in texMap, no action taken");
+            return texMap.get(path);
         }
 
-        ArrayTexture t=new ArrayTexture(files, mipmapping, alpha, interpolation, wrapMode, resids);
+        ArrayTexture t=new ArrayTexture(path, mipmapping, alpha, interpolation, wrapMode);
         t.loadTexture(resources,assetMngr);
-        texMap.put(files[0], t);
+        texMap.put(path, t);
         return t;
     }
 

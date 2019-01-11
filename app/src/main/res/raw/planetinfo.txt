@@ -2,4 +2,4 @@
 #disp textures/earth/earthdisplacement00.png textures/earth/earthdisplacement01.png textures/earth/earthdisplacement02.png textures/earth/earthdisplacement03.png textures/earth/earthdisplacement04.png textures/earth/earthdisplacement05.png
 #norm textures/earth/earthnormals00.png textures/earth/earthnormals01.png textures/earth/earthnormals02.png textures/earth/earthnormals03.png textures/earth/earthnormals04.png textures/earth/earthnormals05.png
 #splat textures/earth/splatmap00.png textures/earth/splatmap01.png textures/earth/splatmap02.png textures/earth/splatmap03.png textures/earth/splatmap04.png textures/earth/splatmap05.png
-#ssheet splatarray0.png splatarray1.png splatarray2.png splatarray3.png
+#ssheet textures/earth/terrainsplats
