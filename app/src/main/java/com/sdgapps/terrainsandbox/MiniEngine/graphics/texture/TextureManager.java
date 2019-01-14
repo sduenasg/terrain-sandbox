@@ -34,9 +34,9 @@ public class TextureManager {
      */
     private HashMap<String, Texture> texMap = new HashMap<String, Texture>();
 
-    public Texture addCubeTexture(String[] files)
+    public Texture addCubeTexture(String[] files,boolean mipmapping,boolean alpha,boolean interpolation,boolean wrapMode)
     {
-        CubeTexture t=new CubeTexture(files);
+        CubeTexture t=new CubeTexture(files,mipmapping,alpha,interpolation,wrapMode);
         t.loadTexture(assetMngr);
         texMap.put(files[0], t);
         return t;
