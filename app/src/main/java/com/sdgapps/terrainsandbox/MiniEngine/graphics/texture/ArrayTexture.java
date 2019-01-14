@@ -1,7 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.texture;
 
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES30;
@@ -87,7 +86,7 @@ public class ArrayTexture extends Texture {
     //given a path to a folder, fetches all the paths of the mipmap images inside and puts them in a list
     //the naming of the mipmaps corresponds to the default one that the Mali Texture compression tool outputs
     //imagename_mip_X.pkm - where X is the mipmap level that corresponds to that image
-    String[] fetchPKMMipmapPaths(String texpath, AssetManager am)
+    private String[] fetchPKMMipmapPaths(String texpath, AssetManager am)
     {
         String[] files=null;
         try {
@@ -111,11 +110,8 @@ public class ArrayTexture extends Texture {
         return mipPaths;
     }
 
-    private int loadInternalETC2(AssetManager am)
+    private int loadInternalETC2Mipmapping(AssetManager am)
     {
-        this.glID = newTextureID();
-
-        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D_ARRAY, glID);
         String[] mips= fetchPKMMipmapPaths(pathList[0],am);
 
         ETC2Util.ETC2Texture etctex=null;
@@ -142,23 +138,64 @@ public class ArrayTexture extends Texture {
                         e.printStackTrace();
                     }
                 }
-                height = etctex.getHeight();
-                width =  etctex.getWidth();
-
-                ByteBuffer pixelbuf = etctex.getData();
-
                 GLES30.glCompressedTexSubImage3D(
                         GLES30.GL_TEXTURE_2D_ARRAY, j,
                         0, 0, i,
-                        width, height, 1,
+                        etctex.getWidth(), etctex.getHeight(), 1,
                         etctex.getCompressionFormat(), etctex.getData().remaining(),
-                        pixelbuf);
+                        etctex.getData());
             }
         }
+        return glID;
+    }
+
+    private int loadInternalETC2NoMM(AssetManager am)
+    {
+        ETC2Util.ETC2Texture etctex=null;
+        try {
+            etctex = ETC2Util.createTexture(am.open(pathList[0]));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        height = etctex.getHeight();
+        width =  etctex.getWidth();
+
+        GLES30.glTexStorage3D(GLES30.GL_TEXTURE_2D_ARRAY, mipmaplevels, etctex.getCompressionFormat(), width, height, layerCount);
+
+        for(int i=0;i<pathList.length;i++) {
+            if(i>0) {
+                try {
+                    etctex = ETC2Util.createTexture(am.open(pathList[i]));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            GLES30.glCompressedTexSubImage3D(
+                    GLES30.GL_TEXTURE_2D_ARRAY, 0,
+                    0, 0, i,
+                    etctex.getWidth(), etctex.getHeight(), 1,
+                    etctex.getCompressionFormat(), etctex.getData().remaining(),
+                    etctex.getData());
+        }
+        return glID;
+    }
+
+    private int loadInternalETC2(AssetManager am)
+    {
+        int result;
+
+        this.glID = newTextureID();
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D_ARRAY, glID);
+
+        if(mipmapping)
+           result= loadInternalETC2Mipmapping(am);
+        else
+           result= loadInternalETC2NoMM(am);
 
         setFiltering(GLES30.GL_TEXTURE_2D_ARRAY);
         setWrapMode(GLES30.GL_TEXTURE_2D_ARRAY);
-        return glID;
+        return result;
     }
 
     private int loadInternal(AssetManager am)
@@ -220,6 +257,9 @@ public class ArrayTexture extends Texture {
         setFiltering(GLES30.GL_TEXTURE_2D_ARRAY);
         setWrapMode(GLES30.GL_TEXTURE_2D_ARRAY);
 
+        //autogen mipmaps if they were requested but not provided
+        if(mipmapping)
+            GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D);
         return glID;
     }
 
