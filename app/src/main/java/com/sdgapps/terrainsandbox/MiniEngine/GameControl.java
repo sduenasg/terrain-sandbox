@@ -1,5 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine;
-import com.sdgapps.terrainsandbox.MVP.SceneInterface;
+
+import com.sdgapps.terrainsandbox.EngineManagers;
 
 import java.util.ArrayList;
 
@@ -11,9 +12,17 @@ public class GameControl implements RendererInterface {
     private Scene currentScene;
     private ArrayList<Scene> scenes;
 
+
+    private EngineManagers engineManagers;
+
+    public EngineManagers getEngineManagers() {
+        return engineManagers;
+    }
+
     public GameControl()
     {
         scenes = new ArrayList<>();
+        engineManagers = new EngineManagers();
     }
 
     @Override
@@ -49,14 +58,18 @@ public class GameControl implements RendererInterface {
 
     public void addScene(Scene s)
     {
-        if(!scenes.contains(s))
+        if(!scenes.contains(s)) {
             scenes.add(s);
+            s.setEngineManagers(engineManagers);
+        }
     }
 
     public void addSceneAndSetCurrent(Scene s)
     {
-        if(!scenes.contains(s))
+        if(!scenes.contains(s)) {
             scenes.add(s);
+            s.setEngineManagers(engineManagers);
+        }
         currentScene=s;
     }
 

@@ -1,8 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.graphics.texture;
 
 import android.content.res.AssetManager;
-import android.content.res.Resources;
-
 import com.sdgapps.terrainsandbox.utils.Logger;
 
 import java.util.HashMap;
@@ -10,12 +8,10 @@ import java.util.HashMap;
 
 public class TextureManager {
 
-    private Resources resources;
     private AssetManager assetMngr;
 
-    public void setAssets(AssetManager am, Resources r)
+    public void setAssets(AssetManager am)
     {
-        resources=r;
         assetMngr=am;
     }
 

@@ -1,5 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.terrain;
 
+import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Camera;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.BoundingBox;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.Frustum;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.LineCube;
@@ -12,7 +13,6 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform1f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform2f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture2D;
 import com.sdgapps.terrainsandbox.SimpleVec3fPool;
-import com.sdgapps.terrainsandbox.Singleton;
 
 class CDLODNode extends SelectableNode {
 
@@ -267,20 +267,20 @@ class CDLODNode extends SelectableNode {
      * @return true-> area handled by current node
      * false-> area not handled by current node (parent node should handle it)
      **/
-    boolean LODSelect(Vec3f cameraPos, SelectionResults selection,boolean parentCompletelyInFrustum) {
+    boolean LODSelect(Camera camera, SelectionResults selection, boolean parentCompletelyInFrustum) {
         ClearSelectionValues();
-
+        Vec3f cameraPos = camera.gameObject.transform.position;
 
         if (!inSphereQRI(quadTree.ranges[lod], cameraPos)) {
             // no node or child nodes were selected (out of range); return false so that our parent node handles our area
             return false;
         }
 
-        if (horizonTestBoundingBox()) {
+        if (horizonTestBoundingBox(camera)) {
             return true;
         }
 
-        Frustum f = Singleton.systems.mainCamera.frustum;
+        Frustum f = camera.frustum;
 
         //if the parent is fully inside the frustum, this child is too
         int frustumTest = parentCompletelyInFrustum ? Frustum.INSIDE: f.testBoundingBox(AABB);
@@ -312,7 +312,7 @@ class CDLODNode extends SelectableNode {
 
                 for (int i = 0; i < children.length; i++) {
 
-                    if (!children[i].LODSelect(cameraPos, selection,frustumTest==Frustum.INSIDE)) {
+                    if (!children[i].LODSelect(camera, selection,frustumTest==Frustum.INSIDE)) {
                         // if a child node is outside of its LOD range, this node (parent) must handle it
                         // AddPartOfNodeToSelectionList( childNode.ParentSubArea ) ;
 
@@ -329,7 +329,7 @@ class CDLODNode extends SelectableNode {
     /**
      * Test if the bounding box is occluded by the planet itself
      */
-    private boolean horizonTestBoundingBox() {
+    private boolean horizonTestBoundingBox(Camera camera) {
 
         /*
          * Same idea as frustum culling, we only test 2 of the 4 points of the bounding box
@@ -343,7 +343,7 @@ class CDLODNode extends SelectableNode {
          */
         float radius = quadTree.terrainXZ * 0.5f;
 
-        Vec3f viewPosition = Singleton.systems.mainCamera.transform.position;
+        Vec3f viewPosition = camera.transform.position;
 
         Vec3f CV = SimpleVec3fPool.create(viewPosition);
         CV.sub(radius, 0, radius);//center of the sphere

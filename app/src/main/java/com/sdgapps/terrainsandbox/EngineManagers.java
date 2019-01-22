@@ -6,7 +6,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Light;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderSystem;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManager;
 
-public class Systems {
+public class EngineManagers {
 
     public ShaderSystem sShaderSystem = new ShaderSystem();
     public TimeSystem sTime = new TimeSystem();

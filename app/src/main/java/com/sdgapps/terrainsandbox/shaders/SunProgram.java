@@ -1,22 +1,22 @@
 package com.sdgapps.terrainsandbox.shaders;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderSystem;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
-import com.sdgapps.terrainsandbox.Singleton;
 
 public class SunProgram extends GLSLProgram {
-    private SunProgram(String id) {
-        super(id, "shaders/sun_vertex.glsl", "shaders/sun_fragment.glsl");
+    private SunProgram(String id, ShaderSystem shaderSys) {
+        super(id, "shaders/sun_vertex.glsl", "shaders/sun_fragment.glsl",shaderSys);
         configure();
     }
 
-    public static GLSLProgram createInstance(String id)
+    public static GLSLProgram createInstance(String id, ShaderSystem shaderSys)
     {
-        GLSLProgram instance=Singleton.systems.sShaderSystem.getProgram(id);
+        GLSLProgram instance=shaderSys.getProgram(id);
         if(instance==null)
         {
-            instance=new SunProgram(id);
-            Singleton.systems.sShaderSystem.addProgram(instance);
+            instance=new SunProgram(id,shaderSys);
+            shaderSys.addProgram(instance);
         }
         return instance;
     }

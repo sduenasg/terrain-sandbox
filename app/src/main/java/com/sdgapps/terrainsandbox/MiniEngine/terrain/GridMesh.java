@@ -2,8 +2,9 @@ package com.sdgapps.terrainsandbox.MiniEngine.terrain;
 
 import android.opengl.GLES30;
 
+import com.sdgapps.terrainsandbox.EngineManagers;
+import com.sdgapps.terrainsandbox.MiniEngine.TimeSystem;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
-import com.sdgapps.terrainsandbox.Singleton;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -32,6 +33,8 @@ public class GridMesh {
     private int indexArraySize;
     private int partialArraySize;
     boolean uploadedVBO = false;
+
+    TimeSystem timeSystem;
 
     GridMesh(int vertexWidth) {
         vdim = vertexWidth;
@@ -208,7 +211,6 @@ public class GridMesh {
             indexBuffer.put(index_array);
             indexBuffer.position(0);
 
-
             ByteBuffer aBuf = ByteBuffer.allocateDirect(gridPositions_array.length * FloatBytes);
             aBuf.order(ByteOrder.nativeOrder());
             FloatBuffer gridPositionsBuffer = aBuf.asFloatBuffer();
@@ -278,19 +280,19 @@ public class GridMesh {
     public void instancedFullmeshDraw(int ninstances)
     {
         GLES30.glDrawElementsInstanced(GLES30.GL_TRIANGLES,indexArraySize,GLES30.GL_UNSIGNED_INT,0,ninstances);
-        Singleton.systems.sTime.drawcalls++;
+        timeSystem.drawcalls++;
     }
 
     public void instancedQuarterMeshDraw(int ninstances)
     {
         GLES30.glDrawElementsInstanced(GLES30.GL_TRIANGLES,partialArraySize,GLES30.GL_UNSIGNED_INT,0,ninstances);
-        Singleton.systems.sTime.drawcalls++;
+        timeSystem.drawcalls++;
     }
 
     public void draw(boolean[] selection) {
         if (selection[4]) {//the whole node got selected
             GLES30.glDrawElements(GLES30.GL_TRIANGLES, indexArraySize, GLES30.GL_UNSIGNED_INT, 0);
-            Singleton.systems.sTime.drawcalls++;
+            timeSystem.drawcalls++;
 
         } else {//only parts of the node got selected (parent covering for it's children)
             for (int j = 0; j < 4; j++) {
@@ -305,7 +307,7 @@ public class GridMesh {
                         j++;
                     }
                     GLES30.glDrawElements(GLES30.GL_TRIANGLES, size, GLES30.GL_UNSIGNED_INT, offset);//offset in bytes
-                    Singleton.systems.sTime.drawcalls++;
+                    timeSystem.drawcalls++;
                 }
             }
         }

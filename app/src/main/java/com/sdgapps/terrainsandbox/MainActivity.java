@@ -17,7 +17,6 @@ import android.widget.Toast;
 import com.sdgapps.terrainsandbox.MVP.MainViewMvp;
 import com.sdgapps.terrainsandbox.MVP.MainViewMvpImpl;
 import com.sdgapps.terrainsandbox.MVP.SceneInterface;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManager;
 import com.sdgapps.terrainsandbox.MiniEngine.terrain.CDLODSettings;
 import com.sdgapps.terrainsandbox.utils.Logger;
 
@@ -61,16 +60,17 @@ public class MainActivity extends AppCompatActivity
         Logger.log("Supported OpenGL ES "+Double.parseDouble(configurationInfo.getGlEsVersion()));
         if (supportsEs3) {
             MVPView = new MainViewMvpImpl(getLayoutInflater(), null);
-            Singleton.systems.sTime.setPresenter(this);
 
-            Resources resources=getResources();
             AssetManager assetM=getAssets();
-
-            Singleton.systems.textureManager.setAssets(assetM,resources);
-            Singleton.systems.sShaderSystem.setRes(assetM);
 
             renderer = new GLSurfaceRenderer(this);
             MVPModel = (MainScene)renderer.engine.getCurrentScene();
+
+
+            EngineManagers em=renderer.getEngineManagers();
+            em.sTime.setPresenter(this);
+            em.textureManager.setAssets(assetM);
+            em.sShaderSystem.setAssets(assetM);
 
             if (savedInstanceState != null) {
                 MVPModel.setLoadedData(unpackBundle(savedInstanceState));

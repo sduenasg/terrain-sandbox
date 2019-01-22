@@ -3,7 +3,6 @@ package com.sdgapps.terrainsandbox.MiniEngine.graphics;
 import android.opengl.GLES30;
 import android.util.Log;
 
-import com.sdgapps.terrainsandbox.Singleton;
 import com.sdgapps.terrainsandbox.utils.Logger;
 
 public class ShadowMapFrameBuffer implements FrameBufferInterface {
@@ -19,7 +18,7 @@ public class ShadowMapFrameBuffer implements FrameBufferInterface {
         GLES30.glEnable(GLES30.GL_CULL_FACE);
         GLES30.glCullFace(GLES30.GL_FRONT);
         GLES30.glEnable(GLES30.GL_DEPTH_TEST);
-        Singleton.systems.mainCamera.updateShadowMapCamera();
+        //Singleton.systems.mainCamera.updateShadowMapCamera();
 
         // bindTextures the previously generated framebuffer
         GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, shadowmap_fb[0]);
@@ -38,8 +37,6 @@ public class ShadowMapFrameBuffer implements FrameBufferInterface {
         if (!mHasDepthTextureExtension) {
 
         } else {
-
-
             mShadowMapWidth = Math.min(shadowmapSize, OpenGLChecks.GL_MAX_TEXTURE_SIZE / 2);
             mShadowMapHeight = Math.min(shadowmapSize, OpenGLChecks.GL_MAX_TEXTURE_SIZE / 2);
 
@@ -59,9 +56,6 @@ public class ShadowMapFrameBuffer implements FrameBufferInterface {
             GLES30.glGenTextures(1, shadowmap_renderTex, 0);
             GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, shadowmap_renderTex[0]);
 
-            // GL_LINEAR does not make sense for depth texture. However, next tutorial shows usage of GL_LINEAR and PCF. Using GL_NEAREST
-          /* GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR);
-            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);*/
             GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_NEAREST);
             GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_NEAREST);
 

@@ -52,7 +52,7 @@ public class MainScene extends Scene implements SceneInterface {
      */
     public void loadScene(AssetManager assetMngr) {
         TerrainData mTerrainData = new TerrainData(scenes[sceneIdx],assetMngr);
-        mTerrainData.LoadTextures();
+        mTerrainData.LoadTextures(engineManagers);
         SetupPlanetScene(mTerrainData);
     }
 
@@ -69,7 +69,8 @@ public class MainScene extends Scene implements SceneInterface {
         sceneCamera.setAspectRatio(aspectRatio);
 
         add(camGO);
-        Singleton.systems.mainCamera = sceneCamera;
+
+        engineManagers.mainCamera = sceneCamera;
 
         /*Light initialization*/
         GameObject sunGO = new GameObject();
@@ -79,20 +80,20 @@ public class MainScene extends Scene implements SceneInterface {
         add(sunGO);
 
         Material sunMaterial = new Material();
-        sunMaterial.shader = SunProgram.createInstance("sunshader");
+        sunMaterial.shader = SunProgram.createInstance("sunshader", engineManagers.sShaderSystem);
         sunGO.add(new CircleBillboard(30,defaultFB,sunMaterial,10000000));
-        Singleton.systems.mainLight = sun;
+        engineManagers.mainLight = sun;
 
         /*Skybox initialization*/
         GameObject skyboxGO=new GameObject();
         Skybox skyboxBehavior=new Skybox();
         Material skyboxMaterial=new Material();
-        skyboxMaterial.shader=SkyboxProgram.createInstance("skyboxshader");
+        skyboxMaterial.shader=SkyboxProgram.createInstance("skyboxshader",engineManagers.sShaderSystem);
         skyboxBehavior.material=skyboxMaterial;
         skyboxGO.add(skyboxBehavior);
 
         String[] skyboxtextures=new String[]{"textures/stars.pkm","textures/stars.pkm","textures/stars.pkm","textures/stars.pkm","textures/stars.pkm","textures/stars.pkm"};
-        Texture skyboxtex = Singleton.systems.textureManager.addCubeTexture(skyboxtextures,false,false,Texture.FILTER_LINEAR,Texture.WRAP_REPEAT);
+        Texture skyboxtex = engineManagers.textureManager.addCubeTexture(skyboxtextures,false,false,Texture.FILTER_LINEAR,Texture.WRAP_REPEAT);
         skyboxMaterial.addTexture(skyboxtex,"skyboxTex");
         add(skyboxGO);
 
@@ -100,8 +101,9 @@ public class MainScene extends Scene implements SceneInterface {
         Planet planet = new Planet();
         planet.camFly = cameraFly;
         GameObject terrainGameObject = new GameObject();
+        add(terrainGameObject);
         terrainGameObject.add(planet);
-        Texture atmosphereGradient = Singleton.systems.textureManager.add2DTexture("textures/earth/atmogradient.png", true, false, Texture.FILTER_LINEAR, Texture2D.WRAP_REPEAT, false,true);
+        Texture atmosphereGradient = engineManagers.textureManager.add2DTexture("textures/earth/atmogradient.png", true, false, Texture.FILTER_LINEAR, Texture2D.WRAP_REPEAT, false,true);
         planet.initialize(terrainData,atmosphereGradient);
 
         float planetRadius = planet.terrainXZ / 2;
@@ -137,7 +139,7 @@ public class MainScene extends Scene implements SceneInterface {
             loadedSceneData = null;
         }
 
-        add(terrainGameObject);
+
         planet.initializeRenderModes(defaultFB, shadowMapFB);
         planet.freeHeightmapPixels();
         initialized = true;

@@ -6,7 +6,6 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.MiniMath;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.Quaternion;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec3f;
 import com.sdgapps.terrainsandbox.SimpleVec3fPool;
-import com.sdgapps.terrainsandbox.Singleton;
 
 public class FlyAround extends Behaviour {
 
@@ -143,7 +142,7 @@ public class FlyAround extends Behaviour {
 
     @Override
     public void update() {
-        int timeDelta = (int) Singleton.systems.sTime.deltaTime;
+        int timeDelta = (int) gameObject.engineManagers.sTime.deltaTime;
         float timefactor = timeDelta * TimeSystem.defaultframetimeInverted;
         setCamera(timefactor);
     }

@@ -1,24 +1,26 @@
 package com.sdgapps.terrainsandbox.shaders;
+import android.graphics.Shader;
+
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderSystem;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform1f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform2f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3f;
-import com.sdgapps.terrainsandbox.Singleton;
 
 public class PlanetShadowPassProgram extends GLSLProgram {
-    private PlanetShadowPassProgram(String id) {
+    private PlanetShadowPassProgram(String id, ShaderSystem shaderSys) {
         //super(id, R.raw.shadowmap_vertex, R.raw.shadowmap_fragment);
-        super(id, "","");
+        super(id, "","",shaderSys);
         configureShadowmapShader();
     }
 
-    public static GLSLProgram createInstance(String id)
+    public static GLSLProgram createInstance(String id, ShaderSystem shaderSys)
     {
-        GLSLProgram instance=Singleton.systems.sShaderSystem.getProgram(id);
+        GLSLProgram instance=shaderSys.getProgram(id);
         if(instance==null)
         {
-            instance=new PlanetShadowPassProgram(id);
-            Singleton.systems.sShaderSystem.addProgram(instance);
+            instance=new PlanetShadowPassProgram(id,shaderSys);
+            shaderSys.addProgram(instance);
         }
         return instance;
     }

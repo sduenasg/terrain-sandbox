@@ -1,24 +1,24 @@
 package com.sdgapps.terrainsandbox.shaders;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderSystem;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform1f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3f;
-import com.sdgapps.terrainsandbox.Singleton;
 
 public class ShadowedTerrainShader extends GLSLProgram {
-    private ShadowedTerrainShader(String id) {
-        super(id, "","");
+    private ShadowedTerrainShader(String id, ShaderSystem shaderSys) {
+        super(id, "","",shaderSys);
         //super(id, R.raw.terrain_vertex_shadowed, R.raw.terrain_fragment_derivative_shadowed_);
         configureShadowedTerrainShader();
     }
 
-    public static GLSLProgram createInstance(String id)
+    public static GLSLProgram createInstance(String id, ShaderSystem shaderSys)
     {
-        GLSLProgram instance=Singleton.systems.sShaderSystem.getProgram(id);
+        GLSLProgram instance=shaderSys.getProgram(id);
         if(instance==null)
         {
-            instance=new ShadowedTerrainShader(id);
-            Singleton.systems.sShaderSystem.addProgram(instance);
+            instance=new ShadowedTerrainShader(id,shaderSys);
+            shaderSys.addProgram(instance);
         }
         return instance;
     }

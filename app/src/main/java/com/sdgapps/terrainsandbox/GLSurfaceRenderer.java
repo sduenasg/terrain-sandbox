@@ -8,7 +8,6 @@ import com.sdgapps.terrainsandbox.MVP.MainViewMvp;
 import com.sdgapps.terrainsandbox.MiniEngine.GameControl;
 import com.sdgapps.terrainsandbox.MiniEngine.MatrixManager;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.OpenGLChecks;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManager;
 import com.sdgapps.terrainsandbox.utils.Logger;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -70,8 +69,8 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
             //Accuracy of the derivative calculations. Default is GL_DONT_CARE, other possible values are GL_NICEST, GL_FASTEST
             GLES30.glHint(GLES30.GL_FRAGMENT_SHADER_DERIVATIVE_HINT, GLES30.GL_FASTEST);
 
-            Singleton.systems.sTime.tickStart();
-            Singleton.systems.textureManager.reset();
+            engine.getEngineManagers().sTime.tickStart();
+            engine.getEngineManagers().textureManager.reset();
 
             //if (OpenGLChecks.oes_depth_texture)
             //    worldScene.setupShadowMapFB();
@@ -85,8 +84,8 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
              * The meshes will re-submit their data to the gpu themselves as
              * long as they've been notified about the GL Context loss.
              */
-            Singleton.systems.sShaderSystem.reloadShaders();
-            Singleton.systems.textureManager.reuploadTextures();
+            engine.getEngineManagers().sShaderSystem.reloadShaders();
+            engine.getEngineManagers().textureManager.reuploadTextures();
 
             //Setup the shadow map depth render buffer again
             //worldScene.setupShadowMapFB();
@@ -112,8 +111,8 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 unused) {
-        Singleton.systems.sTime.update();
-        Singleton.systems.sTime.tickEnd();
+        engine.getEngineManagers().sTime.update();
+        engine.getEngineManagers().sTime.tickEnd();
         Matrix.setIdentityM(MatrixManager.viewMatrix, 0);
 
         if (!first_load) {
@@ -140,5 +139,9 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
         GLES30.glDepthFunc(GLES30.GL_LEQUAL);
 
         GLES30.glDepthMask(true);
+    }
+
+    public EngineManagers getEngineManagers() {
+        return engine.getEngineManagers();
     }
 }

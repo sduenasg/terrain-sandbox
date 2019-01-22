@@ -2,22 +2,22 @@ package com.sdgapps.terrainsandbox.shaders;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.SamplerCubemap;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderSystem;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
-import com.sdgapps.terrainsandbox.Singleton;
 
 public class SkyboxProgram extends GLSLProgram {
-    private SkyboxProgram(String id) {
-        super(id, "shaders/skybox_vertex.glsl","shaders/skybox_fragment.glsl");
+    private SkyboxProgram(String id, ShaderSystem shaderSys) {
+        super(id, "shaders/skybox_vertex.glsl","shaders/skybox_fragment.glsl",shaderSys);
         configure();
     }
 
-    public static GLSLProgram createInstance(String id)
+    public static GLSLProgram createInstance(String id, ShaderSystem shaderSys)
     {
-        GLSLProgram instance=Singleton.systems.sShaderSystem.getProgram(id);
+        GLSLProgram instance=shaderSys.getProgram(id);
         if(instance==null)
         {
-            instance=new SkyboxProgram(id);
-            Singleton.systems.sShaderSystem.addProgram(instance);
+            instance=new SkyboxProgram(id,shaderSys);
+            shaderSys.addProgram(instance);
         }
         return instance;
     }

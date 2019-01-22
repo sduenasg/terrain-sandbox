@@ -2,10 +2,9 @@ package com.sdgapps.terrainsandbox.MiniEngine.terrain;
 
 import android.content.res.AssetManager;
 
+import com.sdgapps.terrainsandbox.EngineManagers;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture2D;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManager;
-import com.sdgapps.terrainsandbox.Singleton;
 import com.sdgapps.terrainsandbox.utils.StringFileReader;
 
 import java.io.IOException;
@@ -91,29 +90,29 @@ public class TerrainData {
         }
     }
 
-    public void LoadTextures() {
+    public void LoadTextures(EngineManagers engineManagers) {
         TexColorMaps = new Texture[colorMaps.size()];
         for (int i = 0; i < colorMaps.size(); i++) {
-            TexColorMaps[i] = Singleton.systems.textureManager.add2DTexture(colorMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP,false,true);
+            TexColorMaps[i] = engineManagers.textureManager.add2DTexture(colorMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP,false,true);
         }
 
         TexNormalMaps = new Texture2D[normalMaps.size()];
         for (int i = 0; i < normalMaps.size(); i++) {
-            TexNormalMaps[i] = Singleton.systems.textureManager.add2DTexture(normalMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP,false,true);
+            TexNormalMaps[i] = engineManagers.textureManager.add2DTexture(normalMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP,false,true);
         }
 
         TexDisplacementMaps = new Texture2D[displacementMaps.size()];
         for (int i = 0; i < displacementMaps.size(); i++) {
-            TexDisplacementMaps[i] = Singleton.systems.textureManager.add2DTexture(displacementMaps.get(i), false, false, Texture2D.FILTER_NEAREST, Texture2D.WRAP_CLAMP,true,true);
+            TexDisplacementMaps[i] = engineManagers.textureManager.add2DTexture(displacementMaps.get(i), false, false, Texture2D.FILTER_NEAREST, Texture2D.WRAP_CLAMP,true,true);
         }
 
         TexSplatMaps = new Texture2D[splatMaps.size()];
         for (int i = 0; i < splatMaps.size(); i++) {
-            TexSplatMaps[i] = Singleton.systems.textureManager.add2DTexture(splatMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP,false,false);
+            TexSplatMaps[i] = engineManagers.textureManager.add2DTexture(splatMaps.get(i), true, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP,false,false);
         }
 
-        TexArraySplat=Singleton.systems.textureManager.addArrayTexture(textureArraySplat,true,false,Texture.FILTER_LINEAR,Texture.WRAP_REPEAT);
-        Clouds=Singleton.systems.textureManager.add2DTexture("textures/cloudswithmips",true,false,true, Texture.WRAP_CLAMP,false,true);
+        TexArraySplat=engineManagers.textureManager.addArrayTexture(textureArraySplat,true,false,Texture.FILTER_LINEAR,Texture.WRAP_REPEAT);
+        Clouds=engineManagers.textureManager.add2DTexture("textures/cloudswithmips",true,false,true, Texture.WRAP_CLAMP,false,true);
     }
 
     public boolean isPlanetaryScene() {

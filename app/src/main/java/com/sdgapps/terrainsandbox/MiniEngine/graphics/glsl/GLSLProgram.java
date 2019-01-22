@@ -3,7 +3,6 @@ package com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl;
 import android.content.res.AssetManager;
 import android.opengl.GLES30;
 
-import com.sdgapps.terrainsandbox.Singleton;
 import com.sdgapps.terrainsandbox.utils.Logger;
 
 import java.util.HashMap;
@@ -39,8 +38,8 @@ public class GLSLProgram {
     /**Shader identifier in the engine*/
     String shaderID;
 
-    public GLSLProgram(String id, String vertexPath, String fragmentPath) {
-        AssetManager am =Singleton.systems.sShaderSystem.getAssetMngr();
+    public GLSLProgram(String id, String vertexPath, String fragmentPath, ShaderSystem shaderSys) {
+        AssetManager am =shaderSys.getAssetMngr();
         this.shaderID = id;
         vertex = new GLSLShader(vertexPath, am, false,id);
         fragment = new GLSLShader(fragmentPath, am, true,id);

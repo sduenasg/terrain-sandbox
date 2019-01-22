@@ -20,7 +20,6 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform1f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
 import com.sdgapps.terrainsandbox.SimpleQuaternionPool;
-import com.sdgapps.terrainsandbox.Singleton;
 import com.sdgapps.terrainsandbox.shaders.AtmosphereProgram;
 import com.sdgapps.terrainsandbox.shaders.BoundingBoxProgram;
 import com.sdgapps.terrainsandbox.shaders.CloudProgram;
@@ -119,6 +118,10 @@ public class Planet extends Renderer implements TerrainInterface {
     static final String splatarrayUniformName="u_splatArray";
 
     LineCube BoundingBoxGeometry;
+
+
+    private SelectionResults selection = new SelectionResults();
+
     public void initialize(TerrainData data, Texture atmosphereGradient) {
 
         BoundingBoxGeometry=new LineCube();
@@ -142,7 +145,7 @@ public class Planet extends Renderer implements TerrainInterface {
         Material materialD = new Material();
 
         this.material = new Material();
-        GLSLProgram myPlanetShader = PlanetShader.createInstance(planetShaderID);
+        GLSLProgram myPlanetShader = PlanetShader.createInstance(planetShaderID,gameObject.engineManagers.sShaderSystem);
         material.shader = myPlanetShader;
         materialN.shader = myPlanetShader;
         materialS.shader = myPlanetShader;
@@ -203,7 +206,7 @@ public class Planet extends Renderer implements TerrainInterface {
         setRangeDetail(rangeDistMin);
 
         Material boundingBoxMaterial = new Material();
-        boundingBoxMaterial.shader = BoundingBoxProgram.createInstance("bbmat");
+        boundingBoxMaterial.shader = BoundingBoxProgram.createInstance("bbmat", gameObject.engineManagers.sShaderSystem);
         planetChunkN = new CDLODQuadTree(true, materialN, gridSize, rootQuadScale, nLods, yscale, ranges, morphconstz, rangeDistance, boundingBoxMaterial);
         planetChunkS = new CDLODQuadTree(true, materialS, gridSize, rootQuadScale, nLods, yscale, ranges, morphconstz, rangeDistance, boundingBoxMaterial);
         planetChunkA = new CDLODQuadTree(true, materialA, gridSize, rootQuadScale, nLods, yscale, ranges, morphconstz, rangeDistance, boundingBoxMaterial);
@@ -233,6 +236,7 @@ public class Planet extends Renderer implements TerrainInterface {
         planetChunkD.transform.rotation.fromAngleNormalAxis(-MiniMath.H_PI, Vec3f.Xvector);
 
         gridMesh = new GridMesh(gridSize + 1);
+        gridMesh.timeSystem=gameObject.engineManagers.sTime;
         gridMesh.GenBuffersAndSubmitToGL();
 
         //pack the 6 cube faces in an array
@@ -245,7 +249,7 @@ public class Planet extends Renderer implements TerrainInterface {
 
         //setup up the atmosphere (inverted sphere around the planet)
         atmosphere = new Sphere(
-                AtmosphereProgram.createInstance("atmosphereShader"),
+                AtmosphereProgram.createInstance("atmosphereShader",gameObject.engineManagers.sShaderSystem),
                 atmosphereRadius, 64, 64);
 
         atmosphere.GenBuffersAndSubmitToGL();
@@ -258,7 +262,7 @@ public class Planet extends Renderer implements TerrainInterface {
 
         //setup up the cloud layer
         clouds = new Sphere(
-                CloudProgram.createInstance("cloudShader"),
+                CloudProgram.createInstance("cloudShader",gameObject.engineManagers.sShaderSystem),
                 cloudlayerRadius, 64, 64);
 
         clouds.GenBuffersAndSubmitToGL();
@@ -286,7 +290,7 @@ public class Planet extends Renderer implements TerrainInterface {
             int minLod = Integer.MAX_VALUE;
             int res;
             for (CDLODQuadTree chunk : cube) {
-                res = chunk.LodSelect();
+                res = chunk.LodSelect(gameObject.engineManagers.mainCamera);
                 minLod = Math.min(minLod, res);
             }
 
@@ -311,7 +315,8 @@ public class Planet extends Renderer implements TerrainInterface {
         rotation.fromAngleNormalAxis(0.0001f,Vec3f.Yvector);
         clouds.transform.rotation.multLocal(rotation);
     }
-    private SelectionResults selection = new SelectionResults();
+
+
     @Override
     public void draw() {
 
@@ -352,22 +357,24 @@ public class Planet extends Renderer implements TerrainInterface {
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, 0);
         GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
+
     private void renderClouds() {
 
         clouds.material.bindShader();
 
+       
         ShaderUniform3f camPos = (ShaderUniform3f) clouds.material.shader.getUniform("camPos");
-        camPos.set(Singleton.systems.mainCamera.transform.position);
+        camPos.set( gameObject.engineManagers.mainCamera.transform.position);
         camPos.bind();
 
         ShaderUniform3f lightPos = (ShaderUniform3f) clouds.material.shader.getUniform("lightPos");
-        lightPos.set(Singleton.systems.mainLight.transform.position);
+        lightPos.set(gameObject.engineManagers.mainLight.transform.position);
         lightPos.bind();
 
         GLES30.glEnable(GLES30.GL_BLEND);
         GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE);
 
-        if(clouds.isPointInside(Singleton.systems.mainCamera.transform.position))
+        if(clouds.isPointInside(gameObject.engineManagers.mainCamera.transform.position))
             GLES30.glCullFace(GLES30.GL_FRONT);
         clouds.draw();
 
@@ -381,11 +388,11 @@ public class Planet extends Renderer implements TerrainInterface {
         atmosphereCol.bind();
 
         ShaderUniform3f camPos = (ShaderUniform3f) atmosphere.material.shader.getUniform("camPos");
-        camPos.set(Singleton.systems.mainCamera.transform.position);
+        camPos.set(gameObject.engineManagers.mainCamera.transform.position);
         camPos.bind();
 
         ShaderUniform3f lightPos = (ShaderUniform3f) atmosphere.material.shader.getUniform("lightPos");
-        lightPos.set(Singleton.systems.mainLight.transform.position);
+        lightPos.set(gameObject.engineManagers.mainLight.transform.position);
         lightPos.bind();
 
         GLES30.glEnable(GLES30.GL_BLEND);
@@ -406,23 +413,23 @@ public class Planet extends Renderer implements TerrainInterface {
 
         ShaderUniform3f v = (ShaderUniform3f) shader.getUniform("u_Fogcolor");
         if (v != null) {
-            Color4f fogColor = Singleton.systems.mainLight.fogColor;
+            Color4f fogColor = gameObject.engineManagers.mainLight.fogColor;
             v.set(fogColor.r, fogColor.g, fogColor.b);
             v.bind();
         }
 
         ShaderUniform1f zfarVar = (ShaderUniform1f) shader.getUniform("zfar");
         if (zfarVar != null) {
-            zfarVar.v = Singleton.systems.mainCamera.frustum.zfar;
+            zfarVar.v = gameObject.engineManagers.mainCamera.frustum.zfar;
             zfarVar.bind();
         }
 
         ShaderUniform3f camPosVar = (ShaderUniform3f) shader.getUniform("cameraPosition");
         if (camPosVar != null) {
-            camPosVar.set(Singleton.systems.mainCamera.transform.position);
+            camPosVar.set(gameObject.engineManagers.mainCamera.transform.position);
             camPosVar.bind();
         }
-        Light l = Singleton.systems.mainLight;
+        Light l = gameObject.engineManagers.mainLight;
         ShaderUniform3f lightpos = (ShaderUniform3f) shader.getUniform("u_LightPos");
         if (lightpos != null) {
 
@@ -456,7 +463,7 @@ public class Planet extends Renderer implements TerrainInterface {
 
     public void initializeRenderModes(FrameBufferInterface defaultFB, FrameBufferInterface shadowmapFB) {
         defaultPass = new DefaultRenderPackage(defaultFB, material.shader);
-       // shadowPass = new ShadowmapRenderPackage(shadowmapFB, Singleton.systems.sShaderSystem.shadowMapProgram);
+       // shadowPass = new ShadowmapRenderPackage(shadowmapFB, gameObject.engineManagers.sShaderSystem.shadowMapProgram);
       //  shadowedDefaultPass =
                // new DefaultRenderPackage(defaultFB, ShadowedTerrainShader.createInstance("shadowedterrain"));
         renderPackages.add(defaultPass);
@@ -471,13 +478,13 @@ public class Planet extends Renderer implements TerrainInterface {
         config.shadowmap = enabled;
 
         if (enabled) {
-            GLSLProgram shadowed = Singleton.systems.sShaderSystem.getProgram(planetShadowedID);
+            GLSLProgram shadowed = gameObject.engineManagers.sShaderSystem.getProgram(planetShadowedID);
             if (shadowed != null) {
                 material.shader = shadowed;
                 ConfigShadowMapModeOn();
             }
         } else {
-            material.shader = Singleton.systems.sShaderSystem.getProgram(planetShaderID);
+            material.shader = gameObject.engineManagers.sShaderSystem.getProgram(planetShaderID);
             ConfigShadowMapModeOff();
         }
     }
@@ -492,7 +499,7 @@ public class Planet extends Renderer implements TerrainInterface {
             prevPos = ranges[i - 1];
         }
 
-        Singleton.systems.mainCamera.frustum.change_zvalues(rootQuadScale / (float) Math.pow(4, nLods - 1), ranges[nLods - 1]);
+        gameObject.engineManagers.mainCamera.frustum.change_zvalues(rootQuadScale / (float) Math.pow(4, nLods - 1), ranges[nLods - 1]);
 
         //generate morph constants
         for (int lod = 0; lod < nLods; lod++) {

@@ -2,23 +2,23 @@ package com.sdgapps.terrainsandbox.shaders;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Sampler2D;
+import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderSystem;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
-import com.sdgapps.terrainsandbox.Singleton;
 
 public class AtmosphereProgram extends GLSLProgram {
-    private AtmosphereProgram(String id) {
-        super(id,"shaders/atmosphere_vert.glsl","shaders/atmosphere_frag.glsl");
+    private AtmosphereProgram(String id,ShaderSystem shaderSys) {
+        super(id,"shaders/atmosphere_vert.glsl","shaders/atmosphere_frag.glsl",shaderSys);
         initAtmosphereShader();
     }
 
-    public static GLSLProgram createInstance(String id)
+    public static GLSLProgram createInstance(String id, ShaderSystem shaderSys)
     {
-        GLSLProgram instance=Singleton.systems.sShaderSystem.getProgram(id);
+        GLSLProgram instance=shaderSys.getProgram(id);
         if(instance==null)
         {
-            instance=new AtmosphereProgram(id);
-            Singleton.systems.sShaderSystem.addProgram(instance);
+            instance=new AtmosphereProgram(id,shaderSys);
+            shaderSys.addProgram(instance);
         }
         return instance;
     }

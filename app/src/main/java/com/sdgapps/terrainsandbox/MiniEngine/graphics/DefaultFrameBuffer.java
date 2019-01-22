@@ -3,7 +3,6 @@ package com.sdgapps.terrainsandbox.MiniEngine.graphics;
 import android.opengl.GLES30;
 
 import com.sdgapps.terrainsandbox.GLSurfaceRenderer;
-import com.sdgapps.terrainsandbox.Singleton;
 
 public class DefaultFrameBuffer implements FrameBufferInterface {
     @Override
@@ -16,7 +15,7 @@ public class DefaultFrameBuffer implements FrameBufferInterface {
         //setup the culling back to GL_BACK
         GLES30.glCullFace(GLES30.GL_BACK);
         GLES30.glColorMask(true, true, true, true);
-        GLES30.glClearColor(Singleton.systems.mainLight.fogColor.r, Singleton.systems.mainLight.fogColor.g, Singleton.systems.mainLight.fogColor.b, 1);
+        GLES30.glClearColor(0, 0, 0, 1);
     }
 
     @Override

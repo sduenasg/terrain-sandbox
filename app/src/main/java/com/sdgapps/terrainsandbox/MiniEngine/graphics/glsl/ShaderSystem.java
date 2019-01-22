@@ -13,7 +13,7 @@ public class ShaderSystem {
     private AssetManager assetMngr;
     private HashMap<String,GLSLProgram> shaders=new HashMap<>();
 
-    public void setRes(AssetManager am) {
+    public void setAssets(AssetManager am) {
         this.assetMngr=am;
     }
 

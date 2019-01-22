@@ -4,6 +4,7 @@ import android.opengl.Matrix;
 
 import com.sdgapps.terrainsandbox.MiniEngine.MatrixManager;
 import com.sdgapps.terrainsandbox.MiniEngine.RenderPackage;
+import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Camera;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.LineCube;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.Transform;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec3f;
@@ -11,7 +12,6 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4fv;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture2D;
-import com.sdgapps.terrainsandbox.Singleton;
 
 public class CDLODQuadTree {
 
@@ -99,13 +99,14 @@ public class CDLODQuadTree {
 
     /**
      * CDLOD node selection
+     * @param mainCamera
      */
-    int LodSelect() {
+    int LodSelect(Camera mainCamera) {
         selection.clear();
-        Vec3f camerapos = Singleton.systems.mainCamera.gameObject.transform.position;
+
 
         if (initialized) {
-            root.LODSelect(camerapos, selection, false);
+            root.LODSelect(mainCamera, selection, false);
         }
 
         transform.updateModelMatrix();
