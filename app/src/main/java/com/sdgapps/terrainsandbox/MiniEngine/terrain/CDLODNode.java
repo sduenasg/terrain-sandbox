@@ -163,7 +163,7 @@ class CDLODNode extends SelectableNode {
         //th.end();
     }
 
-    //TODO: Optimize, very slow
+    //TODO: Optimize, very slow as it goes through all the pixels on the heightmap
     private void minMaxValAreaSphere(Texture2D texture, float x, float z, float w, float h, Vec3f outMin, Vec3f outMax,
                                      float sphereRadius, float terrainWidth, float yscale) {
 
@@ -188,7 +188,7 @@ class CDLODNode extends SelectableNode {
                 //Spherize the flat base point
                 SpherizePoint(newVec, sphereRadius);
 
-                //TODO: NOTE: Disabled displacement mapping here for testing
+                //NOTE: Disabled displacement mapping here for testing
                 //Calculate displacement vector
                /* radiusVector.set(newVec);
                 radiusVector.x -= sphereRadius;

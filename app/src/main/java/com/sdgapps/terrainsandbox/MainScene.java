@@ -19,7 +19,6 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec3f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture2D;
-import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManager;
 import com.sdgapps.terrainsandbox.MiniEngine.terrain.CDLODSettings;
 import com.sdgapps.terrainsandbox.MiniEngine.terrain.Planet;
 import com.sdgapps.terrainsandbox.MiniEngine.terrain.TerrainData;

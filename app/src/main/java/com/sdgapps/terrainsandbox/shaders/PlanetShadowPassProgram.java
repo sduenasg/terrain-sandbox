@@ -1,5 +1,4 @@
 package com.sdgapps.terrainsandbox.shaders;
-import android.graphics.Shader;
 
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderSystem;

@@ -1,7 +1,6 @@
 package com.sdgapps.terrainsandbox.MVP;
 
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 
 import com.sdgapps.terrainsandbox.SceneDataPOJO;
 

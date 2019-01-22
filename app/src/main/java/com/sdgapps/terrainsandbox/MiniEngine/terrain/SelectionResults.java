@@ -57,9 +57,11 @@ public class SelectionResults {
     }
 
     static int drawnNodes=0;
+
+    @Deprecated
     public void renderSelectionInstanced(GridMesh gridMesh, GLSLProgram targetShader)
     {
-        //TODO investigate a more efficient way to gather the data
+        // xTODO investigate a more efficient way to gather the data
         int nFullNodes=fullnodes;
         int nSubquadlNodes=partialNodes;
         //Logger.log("TEST "+fullnodes + " " + nSubquadlNodes);

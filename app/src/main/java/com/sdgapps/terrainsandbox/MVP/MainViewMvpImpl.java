@@ -564,8 +564,4 @@ public class MainViewMvpImpl implements MainViewMvp,
     @Override
     public void onDrawerStateChanged(int i) {
     }
-
-    public void showViewInstructions() {
-      //TODO show some instructions
-    }
 }

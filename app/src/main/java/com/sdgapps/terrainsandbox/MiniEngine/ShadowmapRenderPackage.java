@@ -4,7 +4,6 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.FrameBufferInterface;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.GLSLProgram;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.Material;
 
-
 //TODO CLEANUP Required
 public class ShadowmapRenderPackage extends RenderPackage {
     public ShadowmapRenderPackage(FrameBufferInterface fb, GLSLProgram shader) {
