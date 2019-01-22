@@ -5,6 +5,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 
 import com.sdgapps.terrainsandbox.MVP.MainViewMvp;
+import com.sdgapps.terrainsandbox.MiniEngine.GameControl;
 import com.sdgapps.terrainsandbox.MiniEngine.MatrixManager;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.OpenGLChecks;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.TextureManager;
@@ -22,7 +23,8 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
     private float ratio;
     public float centerX = 0;
     public float centerY = 0;
-    MainScene worldScene = new MainScene();
+
+    GameControl engine=new GameControl();
     private MainViewMvp.MainViewMvpListener presenter;
 
     @Deprecated
@@ -30,6 +32,8 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
 
     public GLSurfaceRenderer(MainViewMvp.MainViewMvpListener _presenter) {
         presenter = _presenter;
+        MainScene world=new MainScene();
+        engine.addSceneAndSetCurrent(world);
     }
 
     @Override
@@ -48,7 +52,7 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
         GLES30.glViewport(0, 0, surface_width, surface_height);
         ratio = (float) w / h;
 
-        worldScene.setAspectRatio(ratio);
+        engine.setAspectRatio(ratio);
     }
 
     @Override
@@ -67,10 +71,10 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
             GLES30.glHint(GLES30.GL_FRAGMENT_SHADER_DERIVATIVE_HINT, GLES30.GL_FASTEST);
 
             Singleton.systems.sTime.tickStart();
-            TextureManager.getInstance().reset();
+            Singleton.systems.textureManager.reset();
 
-            if (OpenGLChecks.oes_depth_texture)
-                worldScene.setupShadowMapFB();
+            //if (OpenGLChecks.oes_depth_texture)
+            //    worldScene.setupShadowMapFB();
 
             if (presenter != null)
                 presenter.onFinishedCreatingSurface();
@@ -82,10 +86,10 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
              * long as they've been notified about the GL Context loss.
              */
             Singleton.systems.sShaderSystem.reloadShaders();
-            TextureManager.getInstance().reuploadTextures();
+            Singleton.systems.textureManager.reuploadTextures();
 
             //Setup the shadow map depth render buffer again
-            worldScene.setupShadowMapFB();
+            //worldScene.setupShadowMapFB();
 
             if (presenter != null)
                 presenter.onFinishedRestoringEGLContext();
@@ -97,13 +101,13 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
      * and needs to be resubmitted to the GPU.
      */
     public void invalidateGLData() {
-        if (worldScene != null)
-            worldScene.invalidateGLData();
+        if (engine != null)
+            engine.invalidateGLData();
     }
 
     public void update() {
 
-        worldScene.update();
+        engine.update();
     }
 
     @Override
@@ -121,7 +125,7 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
 
     private void draw() {
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT | GLES30.GL_DEPTH_BUFFER_BIT);
-        worldScene.draw();
+        engine.draw();
     }
 
     private void configGL() {

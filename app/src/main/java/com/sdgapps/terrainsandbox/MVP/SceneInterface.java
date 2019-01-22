@@ -23,7 +23,7 @@ public interface SceneInterface {
 
     void setRangeDistance(float f);
 
-    void loadScene(Resources res, AssetManager am);
+    void loadScene(AssetManager assetMngr);
 
     void resetCamera();
 

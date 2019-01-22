@@ -29,11 +29,6 @@ public class FlatTerrain implements TerrainInterface {
     }
 
     @Override
-    public void invalidateGLData() {
-
-    }
-
-    @Override
     public void setRangeDetail(float f) {
 
     }

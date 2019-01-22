@@ -66,12 +66,11 @@ public class MainActivity extends AppCompatActivity
             Resources resources=getResources();
             AssetManager assetM=getAssets();
 
-            TextureManager.getInstance().setAssets(assetM,resources);
+            Singleton.systems.textureManager.setAssets(assetM,resources);
             Singleton.systems.sShaderSystem.setRes(assetM);
 
             renderer = new GLSurfaceRenderer(this);
-            MVPModel = renderer.worldScene;
-
+            MVPModel = (MainScene)renderer.engine.getCurrentScene();
 
             if (savedInstanceState != null) {
                 MVPModel.setLoadedData(unpackBundle(savedInstanceState));
@@ -239,7 +238,7 @@ public class MainActivity extends AppCompatActivity
         Runnable task = new Runnable() {
             @Override
             public void run() {
-                MVPModel.loadScene(getResources(),getAssets());
+                MVPModel.loadScene(getAssets());
                 onFinishedLoadingScene();
             }
         };
@@ -266,7 +265,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFinishedCreatingSurface() {
         //renderer.loadScene();
-        MVPModel.loadScene(getResources(),getAssets());
+        MVPModel.loadScene(getAssets());
         onFinishedLoadingScene();
         /*
          * Be careful with runonuithread, if the activity gets destroyed

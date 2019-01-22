@@ -1,7 +1,6 @@
 package com.sdgapps.terrainsandbox;
 
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.opengl.GLES30;
 
 import com.sdgapps.terrainsandbox.MVP.SceneInterface;
@@ -48,25 +47,13 @@ public class MainScene extends Scene implements SceneInterface {
     private boolean initialized = false;
     private TerrainInterface activeTerrain;
 
-    Resources resources;
-    AssetManager assetMngr;
     /**
      * Requires to run on the GL thread
      */
-    public void loadScene(Resources r, AssetManager am) {
-        resources=r;
-        assetMngr=am;
+    public void loadScene(AssetManager assetMngr) {
         TerrainData mTerrainData = new TerrainData(scenes[sceneIdx],assetMngr);
         mTerrainData.LoadTextures();
-
-        if (mTerrainData.isPlanetaryScene())
-            SetupPlanetScene(mTerrainData);
-        else
-            SetupFlatScene(mTerrainData);
-    }
-
-    private void SetupFlatScene(TerrainData terrainData) {
-
+        SetupPlanetScene(mTerrainData);
     }
 
     private void SetupPlanetScene(TerrainData terrainData) {
@@ -105,7 +92,7 @@ public class MainScene extends Scene implements SceneInterface {
         skyboxGO.add(skyboxBehavior);
 
         String[] skyboxtextures=new String[]{"textures/stars.pkm","textures/stars.pkm","textures/stars.pkm","textures/stars.pkm","textures/stars.pkm","textures/stars.pkm"};
-        Texture skyboxtex = TextureManager.getInstance().addCubeTexture(skyboxtextures,false,false,Texture.FILTER_LINEAR,Texture.WRAP_REPEAT);
+        Texture skyboxtex = Singleton.systems.textureManager.addCubeTexture(skyboxtextures,false,false,Texture.FILTER_LINEAR,Texture.WRAP_REPEAT);
         skyboxMaterial.addTexture(skyboxtex,"skyboxTex");
         add(skyboxGO);
 
@@ -114,7 +101,7 @@ public class MainScene extends Scene implements SceneInterface {
         planet.camFly = cameraFly;
         GameObject terrainGameObject = new GameObject();
         terrainGameObject.add(planet);
-        Texture atmosphereGradient = TextureManager.getInstance().add2DTexture("textures/earth/atmogradient.png", true, false, Texture.FILTER_LINEAR, Texture2D.WRAP_REPEAT, false,true);
+        Texture atmosphereGradient = Singleton.systems.textureManager.add2DTexture("textures/earth/atmogradient.png", true, false, Texture.FILTER_LINEAR, Texture2D.WRAP_REPEAT, false,true);
         planet.initialize(terrainData,atmosphereGradient);
 
         float planetRadius = planet.terrainXZ / 2;
@@ -158,10 +145,6 @@ public class MainScene extends Scene implements SceneInterface {
         activeTerrain = planet;
     }
 
-    public void setupShadowMapFB() {
-        shadowMapFB.setup();
-    }
-
     @Override
     public void draw() {
 
@@ -169,13 +152,6 @@ public class MainScene extends Scene implements SceneInterface {
             GLES30.glClearColor(sun.fogColor.r, sun.fogColor.g, sun.fogColor.b, 1f);
 
         super.draw();
-    }
-
-
-    public void invalidateGLData() {
-
-        if (activeTerrain != null)
-            activeTerrain.invalidateGLData();
     }
 
     @Override
@@ -310,7 +286,10 @@ public class MainScene extends Scene implements SceneInterface {
         super.update();
     }
 
+
+    @Override
     public void setAspectRatio(float aspectRatio) {
+        super.setAspectRatio(aspectRatio);
         this.aspectRatio = aspectRatio;
         if (sceneCamera != null)
             sceneCamera.setAspectRatio(aspectRatio);

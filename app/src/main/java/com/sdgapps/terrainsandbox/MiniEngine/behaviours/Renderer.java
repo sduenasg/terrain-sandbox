@@ -19,6 +19,11 @@ public class Renderer extends Behaviour {
 
     }
 
+    public void invalidateGLData()
+    {
+
+    }
+
     @Override
     public void update() {
 

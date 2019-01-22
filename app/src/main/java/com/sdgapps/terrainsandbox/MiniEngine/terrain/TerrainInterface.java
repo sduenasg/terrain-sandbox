@@ -11,8 +11,6 @@ public interface TerrainInterface {
 
     void drawAABBMode(boolean enabled);
 
-    void invalidateGLData();
-
     void setRangeDetail(float f);
 
     CDLODSettings getSettings();

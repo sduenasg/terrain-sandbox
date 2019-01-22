@@ -10,8 +10,6 @@ import java.util.HashMap;
 
 public class TextureManager {
 
-    private static TextureManager instance;
-
     private Resources resources;
     private AssetManager assetMngr;
 
@@ -19,12 +17,6 @@ public class TextureManager {
     {
         resources=r;
         assetMngr=am;
-    }
-    public static TextureManager getInstance() {
-        if (instance == null) {
-            instance = new TextureManager();
-        }
-        return instance;
     }
 
     /**

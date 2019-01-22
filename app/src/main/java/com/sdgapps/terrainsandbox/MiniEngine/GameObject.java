@@ -31,4 +31,13 @@ public class GameObject {
         b.transform = this.transform;
         b.onAddedToEntity();
     }
+
+    public void invalidateGLData() {
+
+        for (int i = 0; i < behaviours.size(); i++) {
+            Behaviour b = behaviours.get(i);
+            if (b.renderer)
+                ((Renderer) b).invalidateGLData();
+        }
+    }
 }
