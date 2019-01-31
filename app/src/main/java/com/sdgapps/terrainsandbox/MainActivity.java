@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.sdgapps.terrainsandbox.MVP.MainViewMvp;
 import com.sdgapps.terrainsandbox.MVP.MainViewMvpImpl;
 import com.sdgapps.terrainsandbox.MVP.SceneInterface;
+import com.sdgapps.terrainsandbox.MiniEngine.EngineManagers;
 import com.sdgapps.terrainsandbox.MiniEngine.terrain.CDLODSettings;
 import com.sdgapps.terrainsandbox.utils.Logger;
 
@@ -271,12 +272,13 @@ public class MainActivity extends AppCompatActivity
          * after the runnable has already been queued to run, it might attempt to reach
          * variables/fields that might have been destroyed (null)
          */
+        final AppCompatActivity a=this;
         runOnUiThread(new Runnable() {
             public void run() {
                 MVPView.configureUIListeners();
 
                 if (!mInstructionsShown) {
-                    MVPView.showViewInstructions();
+                    MVPView.showViewInstructions(a);
                     mInstructionsShown = true;
                 }
             }

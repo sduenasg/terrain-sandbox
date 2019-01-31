@@ -1,6 +1,5 @@
 package com.sdgapps.terrainsandbox.MiniEngine;
 
-import com.sdgapps.terrainsandbox.EngineManagers;
 import com.sdgapps.terrainsandbox.MiniEngine.behaviours.Renderer;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.Transform;
 

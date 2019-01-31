@@ -2,7 +2,7 @@ package com.sdgapps.terrainsandbox.MiniEngine.terrain;
 
 import android.content.res.AssetManager;
 
-import com.sdgapps.terrainsandbox.EngineManagers;
+import com.sdgapps.terrainsandbox.MiniEngine.EngineManagers;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture2D;
 import com.sdgapps.terrainsandbox.utils.StringFileReader;

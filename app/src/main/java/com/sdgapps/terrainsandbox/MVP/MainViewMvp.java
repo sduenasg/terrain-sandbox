@@ -1,11 +1,15 @@
 package com.sdgapps.terrainsandbox.MVP;
 
 
+import android.content.Context;
+
 /**
  * This interface corresponds to the main view of the app, where the user can click around the screen
  * to move the camera, open the navigation drawer and interact with the settings
  */
 public interface MainViewMvp extends ViewMvp {
+
+
 
     //interface that listeners to this class need to implement
     interface MainViewMvpListener {
@@ -68,6 +72,8 @@ public interface MainViewMvp extends ViewMvp {
     void hideLoadingProgress();
 
     void setupRangeSeekbar(int rangeSeekbarMax);
+
+    void showViewInstructions(Context c);
 
 }
 

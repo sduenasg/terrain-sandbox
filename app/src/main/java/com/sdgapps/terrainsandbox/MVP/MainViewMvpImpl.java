@@ -1,5 +1,6 @@
 package com.sdgapps.terrainsandbox.MVP;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sdgapps.terrainsandbox.GLSurfaceRenderer;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.MiniMath;
@@ -419,6 +421,11 @@ public class MainViewMvpImpl implements MainViewMvp,
         seek.setMax(rangeSeekbarMax);
 
         seek.setProgress(0);
+    }
+
+    @Override
+    public void showViewInstructions(Context c) {
+        Toast.makeText(c, "Use the left half of screen to move. The right half of the screen to rotate", Toast.LENGTH_LONG).show();
     }
 
     @Override

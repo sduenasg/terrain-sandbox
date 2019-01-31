@@ -58,7 +58,6 @@ import com.sdgapps.terrainsandbox.utils.TimingHelper;
  * - Color map: Just the color map of the terrain, procedurally generated on World Machine, converted to 6 cubemap face textures
  * using blender.
  *
- * //TODO
  * -Splat map: Every channel in the image references a set color or texture. The value of the channel is that color's or texture's weight
  * on that area.
  */
@@ -78,8 +77,6 @@ public class Planet extends Renderer implements TerrainInterface {
      */
     private CDLODSettings config = new CDLODSettings();
     private RenderPackage defaultPass;
-    private RenderPackage shadowPass;
-    private RenderPackage shadowedDefaultPass;
 
     private int gridSize = 64;
     private float rootQuadScale = 100000;
@@ -98,8 +95,7 @@ public class Planet extends Renderer implements TerrainInterface {
     private final int rangeDistMin = 1;
     private final int rangeDistSteps = 10;//number of steps between rangeDistMin and rangeDistMax
     private static final float morphstartratio = .1f;
-//1 54 119
-   // public Color4f atmosphereColor = new Color4f(219, 246, 254, 1);
+
     public Color4f atmosphereColor = new Color4f(218, 220, 255, 1);
     private float atmosphereRadius,cloudlayerRadius;
     private float planetRadius;
@@ -118,9 +114,6 @@ public class Planet extends Renderer implements TerrainInterface {
     static final String splatarrayUniformName="u_splatArray";
 
     LineCube BoundingBoxGeometry;
-
-
-    private SelectionResults selection = new SelectionResults();
 
     public void initialize(TerrainData data, Texture atmosphereGradient) {
 
@@ -516,14 +509,11 @@ public class Planet extends Renderer implements TerrainInterface {
     }
 
     private void ConfigShadowMapModeOn() {
-        renderPackages.clear();
-        renderPackages.add(shadowPass);
-        renderPackages.add(shadowedDefaultPass);
+
     }
 
     private void ConfigShadowMapModeOff() {
-        renderPackages.clear();
-        renderPackages.add(defaultPass);
+
     }
 
     @Override
