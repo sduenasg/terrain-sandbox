@@ -300,7 +300,7 @@ public class BoundingBox {
         bMax.add(planetTransform.objectPivotPosition);
         bMin.add(planetTransform.objectPivotPosition);
 
-        //the box rotation might mess up max/min values, swap them if necessary
+        //the box rotation might swap max/min values, swap them back if necessary
         rearrangeMaxMin();
     }
 
@@ -329,8 +329,9 @@ public class BoundingBox {
 
     /**
      * Box rendering
+     * @param geometry an instance of a line cube
+     * @param shader
      */
-
     public void draw(GLSLProgram shader, LineCube geometry) {
 
 

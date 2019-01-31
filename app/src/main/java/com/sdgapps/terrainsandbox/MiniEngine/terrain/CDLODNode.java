@@ -416,7 +416,7 @@ class CDLODNode extends SelectableNode {
             offset.bind();
         }
 
-        mesh.draw(this.selection);
+        mesh.drawFromSelection(this.selection);
     }
 
 
@@ -447,11 +447,11 @@ class CDLODNode extends SelectableNode {
 
         AABB.draw(boundingBoxMaterial.shader,geometry);
         /*if (selection[4])
-            AABB.draw(boundingBoxMaterial.shader);
-        else//draw the boxes of the children we are covering for
+            AABB.drawFromSelection(boundingBoxMaterial.shader);
+        else//drawFromSelection the boxes of the children we are covering for
             for (int i = 0; i < 4; i++)
                 if (selection[i])
-                    children[i].AABB.draw(boundingBoxMaterial.shader);*/
+                    children[i].AABB.drawFromSelection(boundingBoxMaterial.shader);*/
 
     }
 

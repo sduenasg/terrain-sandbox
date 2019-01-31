@@ -28,7 +28,7 @@ public class GLSurfaceRenderer implements GLSurfaceView.Renderer {
     private MainViewMvp.MainViewMvpListener presenter;
 
     @Deprecated
-    static final int FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B;
+    static final int FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B; //default in GLES3
 
     public GLSurfaceRenderer(MainViewMvp.MainViewMvpListener _presenter) {
         presenter = _presenter;

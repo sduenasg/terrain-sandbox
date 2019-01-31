@@ -11,7 +11,12 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
-//TODO might be worth it to use short for indices and save some memory
+/**
+ * NxN vertex grid
+ * Object space position of vertex (i,j) is (i,0,j) where i,j are positive int values
+ *
+ * Rendered using IBO in GL_TRIANGLES mode
+ */
 public class GridMesh {
 
     public static final int FloatBytes = Float.SIZE / 8;
@@ -20,11 +25,20 @@ public class GridMesh {
 
     //grid size in vertices
     private int vdim = 0;
+
+    //grid size in quads
     int gridDim = 0;
+
     private int[] index_array;
     private float[] gridPositions_array;
 
-    private int buffers[]; //contains buffer id of the whole chunk
+    /*
+    *  Buffer ids
+    *  0 - index buf
+    *  1 - gridpositions buf
+    *  2 - barycentric coord buf
+    */
+    private int buffers[];
 
     private short[] baryCoordsArray;
     private int[] offsets = new int[4];
@@ -113,7 +127,6 @@ public class GridMesh {
                 index_array[k++] = start + (fulld + 1); //v4
                 index_array[k++] = start + (fulld + 2); //v5
                 index_array[k++] = start + 1; //v6
-
             }
         }
 
@@ -232,7 +245,6 @@ public class GridMesh {
             //0 - index buf
             //1 - gridpositions buf
             //2 - barycentric coord buf
-            //3 - subquad index buf
             GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
             GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER,
                     indexBuffer.capacity() * IntBytes, indexBuffer,
@@ -255,8 +267,7 @@ public class GridMesh {
         }
     }
 
-
-    public void bindAttributes(GLSLProgram Shader, boolean shadowmapRender) {
+    void bindAttributes(GLSLProgram Shader, boolean shadowmapRender) {
         int gridPositionHandle=Shader.getAttributeGLid("a_gridPosition");
         int barycentricHandle=Shader.getAttributeGLid("a_barycentric");
 
@@ -276,31 +287,50 @@ public class GridMesh {
         GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
     }
 
-    public void instancedFullmeshDraw(int ninstances)
+    void instancedFullmeshDraw(int ninstances)
     {
         GLES30.glDrawElementsInstanced(GLES30.GL_TRIANGLES,indexArraySize,GLES30.GL_UNSIGNED_INT,0,ninstances);
         timeSystem.drawcalls++;
     }
 
-    public void instancedQuarterMeshDraw(int ninstances)
+    void instancedQuarterMeshDraw(int ninstances)
     {
         GLES30.glDrawElementsInstanced(GLES30.GL_TRIANGLES,partialArraySize,GLES30.GL_UNSIGNED_INT,0,ninstances);
         timeSystem.drawcalls++;
     }
 
-    public void draw(boolean[] selection) {
+    /**
+     * Draw the grid mesh
+     */
+    public void draw()
+    {
+        GLES30.glDrawElements(GLES30.GL_TRIANGLES, indexArraySize, GLES30.GL_UNSIGNED_INT, 0);
+        timeSystem.drawcalls++;
+    }
+
+    /**
+     *
+     * Draws parts of the mesh depending on the selection[] parameter.
+     *
+     * Selection contains 5 booleans.
+     *          -If selection[4] is set, the whole grid is sent to render and ignores the rest of the array.
+     *          -If not, it uses selection[0-3] to render the quarters of the mesh that correspond
+     *              to the booleans that are set.
+     */
+    public void drawFromSelection(boolean[] selection) {
         if (selection[4]) {//the whole node got selected
             GLES30.glDrawElements(GLES30.GL_TRIANGLES, indexArraySize, GLES30.GL_UNSIGNED_INT, 0);
             timeSystem.drawcalls++;
 
-        } else {//only parts of the node got selected (parent covering for it's children)
+        } else {//only certain quarters of the grid got selected
             for (int j = 0; j < 4; j++) {
-                if (selection[j]) {//if  node covers child j's area
+                if (selection[j]) {
                     int offset = offsets[j];
                     int size = partialArraySize;
                     int k = j + 1;
 
-                    while (selection[k] && k < 4) { //consecutive sub-quads will be rendered in one go
+                    //consecutive sub-quads will be rendered in one go saving drawcalls
+                    while (selection[k] && k < 4) {
                         size += partialArraySize;
                         k++;
                         j++;
@@ -315,7 +345,7 @@ public class GridMesh {
     /**
      * Mark the VBO's as invalid
      */
-    public void invalidateVBO() {
+    void invalidateVBO() {
         uploadedVBO = false;
     }
 }

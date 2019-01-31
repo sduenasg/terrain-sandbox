@@ -1,6 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.terrain;
 /**
- * TODO: implement the terrain interface to show a flat terrain chunk
+ * TODO: implement the terrain interface to render a flat terrain chunk
  */
 public class FlatTerrain implements TerrainInterface {
     @Override

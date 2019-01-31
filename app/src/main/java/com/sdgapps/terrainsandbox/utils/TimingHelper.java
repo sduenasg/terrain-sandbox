@@ -2,7 +2,7 @@
 package com.sdgapps.terrainsandbox.utils;
 
 /**
- * Very simple time measuring class
+ * Basic time measuring class
  */
 public class TimingHelper {
     double start;
