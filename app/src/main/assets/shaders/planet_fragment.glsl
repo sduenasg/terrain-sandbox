@@ -1,7 +1,7 @@
 #version 300 es
 /*
 this extension is now default in GLES3.0 and up.
-The shader silently crashes during compilation on the following device if this is used on GLES3.0
+The shader compilation silently crashes on the following device if this is used on GLES3.0
 (ASUS zenpad)
 #ifdef GL_OES_standard_derivatives
 #extension GL_OES_standard_derivatives : enable
@@ -52,9 +52,8 @@ in vec4 vertColor;
 in float incidenceAngle;
 in vec3 v_normal;
 
-
 out vec4 fragColor;
-// Functions
+
 float calcFogLinear(float distanceToEye);
 float calcFogExp(float distanceToEye);
 
@@ -87,17 +86,29 @@ float edgeFactor(){
     return min(min(a3.x, a3.y), a3.z);
 }
 
+float getSplatSheetColorSimple(vec4 splatWeights)
+{
+    vec2 coords = fract(v_TexCoordinate * 1200.0);
+    float grassvalue =  texture( u_splatArray  , vec3(coords,0.0)).r;
+    float snowvalue =   texture(  u_splatArray  , vec3(coords,2.0)).r;
+    float watervalue =  texture( u_splatArray  , vec3(coords,3.0)).r;
+    float cliffsvalue = texture(u_splatArray  , vec3(coords,0.0)).r;
 
+    float outcolor = splatWeights.r * grassvalue +
+                    splatWeights.g * cliffsvalue+
+                    splatWeights.b * watervalue +
+                    splatWeights.a * snowvalue;
+
+    return outcolor;
+}
+
+
+ /* samples 2 sets of coordinates to minimize the tiling effect. Looks
+       better but it is pretty slow on weaker devices*/
 float getSplatSheetColor(vec4 splatWeights)
 {
-
-    /*Array texture for the detail maps:
-    Pros: Avoid a thousand problems related to atlassing, mipmapping and linear interpolation
-    Cons: OpenGL ES 3.0 required
-    */
     vec2 coords = fract(v_TexCoordinate * 1200.0);
-    vec2 coords2 = fract(v_TexCoordinate * 600.0).yx; //rotated and scaled to minimize tiling by mixing
-
+    vec2 coords2 = fract(v_TexCoordinate * 600.0).yx;
 
     float grassvalue=  texture( u_splatArray  , vec3(coords,0.0)).r;
     float snowvalue=   texture(  u_splatArray  , vec3(coords,2.0)).r;
@@ -125,35 +136,29 @@ void main()
     float fogFactor = calcFogLinear(distancef);
     vec3 wirecolor;
     vec3 mixedColor;
-    vec3 colorMap;
-        colorMap = vec3(0.8,0.8,0.8); //no color texture
+    vec3 colorMap = texture(u_colorMap, v_TexCoordinate).rgb;
 
-    colorMap = texture(u_colorMap, v_TexCoordinate).rgb;
-
-
-    //Splat maps must have a non-premultiplied alpha channel
-    vec4 splatvalue=texture(u_splatMap,v_TexCoordinate);
-
-    //avoiding the if statement (if depthValue>detailthresh)
+    // avoiding the if statement (if depthValue>detailthresh)
     float depthValue = depthPosition.z /depthPosition.w;
     float detailFactor= (depthValue-detailThreshold)/(0.999-detailThreshold);
-    float splatcolor=getSplatSheetColor(splatvalue);
 
-    splatcolor=mix(2.0*splatcolor,1.0,clamp(detailFactor,0.0,1.0));
+    // splat maps must have a non-premultiplied alpha channel
+    vec4 splatvalue=texture(u_splatMap,v_TexCoordinate);
+    float splatcolor=getSplatSheetColorSimple(splatvalue);
 
-    //TODO Splat maps are killing performance on weaker devices, check that out
-    colorMap*=splatcolor;//apply the detail value
+    splatcolor=mix(3.0*splatcolor,1.0,clamp(detailFactor,0.0,1.0));
 
-    vec3 n = v_normal;// getNormal(v_TexCoordinate);
+    colorMap*=splatcolor;// apply the detail value
+
+    vec3 n = v_normal;
     vec3 l = normalize(u_LightPos - v_Position.xyz);
-    vec3 E = normalize(-v_Position.xyz);   // we are in Eye Coordinates, so EyePos is (0,0,0)
-    //vec3 h = normalize(l+E); //half dir = lightdir + eyedir
+    vec3 E = normalize(-v_Position.xyz);   // v position is in eye space (eye position is (0,0,0))
     vec3 r = normalize(-reflect(l,n));
+
     const float shininess = 50.0;
     const vec3 specularColor=vec3(0.980, 0.922 , 0.608);
 
-    float specularity=splatvalue.b;//water
-    //Specular term
+    // specular term
     vec3 Ispec = max(splatvalue.b,0.1)*specularColor* pow(max(dot(r,E),0.0) , shininess);
 
     float lightDot = dot(n,l);
@@ -164,16 +169,20 @@ void main()
     vec3 atmocol = vertColor.rgb * texture(u_atmoGradient, gradientLevel).rgb;
 
     float atmofactor=clamp(vertColor.a,0.0,1.0);
-    atmocol=atmocol*atmofactor+diffspec*(1.0-atmofactor);//mix(atmocol,diffspec,0.9);
+    atmocol=atmocol*atmofactor+diffspec*(1.0-atmofactor);
 
     vec3 baseColor = mix(atmocol,diffspec, atmofactor);
 
-    if((mode==3.0 || mode==7.0 )){ //wireframe
+    vec4 outcolor;
+     outcolor =  vec4(mix (u_Fogcolor, baseColor, fogFactor),1.0);
+   /*if((mode==3.0 || mode==7.0 )){ //wireframe
            wirecolor=mix(getWireColor(), baseColor.rgb, edgeFactor());
-           fragColor =  vec4(mix(u_Fogcolor,wirecolor, fogFactor),1.0); //<-
+           outcolor =  vec4(mix(u_Fogcolor,wirecolor, fogFactor),1.0);
     }
     else{ // no wireframe
-       fragColor =  vec4(mix (u_Fogcolor, baseColor, fogFactor),1.0); //<-
-    }
+       outcolor =  vec4(mix (u_Fogcolor, baseColor, fogFactor),1.0);
+    }*/
+
+    fragColor =  outcolor;
 }
 
