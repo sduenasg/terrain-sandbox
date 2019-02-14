@@ -383,6 +383,7 @@ class CDLODNode extends SelectableNode {
     {
         return quadTree.rangeDistance[lod];
     }
+
     void renderSelectedParts(GridMesh mesh, GLSLProgram shader) {
         ShaderUniform2f range = (ShaderUniform2f) shader.getUniform("range");
         ShaderUniform1f qScale = (ShaderUniform1f) shader.getUniform("quad_scale");

@@ -183,12 +183,6 @@ public class Planet extends Renderer implements TerrainInterface {
         materialC.addTexture(data.TexArraySplat,splatarrayUniformName);
         materialD.addTexture(data.TexArraySplat,splatarrayUniformName);
 
-        materialN.addTexture(atmosphereGradient,"u_atmoGradient");
-        materialS.addTexture(atmosphereGradient,"u_atmoGradient");
-        materialA.addTexture(atmosphereGradient,"u_atmoGradient");
-        materialB.addTexture(atmosphereGradient,"u_atmoGradient");
-        materialC.addTexture(atmosphereGradient,"u_atmoGradient");
-        materialD.addTexture(atmosphereGradient,"u_atmoGradient");
         terrainXZ = rootQuadScale * gridSize;
 
         float maxverts = (float) Math.sqrt(Math.pow(4, nLods - 1) * (gridSize + 1) * (gridSize + 1));

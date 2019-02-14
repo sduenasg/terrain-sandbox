@@ -13,8 +13,6 @@ precision highp float;
 precision mediump float;
 #endif
 
-const float shininess = 5.0;
-const vec3 specularColor = vec3(0.5, 0.5, 0.5);
 const float fogScale=0.6;
 const float detailTextureMult = 100.0;
 const vec3 rcolor=vec3(0.0,1.0,0.0);
@@ -22,6 +20,8 @@ const vec3 gcolor=vec3(0.27,0.21,0.13);//cliffs
 const vec3 bcolor=vec3(0.0,0.0,1.0);
 const vec3 acolor=vec3(1.0,1.0,1.0);
 const float detailThreshold = 0.99;//distance [0,1] threshold at which detail will start showing
+const float shininess = 50.0;
+const vec3 specularColor=vec3(0.980, 0.922 , 0.608);
 
 uniform sampler2D u_colorMap;  //color map
 uniform sampler2D u_heightMap; //heightmap (for debugging)
@@ -48,8 +48,6 @@ in vec4 depthPosition;
 in vec3 barycentric;
 in float distancef;
 in float morph;
-in vec4 vertColor;
-in float incidenceAngle;
 in vec3 v_normal;
 
 out vec4 fragColor;
@@ -135,7 +133,6 @@ void main()
 {
     float fogFactor = calcFogLinear(distancef);
     vec3 wirecolor;
-    vec3 mixedColor;
     vec3 colorMap = texture(u_colorMap, v_TexCoordinate).rgb;
 
     // avoiding the if statement (if depthValue>detailthresh)
@@ -144,38 +141,28 @@ void main()
 
     // splat maps must have a non-premultiplied alpha channel
     vec4 splatvalue=texture(u_splatMap,v_TexCoordinate);
-    float splatcolor=getSplatSheetColorSimple(splatvalue);
 
-    splatcolor=mix(3.0*splatcolor,1.0,clamp(detailFactor,0.0,1.0));
+    float splatcolor=mix(3.0*getSplatSheetColorSimple(splatvalue),1.0,clamp(detailFactor,0.0,1.0));
 
     colorMap*=splatcolor;// apply the detail value
 
     vec3 n = v_normal;
     vec3 l = normalize(u_LightPos - v_Position.xyz);
-    vec3 E = normalize(-v_Position.xyz);   // v position is in eye space (eye position is (0,0,0))
-    vec3 r = normalize(-reflect(l,n));
-
-    const float shininess = 50.0;
-    const vec3 specularColor=vec3(0.980, 0.922 , 0.608);
+    vec3 E = normalize(-v_Position.xyz);   // v_position is in eye space (eye position is (0,0,0))
+    vec3 r = -reflect(l,n);
 
     // specular term
-    vec3 Ispec = max(splatvalue.b,0.1)*specularColor* pow(max(dot(r,E),0.0) , shininess);
+    vec3 Ispec = max(splatvalue.b,0.1) * specularColor * pow(max(dot(r,E),0.0) , shininess);
 
     float lightDot = dot(n,l);
     vec3 Idiff = colorMap * lightDot;
     vec3 diffspec = Idiff+Ispec;
 
-    vec2 gradientLevel = vec2(incidenceAngle, 0);
-    vec3 atmocol = vertColor.rgb * texture(u_atmoGradient, gradientLevel).rgb;
-
-    float atmofactor=clamp(vertColor.a,0.0,1.0);
-    atmocol=atmocol*atmofactor+diffspec*(1.0-atmofactor);
-
-    vec3 baseColor = mix(atmocol,diffspec, atmofactor);
-
     vec4 outcolor;
-     outcolor =  vec4(mix (u_Fogcolor, baseColor, fogFactor),1.0);
-   /*if((mode==3.0 || mode==7.0 )){ //wireframe
+    outcolor =  vec4(diffspec,1.0);
+
+    /*
+    if((mode==7.0)){ //wireframe
            wirecolor=mix(getWireColor(), baseColor.rgb, edgeFactor());
            outcolor =  vec4(mix(u_Fogcolor,wirecolor, fogFactor),1.0);
     }

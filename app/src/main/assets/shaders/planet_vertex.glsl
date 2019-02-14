@@ -47,8 +47,6 @@ out vec4 depthPosition;
 out float distancef;
 out vec3 barycentric;
 out float morph;
-out vec4 vertColor;
-out float incidenceAngle;
 out vec3 v_normal;
 
 #define PI 3.14159265;
@@ -99,23 +97,6 @@ vec4 applyHeightmapToSpherizedPoint(in vec4 p, in float heightValue)
     return vec4(p.xyz + radiusVector * heightValue,1.0);
 }
 
-
-void calcAtmosphereValues(in vec4 eyepos, in vec3 eyenormal)
-{
-    vec3 viewDirection = normalize(-eyepos.xyz);
-    vec3 lightDirection = normalize(u_LightPos-eyepos.xyz);
-
-    // assuming the object is a sphere, the angles between normals and light determines the positions on the sphere
-    incidenceAngle = acos(dot(lightDirection, eyenormal)) / PI;
-    // shade atmosphere according to this ramp function from 0 to 180 degrees
-    float shadeFactor = 0.1 * (1.0 - incidenceAngle) + 0.9 * (1.0 - (clamp(incidenceAngle, 0.5, 0.5 + _TransitionWidth) - 0.5) / _TransitionWidth);
-    float angleToViewer = sin(acos(dot(eyenormal, viewDirection)));
-    float perspectiveFactor = 0.3 + 0.2 * pow(angleToViewer, _FresnelExponent) + 0.5 * pow(angleToViewer, _FresnelExponent * 20.0);
-    vertColor = vec4(ambientLight * shadeFactor*perspectiveFactor,atmoBorderWidth-angleToViewer);
-
-     vertColor = vec4(ambientLight * shadeFactor*perspectiveFactor,atmoBorderWidth-angleToViewer);
-}
-
 //morph original height with the fully morphed height using the morphLerpK value
 float interpolateHeights(in float oldheight, in vec2 newUvCoords,in float morph)
 {
@@ -132,7 +113,6 @@ vec3 getNormal(vec2 uv) {
     nobj = ( u_MVMatrix * vec4(nobj, 0.0)).xyz;
 	return normalize(nobj);
 }
-
 
 void main()                                                 	
 {
@@ -171,7 +151,6 @@ void main()
     morph=morphLerpK;
 
     vec3 radiusVector = getRadiusVector(hmpos,radius);
-    calcAtmosphereValues(v_Position,normalize((u_MVMatrix * vec4(radiusVector,0.0)).xyz));
     v_normal=getNormal(uvcoords);
 
 }
