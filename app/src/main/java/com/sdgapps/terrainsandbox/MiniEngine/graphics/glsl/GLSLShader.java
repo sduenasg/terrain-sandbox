@@ -15,15 +15,31 @@ public class GLSLShader {
     private String path;
     private String programID;
 
-    GLSLShader(String _path, AssetManager assetMngr, boolean isFragment, String _programID) {
+    /**
+     * A native method that is implemented by the 'jni-optimizer' native library,
+     * which is packaged with this application.
+     */
+    public native String jnioptimize(String shaderCode,boolean isFragment);
+
+
+    GLSLShader(String _path, AssetManager assetMngr, boolean isFragment, String _programID, boolean optimize) {
         programID=_programID;
         path=_path;
         this.isFragment = isFragment;
 
+        String code= getCode(assetMngr);
+
+        if(optimize)
+        {
+            String optcode=jnioptimize(code,isFragment);
+            if(optcode!=null)
+                code=optcode;
+        }
+
         if (isFragment)
-            glHandle = compileShader(GLES30.GL_FRAGMENT_SHADER, getCode(assetMngr));
+            glHandle = compileShader(GLES30.GL_FRAGMENT_SHADER, code);
         else
-            glHandle = compileShader(GLES30.GL_VERTEX_SHADER, getCode(assetMngr));
+            glHandle = compileShader(GLES30.GL_VERTEX_SHADER, code);
     }
 
     void reloadShader(AssetManager assetMngr) {

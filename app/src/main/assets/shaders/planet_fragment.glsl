@@ -159,16 +159,15 @@ void main()
     vec3 diffspec = Idiff+Ispec;
 
     vec4 outcolor;
-    outcolor =  vec4(diffspec,1.0);
+    //outcolor =  vec4(diffspec,1.0);
 
-    /*
     if((mode==7.0)){ //wireframe
            wirecolor=mix(getWireColor(), diffspec.rgb, edgeFactor());
-           outcolor =  vec4(mix(u_Fogcolor,wirecolor, fogFactor),1.0);
+           outcolor =  vec4(wirecolor,1.0);
     }
     else{ // no wireframe
-       outcolor =  vec4(mix (u_Fogcolor, diffspec, fogFactor),1.0);
-    }*/
+           outcolor =  vec4(diffspec,1.0);
+    }
 
     fragColor =  outcolor;
 }

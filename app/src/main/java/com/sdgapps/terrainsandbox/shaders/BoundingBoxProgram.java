@@ -6,7 +6,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4f
 
 public class BoundingBoxProgram extends GLSLProgram {
     private BoundingBoxProgram(String id, ShaderSystem shaderSys) {
-        super(id, "shaders/boxvertex.glsl", "shaders/boxfragment.glsl",shaderSys);
+        super(id, "shaders/boxvertex.glsl", "shaders/boxfragment.glsl",shaderSys,true);
         ShaderUniformMatrix4fv MVPMatrix=new ShaderUniformMatrix4fv("u_MVPMatrix");
         addUniform(MVPMatrix);
         linkAttribute("a_Position");

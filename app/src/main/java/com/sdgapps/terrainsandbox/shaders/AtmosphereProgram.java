@@ -8,7 +8,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4f
 
 public class AtmosphereProgram extends GLSLProgram {
     private AtmosphereProgram(String id,ShaderSystem shaderSys) {
-        super(id,"shaders/atmosphere_vert.glsl","shaders/atmosphere_frag.glsl",shaderSys);
+        super(id,"shaders/atmosphere_vert.glsl","shaders/atmosphere_frag.glsl",shaderSys,true);
         initAtmosphereShader();
     }
 

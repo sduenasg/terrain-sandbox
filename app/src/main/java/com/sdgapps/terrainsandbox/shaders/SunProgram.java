@@ -6,7 +6,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4f
 
 public class SunProgram extends GLSLProgram {
     private SunProgram(String id, ShaderSystem shaderSys) {
-        super(id, "shaders/sun_vertex.glsl", "shaders/sun_fragment.glsl",shaderSys);
+        super(id, "shaders/sun_vertex.glsl", "shaders/sun_fragment.glsl",shaderSys,true);
         configure();
     }
 

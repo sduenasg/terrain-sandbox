@@ -9,7 +9,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3f;
 public class PlanetShadowPassProgram extends GLSLProgram {
     private PlanetShadowPassProgram(String id, ShaderSystem shaderSys) {
         //super(id, R.raw.shadowmap_vertex, R.raw.shadowmap_fragment);
-        super(id, "","",shaderSys);
+        super(id, "","",shaderSys,true);
         configureShadowmapShader();
     }
 

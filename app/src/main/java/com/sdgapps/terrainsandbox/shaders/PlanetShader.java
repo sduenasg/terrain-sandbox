@@ -11,7 +11,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4f
 
 public class PlanetShader extends GLSLProgram {
     private PlanetShader(String id, ShaderSystem shaderSys) {
-        super(id, "shaders/planet_vertex.glsl", "shaders/planet_fragment.glsl",shaderSys);
+        super(id, "shaders/planet_vertex.glsl", "shaders/planet_fragment.glsl",shaderSys,true);
 
         configureTerrainShader();
     }

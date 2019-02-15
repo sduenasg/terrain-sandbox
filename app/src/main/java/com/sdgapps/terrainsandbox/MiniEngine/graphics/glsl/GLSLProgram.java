@@ -38,11 +38,12 @@ public class GLSLProgram {
     /**Shader identifier in the engine*/
     String shaderID;
 
-    public GLSLProgram(String id, String vertexPath, String fragmentPath, ShaderSystem shaderSys) {
+
+    public GLSLProgram(String id, String vertexPath, String fragmentPath, ShaderSystem shaderSys,boolean optimize) {
         AssetManager am =shaderSys.getAssetMngr();
         this.shaderID = id;
-        vertex = new GLSLShader(vertexPath, am, false,id);
-        fragment = new GLSLShader(fragmentPath, am, true,id);
+        vertex = new GLSLShader(vertexPath, am, false,id,optimize);
+        fragment = new GLSLShader(fragmentPath, am, true,id,optimize);
 
         glHandle = createAndLinkProgram(vertex.glHandle,
                 fragment.glHandle, new String[]{

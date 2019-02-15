@@ -7,7 +7,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4f
 
 public class SkyboxProgram extends GLSLProgram {
     private SkyboxProgram(String id, ShaderSystem shaderSys) {
-        super(id, "shaders/skybox_vertex.glsl","shaders/skybox_fragment.glsl",shaderSys);
+        super(id, "shaders/skybox_vertex.glsl","shaders/skybox_fragment.glsl",shaderSys,true);
         configure();
     }
 

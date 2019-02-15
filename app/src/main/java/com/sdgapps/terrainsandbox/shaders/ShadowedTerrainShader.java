@@ -7,7 +7,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3f;
 
 public class ShadowedTerrainShader extends GLSLProgram {
     private ShadowedTerrainShader(String id, ShaderSystem shaderSys) {
-        super(id, "","",shaderSys);
+        super(id, "","",shaderSys,true);
         //super(id, R.raw.terrain_vertex_shadowed, R.raw.terrain_fragment_derivative_shadowed_);
         configureShadowedTerrainShader();
     }

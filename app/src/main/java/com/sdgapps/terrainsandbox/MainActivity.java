@@ -39,6 +39,13 @@ public class MainActivity extends AppCompatActivity
     private GLSurfaceRenderer renderer = null;
     private boolean mInstructionsShown = false;
 
+
+    // Used to load the ndk native library on application startup.
+    static {
+        System.loadLibrary("jni_optimizer");
+    }
+
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);

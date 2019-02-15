@@ -8,7 +8,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniformMatrix4f
 
 public class CloudProgram extends GLSLProgram {
     private CloudProgram(String id, ShaderSystem shaderSys) {
-        super(id,"shaders/cloud_vert.glsl","shaders/cloud_frag.glsl",shaderSys);
+        super(id,"shaders/cloud_vert.glsl","shaders/cloud_frag.glsl",shaderSys,true);
         initShader();
     }
 
