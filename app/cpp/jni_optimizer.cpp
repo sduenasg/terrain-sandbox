@@ -3,6 +3,8 @@
 
 #include "glsl_optimizer.h"
 
+/**jni interface to the glsl-optimizer c++ library*/
+
 extern "C"
 JNIEXPORT jstring JNICALL Java_com_sdgapps_terrainsandbox_MiniEngine_graphics_glsl_GLSLShader_jnioptimize( JNIEnv* env, jobject thiz, jstring jstr,jboolean isFragment )
 {
@@ -12,6 +14,7 @@ JNIEXPORT jstring JNICALL Java_com_sdgapps_terrainsandbox_MiniEngine_graphics_gl
 
 	glslopt_ctx* ctx = glslopt_initialize(kGlslTargetOpenGLES30);
     glslopt_shader* shader;
+
 	if(isFragment)
 	    shader = glslopt_optimize (ctx, kGlslOptShaderFragment, shaderSource, 0);
     else

@@ -5,7 +5,6 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
-
 include_directories(glsl-optimizer/include)
 include_directories(glsl-optimizer/src/mesa)
 include_directories(glsl-optimizer/src/mapi)
@@ -23,10 +22,7 @@ else()
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -s")
 endif()
 
-
 file(GLOB glcpp-library_sources ./glsl-optimizer/src/glsl/glcpp/*.c ./glsl-optimizer/src/util/*.c)
-#file(GLOB glcpp-library_sources_remove src/glsl/glcpp/glcpp.c)
-#list(REMOVE_ITEM glcpp-library_sources ${glcpp-library_sources_remove})
 add_library(glcpp-library ${glcpp-library_sources})
 
 file(GLOB mesa_sources ./glsl-optimizer/src/mesa/program/*.c ./glsl-optimizer/src/mesa/main/*.c)
@@ -47,13 +43,6 @@ target_link_libraries(glsl_test glsl_optimizer)
 
 find_library(OpenGL_LIBRARY GLESv3)
 target_link_libraries(glsl_test ${OpenGL_LIBRARY})
-
-file(GLOB glslopt_sources ./glsl-optimizer/contrib/glslopt/*.cpp)
-add_executable(glslopt ${glslopt_sources})
-target_link_libraries(glslopt glsl_optimizer)
-
-#add_library(glsl_optimizer SHARED ./glsl-optimizer/src/glsl/glsl_optimizer.cpp)
-
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -85,17 +74,6 @@ find_library( # Sets the name of the path variable.
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
 
-target_link_libraries( # Specifies the target library.
-        jni_optimizer
-
-        # Links the target library to the log library
-        # included in the NDK.
-        ${log-lib})
-
-target_link_libraries( # Specifies the target library.
-        jni_optimizer
-
-        # Links the target library to the log library
-        # included in the NDK.
-        glsl_optimizer)
+target_link_libraries(jni_optimizer ${log-lib})
+target_link_libraries(jni_optimizer glsl_optimizer)
 
