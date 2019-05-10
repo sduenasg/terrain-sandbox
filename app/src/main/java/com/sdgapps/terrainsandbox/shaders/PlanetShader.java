@@ -37,6 +37,7 @@ public class PlanetShader extends GLSLProgram {
 
         //uniforms
         ShaderUniform1f mode = new ShaderUniform1f("mode");
+        ShaderUniform1f gridDim = new ShaderUniform1f("gridDim");
 
         ShaderUniform3f CDLODcampos = new ShaderUniform3f("cameraPosition");
 
@@ -63,6 +64,7 @@ public class PlanetShader extends GLSLProgram {
         //add everything to the shader
         addUniform(MVMatrix);
         addUniform(MVPMatrix);
+        addUniform(gridDim);
 
         addUniform(mode);
         addUniform(heightmap);

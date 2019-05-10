@@ -30,11 +30,12 @@ uniform vec3 u_LightPos; //Light position in eye space
 uniform sampler2D u_heightMap;
 uniform sampler2D u_normalMap;
 
-//specific node uniforms (instanced)
+//specific node uniforms
 uniform float quad_scale; //Quad size of the current lod grid mesh
 uniform vec2 range; //x= range, y= 1/(morphend-morphstart) - current range distance inverted
 uniform vec2 nodeoffset;//position offset of the patch this vertex belongs to
 uniform float lodlevel;
+uniform float gridDim;
 
 //general uniforms
 uniform vec3 cameraPosition;
@@ -70,8 +71,7 @@ vec2 getuvsxy(in vec2 v)
 }
 
 vec2 morphVertex( in vec2 gridPos, in vec2 worldPos, in float morph) {
-	//vec2 fracPart = vec2(quad_scale) * fract(gridPos.xy * vec2(gridDim)*0.5) * 2.0/vec2(gridDim);
-	vec2 fracPart = vec2(quad_scale) * fract(gridPos.xy);
+    vec2 fracPart = vec2(quad_scale) * fract(gridPos.xy * vec2(gridDim)*0.5) * 2.0/vec2(gridDim);
     return worldPos - fracPart * morph;
 }
 

@@ -496,7 +496,7 @@ public class Planet extends Renderer implements TerrainInterface {
             if (lod > 0)
                 morphstart = ranges[lod - 1];
 
-            morphstart = MiniMath.lerp(morphend, morphstart, morphstartratio);//morphend - (morphend - rangestart) * morphstartratio;
+            morphstart = MiniMath.lerp(morphend, morphstart, morphstartratio);
             rangeDistance[lod] = 1f / (morphend - morphstart); //y
             morphconstz[lod] = morphend / (morphend - morphstart); //x
         }
