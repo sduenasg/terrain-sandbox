@@ -65,7 +65,7 @@ float calcFogLinear(float distanceToEye)
 
 vec3 getWireColor()
 {
-    float lod=mod(lodlevel,7.0);
+    /*float lod=mod(lodlevel,7.0);
     if(lod==0.0)      return mix(vec3(0.9,0.0,0.0),vec3(0.95,0.0,1.0),morph);
     else if(lod==1.0) return mix(vec3(0.95,0.0,1.0),vec3(0.0,0.0,1.0),morph);
     else if(lod==2.0) return mix(vec3(0.0,0.0,1.0),vec3(0.0,1.0,0.0),morph);
@@ -73,6 +73,17 @@ vec3 getWireColor()
     else if(lod==4.0) return mix(vec3(0.6,0.0,1.0),vec3(1.0,1.0,0.0),morph);
     else if(lod==5.0) return mix(vec3(1.0,1.0,0.0),vec3(1.0,0.2,0.1),morph);
     else if(lod==6.0) return mix(vec3(1.0,0.2,0.1),vec3(0.9,0.0,0.0),morph);
+    else return vec3(1.0,0.3,0.0);*/
+
+
+    float lod=mod(lodlevel,7.0);
+    if(lod==0.0)      return vec3(0.9,0.0,0.0);
+    else if(lod==1.0) return vec3(0.95,0.0,1.0);
+    else if(lod==2.0) return vec3(0.0,0.0,1.0);
+    else if(lod==3.0) return vec3(0.0,1.0,0.0);
+    else if(lod==4.0) return vec3(0.6,0.0,1.0);
+    else if(lod==5.0) return vec3(1.0,1.0,0.0);
+    else if(lod==6.0) return vec3(1.0,0.2,0.1);
     else return vec3(1.0,0.3,0.0);
 }
 

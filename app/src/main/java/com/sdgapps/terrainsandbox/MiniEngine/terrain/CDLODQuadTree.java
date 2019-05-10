@@ -59,7 +59,7 @@ public class CDLODQuadTree {
      * Root node of the quad tree
      */
     private CDLODNode root;
-    private float[] shadowMapMVPMatrix = new float[16];
+    //private float[] shadowMapMVPMatrix = new float[16];
     private boolean initialized;
     private SelectionResults selection = new SelectionResults();
 
