@@ -66,10 +66,11 @@ float calcFogLinear(float distanceToEye)
 vec3 getWireColor()
 {
 
-    // this looks cool but it can trick you into thinking the verts are being morphed when they
-    // might not. Use the commented block below to get a more clear view of the morphing without mixing
-    // colors between levels
-    float lod=mod(lodlevel,7.0);
+    /* this looks cool but it can trick you into thinking the verts are being morphed when they
+     * might not. Use the block below the next one to get a more clear view of the morphing without mixing
+     * colors between levels*/
+
+    /*float lod=mod(lodlevel,7.0);
     if(lod==0.0)      return mix(vec3(0.9,0.0,0.0),vec3(0.95,0.0,1.0),morph);
     else if(lod==1.0) return mix(vec3(0.95,0.0,1.0),vec3(0.0,0.0,1.0),morph);
     else if(lod==2.0) return mix(vec3(0.0,0.0,1.0),vec3(0.0,1.0,0.0),morph);
@@ -77,10 +78,8 @@ vec3 getWireColor()
     else if(lod==4.0) return mix(vec3(0.6,0.0,1.0),vec3(1.0,1.0,0.0),morph);
     else if(lod==5.0) return mix(vec3(1.0,1.0,0.0),vec3(1.0,0.2,0.1),morph);
     else if(lod==6.0) return mix(vec3(1.0,0.2,0.1),vec3(0.9,0.0,0.0),morph);
-    else return vec3(1.0,0.3,0.0);
+    else return vec3(1.0,0.3,0.0);*/
 
-
-    /*
     float lod=mod(lodlevel,7.0);
     if(lod==0.0)      return vec3(0.9,0.0,0.0);
     else if(lod==1.0) return vec3(0.95,0.0,1.0);
@@ -90,35 +89,34 @@ vec3 getWireColor()
     else if(lod==5.0) return vec3(1.0,1.0,0.0);
     else if(lod==6.0) return vec3(1.0,0.2,0.1);
     else return vec3(1.0,0.3,0.0);
-    */
 }
 
 float edgeFactor(){
      // http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates
 
     vec3 d = fwidth(barycentric);
-    vec3 a3 = smoothstep(vec3(0.0), d*3.0, barycentric);
+    vec3 a3 = smoothstep(vec3(0.0), d*2.0, barycentric);
     return min(min(a3.x, a3.y), a3.z);
 }
 
 float getSplatSheetColorSimple(vec4 splatWeights)
 {
     vec2 coords = fract(v_TexCoordinate * 1200.0);
-    float grassvalue =  texture( u_splatArray  , vec3(coords,0.0)).r;
-    float snowvalue =   texture(  u_splatArray  , vec3(coords,2.0)).r;
-    float watervalue =  texture( u_splatArray  , vec3(coords,3.0)).r;
+    float grassvalue =  texture(u_splatArray  , vec3(coords,0.0)).r;
+    float snowvalue =   texture(u_splatArray  , vec3(coords,2.0)).r;
+    float watervalue =  texture(u_splatArray  , vec3(coords,3.0)).r;
     float cliffsvalue = texture(u_splatArray  , vec3(coords,0.0)).r;
 
     float outcolor = splatWeights.r * grassvalue +
-                    splatWeights.g * cliffsvalue+
-                    splatWeights.b * watervalue +
-                    splatWeights.a * snowvalue;
+                     splatWeights.g * cliffsvalue+
+                     splatWeights.b * watervalue +
+                     splatWeights.a * snowvalue;
 
     return outcolor;
 }
 
 
- /* samples 2 sets of coordinates to minimize the tiling effect. Looks
+/* samples 2 sets of coordinates to minimize the tiling effect. Looks
        better but it is pretty slow on weaker devices*/
 float getSplatSheetColor(vec4 splatWeights)
 {
@@ -135,11 +133,11 @@ float getSplatSheetColor(vec4 splatWeights)
     float watervalue2= texture( u_splatArray  , vec3(coords2,3.0)).r;
     float cliffsvalue2=texture(u_splatArray  , vec3(coords2,1.0)).r;
 
-   float outcolor = splatWeights.r * grassvalue +
+    float outcolor = splatWeights.r * grassvalue +
                     splatWeights.g * cliffsvalue+
                     splatWeights.b * watervalue +
                     splatWeights.a * snowvalue;
-    float outcolor2=splatWeights.r * grassvalue2 +
+    float outcolor2 = splatWeights.r * grassvalue2 +
                    splatWeights.g * cliffsvalue2+
                    splatWeights.b * watervalue2 +
                    splatWeights.a * snowvalue2;
@@ -159,7 +157,7 @@ void main()
     // splat maps must have a non-premultiplied alpha channel
     vec4 splatvalue=texture(u_splatMap,v_TexCoordinate);
 
-    float splatcolor=mix(3.0*getSplatSheetColorSimple(splatvalue),1.0,clamp(detailFactor,0.0,1.0));
+    float splatcolor=mix(3.0*getSplatSheetColor(splatvalue),1.0,clamp(detailFactor,0.0,1.0));
 
     colorMap*=splatcolor;// apply the detail value
 

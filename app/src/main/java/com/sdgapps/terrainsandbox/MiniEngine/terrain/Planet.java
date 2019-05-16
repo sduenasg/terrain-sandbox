@@ -91,15 +91,19 @@ public class Planet extends Renderer implements TerrainInterface {
     private float[] rangeDistance;
     private float[] morphconstz;
     private float[] ranges;
+
+    // Range distance slider(frontend) attributes
     private final int rangeDistMax = 10;
     private final int rangeDistMin = 1;
-    private final int rangeDistSteps = 10;//number of steps between rangeDistMin and rangeDistMax
+
+    // The slidder must go from rangeDistMin to rangeDistMax in rangeDistSteps steps
+    private final int rangeDistSteps = 10;
+
     private static final float morphstartratio = .1f;
 
     public Color4f atmosphereColor = new Color4f(218, 220, 255, 1);
     private float atmosphereRadius,cloudlayerRadius;
     private float planetRadius;
-
 
     private static final String planetShaderID = "IDPlanetShader";
     private static final String planetShadowedID = "IDPlanetShadowedShader";
