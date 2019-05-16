@@ -20,6 +20,7 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform1f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.glsl.ShaderUniform3f;
 import com.sdgapps.terrainsandbox.MiniEngine.graphics.texture.Texture;
 import com.sdgapps.terrainsandbox.SimpleQuaternionPool;
+import com.sdgapps.terrainsandbox.SimpleVec3fPool;
 import com.sdgapps.terrainsandbox.shaders.AtmosphereProgram;
 import com.sdgapps.terrainsandbox.shaders.BoundingBoxProgram;
 import com.sdgapps.terrainsandbox.shaders.CloudProgram;
@@ -365,9 +366,18 @@ public class Planet extends Renderer implements TerrainInterface {
         GLES30.glEnable(GLES30.GL_BLEND);
         GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE);
 
-        if(clouds.isPointInside(gameObject.engineManagers.mainCamera.transform.position))
+        boolean cameraIsInside=clouds.isPointInside(gameObject.engineManagers.mainCamera.transform.position);
+
+        if(cameraIsInside)
             GLES30.glCullFace(GLES30.GL_FRONT);
+        else
+            // To avoid zfighting issues when the camera is outside of the sphere
+            GLES30.glDisable(GLES30.GL_DEPTH_TEST);
+
         clouds.draw();
+
+        if(!cameraIsInside)
+            GLES30.glEnable(GLES30.GL_DEPTH_TEST);
 
         GLES30.glCullFace(GLES30.GL_BACK);
         GLES30.glDisable(GLES30.GL_BLEND);
@@ -482,11 +492,11 @@ public class Planet extends Renderer implements TerrainInterface {
 
     @Override
     public void setRangeDetail(float distRange) {
-        float f = .005f;
+        float f = .004f;
         float prevPos = distRange * terrainXZ * f;
 
         for (int i = 1; i < nLods + 1; i++) {
-            ranges[i - 1] = prevPos + terrainXZ * f * (float) Math.pow(2.8f, i);
+            ranges[i - 1] = prevPos + terrainXZ * f * (float) Math.pow(2.f, i);
             prevPos = ranges[i - 1];
         }
 

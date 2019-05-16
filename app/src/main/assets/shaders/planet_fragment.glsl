@@ -14,7 +14,7 @@ precision mediump float;
 #endif
 
 const float fogScale=0.6;
-const float detailTextureMult = 100.0;
+const float detailTextureMult = 50.0;
 const vec3 rcolor=vec3(0.0,1.0,0.0);
 const vec3 gcolor=vec3(0.27,0.21,0.13);//cliffs
 const vec3 bcolor=vec3(0.0,0.0,1.0);
