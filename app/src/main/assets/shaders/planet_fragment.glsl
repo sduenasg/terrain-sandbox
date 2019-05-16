@@ -19,7 +19,7 @@ const vec3 rcolor=vec3(0.0,1.0,0.0);
 const vec3 gcolor=vec3(0.27,0.21,0.13);//cliffs
 const vec3 bcolor=vec3(0.0,0.0,1.0);
 const vec3 acolor=vec3(1.0,1.0,1.0);
-const float detailThreshold = 0.99;//distance [0,1] threshold at which detail will start showing
+const float detailThreshold = 0.999;//distance [0,1) threshold at which detail will start showing
 const float shininess = 50.0;
 const vec3 specularColor=vec3(0.980, 0.922 , 0.608);
 
@@ -152,7 +152,7 @@ void main()
 
     // avoiding the if statement (if depthValue>detailthresh)
     float depthValue = depthPosition.z /depthPosition.w;
-    float detailFactor= (depthValue-detailThreshold)/(0.999-detailThreshold);
+    float detailFactor= (depthValue-detailThreshold)/(1.0-detailThreshold);
 
     // splat maps must have a non-premultiplied alpha channel
     vec4 splatvalue=texture(u_splatMap,v_TexCoordinate);
