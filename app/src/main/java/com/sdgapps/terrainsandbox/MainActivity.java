@@ -39,12 +39,10 @@ public class MainActivity extends AppCompatActivity
     private GLSurfaceRenderer renderer = null;
     private boolean mInstructionsShown = false;
 
-
     // Used to load the ndk native library on application startup.
     static {
         System.loadLibrary("jni_optimizer");
     }
-
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -54,6 +52,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Logger.log("Miau :3");
         Logger.log("Lifecycle: CREATE ");
 
         final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -98,8 +98,6 @@ public class MainActivity extends AppCompatActivity
         };
 
         Thread.setDefaultUncaughtExceptionHandler(h);
-
-
     }
 
     @Override
@@ -271,12 +269,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFinishedCreatingSurface() {
-        //renderer.loadScene();
         MVPModel.loadScene(getAssets());
         onFinishedLoadingScene();
         /*
          * Be careful with runonuithread, if the activity gets destroyed
-         * after the runnable has already been queued to run, it might attempt to reach
+         * after the runnable has already been queued to run, it could attempt to reach
          * variables/fields that might have been destroyed (null)
          */
         final AppCompatActivity a=this;

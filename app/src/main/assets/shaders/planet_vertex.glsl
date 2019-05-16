@@ -59,7 +59,7 @@ const float texelSize=1.0/2080.0;
 float getHeightuv(in vec2 uv, in bool usefilter) {
 
     float heightmap=0.0;
-    heightmap = texture(u_heightMap, uv).r;//make sure the heightmaps are loaded with the NEAREST mode(no filter)
+    heightmap = texture(u_heightMap, uv).r;
 	return meshInfo.z * heightmap;
 }
 

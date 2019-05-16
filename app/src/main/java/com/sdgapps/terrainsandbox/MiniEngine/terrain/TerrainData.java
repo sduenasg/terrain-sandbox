@@ -103,7 +103,7 @@ public class TerrainData {
 
         TexDisplacementMaps = new Texture2D[displacementMaps.size()];
         for (int i = 0; i < displacementMaps.size(); i++) {
-            TexDisplacementMaps[i] = engineManagers.textureManager.add2DTexture(displacementMaps.get(i), false, false, Texture2D.FILTER_NEAREST, Texture2D.WRAP_CLAMP,true,true);
+            TexDisplacementMaps[i] = engineManagers.textureManager.add2DTexture(displacementMaps.get(i), false, false, Texture2D.FILTER_LINEAR, Texture2D.WRAP_CLAMP,true,true);
         }
 
         TexSplatMaps = new Texture2D[splatMaps.size()];
