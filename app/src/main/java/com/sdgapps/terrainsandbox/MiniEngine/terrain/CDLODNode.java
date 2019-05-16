@@ -128,12 +128,13 @@ class CDLODNode extends SelectableNode {
             }
         }
     }
+
     /**
      * Bounding box initialization for planets
      */
     private void buildAABBfromDataSphere(Texture2D heightmap, float terrainWidth, float nodeSide) {
         //TimingHelper th=new TimingHelper("bb building");
-       // th.start();
+        // th.start();
         AABB = new BoundingBox();
 
         Vec3f heightMapMax = SimpleVec3fPool.create();
@@ -155,6 +156,12 @@ class CDLODNode extends SelectableNode {
                 CDLODQuadTree.yscale);*/
 
         //spherize only the corners and the center points, no displacement
+        /*
+        * At planetary scale, heightmap displacement seems negligible compared to the bounding
+        * box that is created by the curvature of the mesh. This needs some more investigating
+        * though, for when the node is so detailed (tiny part of the sphere) that the mesh is
+        * almost flat.
+        */
         calcBoxPoints(terrainWidth*0.5f,nodeSide,heightMapMax,heightMapMin);
 
         AABB.expand(heightMapMin);
