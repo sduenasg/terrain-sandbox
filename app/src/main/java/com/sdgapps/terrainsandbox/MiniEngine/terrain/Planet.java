@@ -127,6 +127,7 @@ public class Planet extends Renderer implements TerrainInterface {
 
         TimingHelper th=new TimingHelper("Planet initialization...");
         th.start();
+
         //Setup the 6 faces of the cube
         CDLODQuadTree planetChunkN;
         CDLODQuadTree planetChunkS;
@@ -295,7 +296,6 @@ public class Planet extends Renderer implements TerrainInterface {
                 if(camFly!=null)
                     camFly.allowedSpeed = camFly.maxSpeed * factor;
             }
-
         }
     }
 
@@ -382,6 +382,7 @@ public class Planet extends Renderer implements TerrainInterface {
         GLES30.glCullFace(GLES30.GL_BACK);
         GLES30.glDisable(GLES30.GL_BLEND);
     }
+
     private void renderAtmosphere() {
 
         atmosphere.material.bindShader();
