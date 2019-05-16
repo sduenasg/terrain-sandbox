@@ -6,8 +6,9 @@ The planet is a sphere composed of 6 separate CDLOD meshes (quadtrees) forming t
 
 In CDLOD, neighbor terrain nodes with different LOD levels dynamically morph their vertices to avoid showing cracks on the terrain. Some other popular terrain rendering techniques use skirts (geometry patches) to hide the cracks. The limitation in CDLOD is that between two neighboring terrain nodes the LOD difference must be 0 or one, since a node with LOD level n can only morph into a LOD n-1. This is all well explained in the original [paper](https://github.com/fstrugar/CDLOD).
 
-![img](https://i.imgur.com/2QXzZA2.png)
-![img](https://i.imgur.com/47dvMxv.png)
-![img](https://i.imgur.com/3DyVid2.png)
-
-
+# Screenshots
+![Screenshot](https://i.imgur.com/2QXzZA2.png)
+![Screenshot](https://i.imgur.com/47dvMxv.png)
+![Screenshot](https://i.imgur.com/3DyVid2.png)
+![Screenshot](https://user-images.githubusercontent.com/651022/57857850-7c664400-77df-11e9-91d9-d5ca80396498.png)
+![Screenshot](https://user-images.githubusercontent.com/651022/57857849-7c664400-77df-11e9-9f68-c56ede2f4ea2.png)
