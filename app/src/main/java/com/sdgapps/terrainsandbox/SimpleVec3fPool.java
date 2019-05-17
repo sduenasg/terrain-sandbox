@@ -5,7 +5,10 @@ import com.sdgapps.terrainsandbox.MiniEngine.graphics.Vec3f;
 /**
  * Use this pool VERY carefully. It is very simple and fast, but
  * it doesn't track which pool elements are being used/stop being used. These are for very short
- * immediate usages only.**
+ * immediate/auxiliary usages only.
+ * <p>
+ * This helps avoid garbage collection runs triggered by doing "x = new whatever()" all over the
+ * place. Garbage collection running too often will cause the framerate to dip.
  **/
 public class SimpleVec3fPool {
 

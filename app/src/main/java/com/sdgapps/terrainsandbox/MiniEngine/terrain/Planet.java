@@ -200,12 +200,12 @@ public class Planet extends Renderer implements TerrainInterface {
 
         Material boundingBoxMaterial = new Material();
         boundingBoxMaterial.shader = BoundingBoxProgram.createInstance("bbmat", gameObject.engineManagers.sShaderSystem);
-        planetChunkN = new CDLODQuadTree(true, materialN, gridSize, rootQuadScale, nLods, yscale, ranges, morphconstz, rangeDistance, boundingBoxMaterial);
-        planetChunkS = new CDLODQuadTree(true, materialS, gridSize, rootQuadScale, nLods, yscale, ranges, morphconstz, rangeDistance, boundingBoxMaterial);
-        planetChunkA = new CDLODQuadTree(true, materialA, gridSize, rootQuadScale, nLods, yscale, ranges, morphconstz, rangeDistance, boundingBoxMaterial);
-        planetChunkB = new CDLODQuadTree(true, materialB, gridSize, rootQuadScale, nLods, yscale, ranges, morphconstz, rangeDistance, boundingBoxMaterial);
-        planetChunkC = new CDLODQuadTree(true, materialC, gridSize, rootQuadScale, nLods, yscale, ranges, morphconstz, rangeDistance, boundingBoxMaterial);
-        planetChunkD = new CDLODQuadTree(true, materialD, gridSize, rootQuadScale, nLods, yscale, ranges, morphconstz, rangeDistance, boundingBoxMaterial);
+        planetChunkN = new CDLODQuadTree(materialN, gridSize, rootQuadScale, nLods, yscale, ranges, morphconstz, rangeDistance, boundingBoxMaterial);
+        planetChunkS = new CDLODQuadTree(materialS, gridSize, rootQuadScale, nLods, yscale, ranges, morphconstz, rangeDistance, boundingBoxMaterial);
+        planetChunkA = new CDLODQuadTree(materialA, gridSize, rootQuadScale, nLods, yscale, ranges, morphconstz, rangeDistance, boundingBoxMaterial);
+        planetChunkB = new CDLODQuadTree(materialB, gridSize, rootQuadScale, nLods, yscale, ranges, morphconstz, rangeDistance, boundingBoxMaterial);
+        planetChunkC = new CDLODQuadTree(materialC, gridSize, rootQuadScale, nLods, yscale, ranges, morphconstz, rangeDistance, boundingBoxMaterial);
+        planetChunkD = new CDLODQuadTree(materialD, gridSize, rootQuadScale, nLods, yscale, ranges, morphconstz, rangeDistance, boundingBoxMaterial);
         th.end();
         cube = new CDLODQuadTree[6];
 
