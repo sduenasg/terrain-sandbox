@@ -1,6 +1,6 @@
 package com.sdgapps.terrainsandbox.MiniEngine.terrain;
 
-public class SelectableNode {
+class SelectableNode {
 
     boolean[] selection = new boolean[5];
 
