@@ -20,7 +20,7 @@ public class CDLODQuadTree {
     /**
      * Number of LOD levels
      */
-    int nLods;
+    short nLods;
 
     /**
      * gridSize: Determines the number of Quads for every node (gridSize * gridSize)
@@ -74,7 +74,7 @@ public class CDLODQuadTree {
     public Material material;
     public Transform transform;
 
-    CDLODQuadTree(boolean sphere, Material mat, int _gridSize, float _rootQuadScale, int _nLods, float _yscale,
+    CDLODQuadTree(boolean sphere, Material mat, int _gridSize, float _rootQuadScale, short _nLods, float _yscale,
                   float[] _ranges, float[] _morphconstz, float[] _rangeDistance, Material _boundingBoxMaterial) {
         super();
         gridSize = _gridSize;
@@ -92,7 +92,7 @@ public class CDLODQuadTree {
         transform.objectPivotPosition.set(terrainXZ / 2f, 0, terrainXZ / 2f);
 
         material = mat;
-        root = new CDLODNode(sphere, nLods - 1, rootQuadScale, 0, 0, gridSize, gridSize * rootQuadScale, (Texture2D)material.getTexture(Planet.heightmapUniformName), this);
+        root = new CDLODNode(sphere, (short)(nLods - 1), rootQuadScale, 0, 0, gridSize, gridSize * rootQuadScale, (Texture2D)material.getTexture(Planet.heightmapUniformName), this);
         boundingBoxMaterial = _boundingBoxMaterial;
         initialized = true;
     }
@@ -106,7 +106,7 @@ public class CDLODQuadTree {
 
 
         if (initialized) {
-            root.LODSelect(mainCamera, selection, false);
+            root.LODSelect(mainCamera, selection, false,ranges,morphconstz,terrainXZ * 0.5f);
         }
 
         transform.updateModelMatrix();
@@ -125,7 +125,7 @@ public class CDLODQuadTree {
                 material.bindTextures();
                 sendMatrices();
                 //selection.renderSelectionInstanced(gridMesh,targetShader);
-                selection.renderSelection(gridMesh,targetShader);
+                selection.renderSelection(gridMesh,targetShader,rangeDistance,morphconstz);
                 Matrix.setIdentityM(MatrixManager.modelMatrix, 0);
             }
         }

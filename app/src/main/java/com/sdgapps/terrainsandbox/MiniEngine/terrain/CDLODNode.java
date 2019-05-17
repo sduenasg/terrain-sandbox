@@ -17,20 +17,18 @@ import com.sdgapps.terrainsandbox.SimpleVec3fPool;
 class CDLODNode extends SelectableNode {
 
     private CDLODNode[] children;
-    int lod;
+    short lod;
     private BoundingBox AABB;
     float xoffset;
     float zoffset;
     float quadScale;
-    private CDLODQuadTree quadTree;
 
-    CDLODNode(boolean sphere, int _lod, float _quadScale, float _xoffset, float _yoffset, int gridsize,
+    CDLODNode(boolean sphere, short _lod, float _quadScale, float _xoffset, float _yoffset, int gridsize,
               float fullWidth, Texture2D heightmap, CDLODQuadTree cdlodQuadTree) {
         quadScale = _quadScale;
         lod = _lod;
         xoffset = _xoffset;
         zoffset = _yoffset;
-        quadTree = cdlodQuadTree;
         float nodeSide = (float) gridsize * _quadScale;
 
         if (lod == 0) {
@@ -56,7 +54,7 @@ class CDLODNode extends SelectableNode {
 
             for (int i = 0; i < 4; i++) {
                 children[i] = new CDLODNode(sphere,
-                        lod - 1,
+                        (short)(lod - 1),
                         _quadScale / 2f,
                         childrenOffsets[i].x,
                         childrenOffsets[i].y,
@@ -274,16 +272,16 @@ class CDLODNode extends SelectableNode {
      * @return true-> area handled by current node
      * false-> area not handled by current node (parent node should handle it)
      **/
-    boolean LODSelect(Camera camera, SelectionResults selection, boolean parentCompletelyInFrustum) {
+    boolean LODSelect(Camera camera, SelectionResults selection, boolean parentCompletelyInFrustum,float[] ranges, float[] morphConsts, float terrainLenH) {
         ClearSelectionValues();
         Vec3f cameraPos = camera.gameObject.transform.position;
 
-        if (!inSphereQRI(quadTree.ranges[lod], cameraPos)) {
+        if (!inSphereQRI(ranges[lod], cameraPos)) {
             // no node or child nodes were selected (out of range); return false so that our parent node handles our area
             return false;
         }
 
-        if (horizonTestBoundingBox(camera)) {
+        if (horizonTestBoundingBox(camera,terrainLenH)) {
             return true;
         }
 
@@ -306,20 +304,18 @@ class CDLODNode extends SelectableNode {
             // we are in our LOD range at the last LOD level (leaf node)
             return true; // we have handled the area of our node
         } else {
-
-            /* we cover the more detailed lodLevel range: some or all of our four child nodes will
-               have to be selected instead*/
-            if (!inSphereQRI(quadTree.ranges[lod - 1], cameraPos)) {
+            if (!inSphereQRI(ranges[lod - 1], cameraPos)) {
                 // we cover the required lodLevel range
                 //AddWholeNodeToSelectionList( ) ;
 
                 Select(4);
                 selection.add(this, lod);
             } else {
-
+                /* We cover the more detailed lodLevel range: some or all of our four child nodes will
+                have to be selected instead*/
                 for (int i = 0; i < children.length; i++) {
 
-                    if (!children[i].LODSelect(camera, selection,frustumTest==Frustum.INSIDE)) {
+                    if (!children[i].LODSelect(camera, selection,frustumTest==Frustum.INSIDE,ranges,morphConsts,terrainLenH)) {
                         // if a child node is outside of its LOD range, this node (parent) must handle it
                         // AddPartOfNodeToSelectionList( childNode.ParentSubArea ) ;
 
@@ -336,7 +332,7 @@ class CDLODNode extends SelectableNode {
     /**
      * Test if the bounding box is occluded by the planet itself
      */
-    private boolean horizonTestBoundingBox(Camera camera) {
+    private boolean horizonTestBoundingBox(Camera camera, float terrainLenH) {
 
         /*
          * Same idea as frustum culling, we only test 2 of the 4 points of the bounding box
@@ -348,7 +344,7 @@ class CDLODNode extends SelectableNode {
          *  http://www.lighthouse3d.com/tutorials/view-frustum-culling/geometric-approach-testing-boxes-ii/
          *
          */
-        float radius = quadTree.terrainXZ * 0.5f;
+        float radius = terrainLenH;
 
         Vec3f viewPosition = camera.transform.position;
 
@@ -382,16 +378,7 @@ class CDLODNode extends SelectableNode {
             // && dot*dot/vtMagnitudeSquared>vhMagnitudeSquared; //cone test
     }
 
-    float getMorphContz()
-    {
-        return quadTree.morphconstz[lod];
-    }
-    float getRangeDistance()
-    {
-        return quadTree.rangeDistance[lod];
-    }
-
-    void renderSelectedParts(GridMesh mesh, GLSLProgram shader) {
+    void renderSelectedParts(GridMesh mesh, GLSLProgram shader,float[] rangeDistances, float[] morphconsts) {
         ShaderUniform2f range = (ShaderUniform2f) shader.getUniform("range");
         ShaderUniform1f qScale = (ShaderUniform1f) shader.getUniform("quad_scale");
         ShaderUniform1f gridDim = (ShaderUniform1f) shader.getUniform("gridDim");
@@ -399,8 +386,8 @@ class CDLODNode extends SelectableNode {
         ShaderUniform2f offset = (ShaderUniform2f) shader.getUniform("nodeoffset");
 
         if (range != null) {
-            range.v0 = quadTree.morphconstz[lod];
-            range.v1 = quadTree.rangeDistance[lod];
+            range.v0 = morphconsts[lod];
+            range.v1 = rangeDistances[lod];
             range.bind();
         }
 

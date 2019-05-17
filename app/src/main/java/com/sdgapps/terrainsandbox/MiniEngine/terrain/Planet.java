@@ -81,7 +81,7 @@ public class Planet extends Renderer implements TerrainInterface {
 
     private int gridSize = 64;
     private float rootQuadScale = 100000;
-    private int nLods = 8;
+    private short nLods = 8;
     private float yscale = 60000;
     public float terrainXZ;
 
