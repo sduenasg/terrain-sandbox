@@ -6,8 +6,8 @@ import android.content.pm.ConfigurationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -66,13 +66,13 @@ public class MainActivity extends AppCompatActivity
 
         Logger.log("Supported OpenGL ES "+Double.parseDouble(configurationInfo.getGlEsVersion()));
         if (supportsEs3) {
-            MVPView = new MainViewMvpImpl(getLayoutInflater(), null);
+
 
             AssetManager assetM=getAssets();
 
             renderer = new GLSurfaceRenderer(this);
             MVPModel = (MainScene)renderer.engine.getCurrentScene();
-
+            MVPView = new MainViewMvpImpl(getLayoutInflater(), null, renderer);
 
             EngineManagers em=renderer.getEngineManagers();
             em.sTime.setPresenter(this);
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity
         Logger.log("Lifecycle: START");
 
         MVPView.setListener(this);
-        MVPView.start(renderer);
+       // MVPView.start(renderer);
     }
 
     @Override

@@ -3,7 +3,7 @@
 
 
 
-<android.support.v7.widget.LinearLayoutCompat
+<androidx.appcompat.widget.LinearLayoutCompat
 xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
 android:layout_height="wrap_content"
@@ -12,7 +12,7 @@ android:orientation="vertical"
 android:gravity="left"
         >
 
-<android.support.v7.widget.AppCompatTextView
+<androidx.appcompat.widget.AppCompatTextView
         android:textColor="#1d1e1d"
         android:text="@string/elevation"
         android:layout_width="match_parent"
@@ -23,7 +23,7 @@ android:gravity="left"
         android:layout_weight="1"
         />
 
-    <android.support.v7.widget.AppCompatSeekBar android:id="@+id/seeker"
+    <androidx.appcompat.widget.AppCompatSeekBar android:id="@+id/seeker"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
@@ -31,4 +31,4 @@ android:gravity="left"
         android:secondaryProgress="1"
         android:max="90" />
 
-</android.support.v7.widget.LinearLayoutCompat>
+</androidx.appcompat.widget.LinearLayoutCompat>

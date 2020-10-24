@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/main_content"
     tools:context="com.sdgapps.terrainsandbox.MainActivity">
 
     <RelativeLayout
@@ -10,7 +11,7 @@
         android:layout_height="match_parent">
 
         <android.opengl.GLSurfaceView
-            android:id="@+id/surface"
+            android:id="@+id/glsurface"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
@@ -28,10 +29,12 @@
 
     <include
         layout="@layout/info_layout"
+        android:id="@+id/info_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <include
+        android:id="@+id/load_layout"
         layout="@layout/load_progress_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -45,4 +48,4 @@
         android:paddingTop="18dp"
         android:scaleType="fitCenter"
         android:src="@drawable/myicmenu" />
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
