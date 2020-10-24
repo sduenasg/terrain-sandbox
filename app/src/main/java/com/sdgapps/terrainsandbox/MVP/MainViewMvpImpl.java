@@ -46,6 +46,7 @@ public class MainViewMvpImpl implements MainViewMvp,
     private int leftSidePtrId = -1;
     private int rightSidePtrId = -1;
 
+
     boolean manageTouch(View view, MotionEvent motionEvent) {
         if (mListener != null) {
             float newX, newY;
@@ -278,6 +279,8 @@ public class MainViewMvpImpl implements MainViewMvp,
         mainBinding = ActivityMainBinding.inflate(inflater);
         mRootView = mainBinding.getRoot();
         this.start(renderer);
+
+        mainBinding.mainContent.glsurface.setOnTouchListener(this::manageTouch);
     }
 
     private void setupSeekbarListeners() {
